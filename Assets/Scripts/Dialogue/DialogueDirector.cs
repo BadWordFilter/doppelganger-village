@@ -39,7 +39,8 @@ namespace DoppelgangerVillage.Dialogue
         private AnimalCitizen Citizen(int id)
         {
             if (_citizens == null)
-                _citizens = FindObjectsByType<AnimalCitizen>(FindObjectsSortMode.None).ToDictionary(c => c.CitizenId);
+                _citizens = FindObjectsByType<AnimalCitizen>(FindObjectsInactive.Include, FindObjectsSortMode.None)
+                    .ToDictionary(c => c.CitizenId);
             return _citizens.TryGetValue(id, out var c) ? c : null;
         }
 

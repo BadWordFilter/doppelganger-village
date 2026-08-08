@@ -9,10 +9,12 @@ namespace DoppelgangerVillage.Village
     public class AnimalCitizen : MonoBehaviour
     {
         [SerializeField] private int citizenId;
-        [SerializeField] private string animalType; // "강아지" | "고양이" | "토끼"
+        [SerializeField] private string animalType; // 주간: 강아지·고양이·토끼·돼지·곰·양 / 야행: 올빼미·박쥐·늑대
+        [SerializeField] private bool isNocturnal;  // 야행성 — 밤 페이즈에만 활성화, 구출 시 부품 확정 지급
 
         public int CitizenId => citizenId;
         public string AnimalType => animalType;
+        public bool IsNocturnal => isNocturnal;
 
         /// <summary>이 시민이 도플갱어인지 (마스터 배정 룸 프로퍼티 기준).</summary>
         public bool IsDoppelganger => VillageDirector.IsDoppelganger(citizenId);
@@ -23,10 +25,11 @@ namespace DoppelgangerVillage.Village
         /// <summary>남은 질문 횟수 관리는 대화 시스템(3단계)에서 처리한다.</summary>
         public int QuestionsAsked { get; set; }
 
-        public void Configure(int id, string type)
+        public void Configure(int id, string type, bool nocturnal = false)
         {
             citizenId = id;
             animalType = type;
+            isNocturnal = nocturnal;
         }
     }
 }

@@ -71,10 +71,18 @@ namespace DoppelgangerVillage.Judgement
                 if (!isDoppel)
                 {
                     _trueRescued++;
-                    float r = Random.value;
-                    if (r < GameConfig.PartDropChance) { drop = "part"; _parts++; }
-                    else if (r < GameConfig.PartDropChance + GameConfig.MedkitDropChance) drop = "medkit";
-                    else if (r < GameConfig.PartDropChance + GameConfig.MedkitDropChance + GameConfig.FoodDropChance) drop = "food";
+                    if (citizen.IsNocturnal)
+                    {
+                        drop = "part"; // 야행성 시민 구출 성공 = 수리 부품 확정 지급 (기획 규칙)
+                        _parts++;
+                    }
+                    else
+                    {
+                        float r = Random.value;
+                        if (r < GameConfig.PartDropChance) { drop = "part"; _parts++; }
+                        else if (r < GameConfig.PartDropChance + GameConfig.MedkitDropChance) drop = "medkit";
+                        else if (r < GameConfig.PartDropChance + GameConfig.MedkitDropChance + GameConfig.FoodDropChance) drop = "food";
+                    }
                 }
                 else
                 {
@@ -94,26 +102,39 @@ namespace DoppelgangerVillage.Judgement
             CheckPhase();
         }
 
-        /// <summary>마스터: 목표 달성 시(표시 기준) 또는 동물 소진 시 정산 발동.</summary>
+        /// <summary>
+        /// 마스터: 목표 달성(표시 기준) 또는 깨어 있는 동물 소진 시 정산 발동.
+        /// 잠들어 있는 야행성이 남아 있으면 패배 대신 밤 페이즈로 이어진다.
+        /// </summary>
         private void CheckPhase()
         {
-            int remaining = RemainingCitizens();
+            int awake = RemainingCitizens();          // 활성(깨어 있는) 미판정
+            int all = RemainingCitizensIncludingSleeping();
             bool goalMet = DisplayRescued >= GameConfig.RescueGoal && _parts >= GameConfig.PartsGoal;
-            if (!goalMet && remaining > 0) return;
+            if (!goalMet && awake > 0) return;
 
             int final = Mathf.Max(0, _trueRescued - _infiltrators);
             bool realGoal = final >= GameConfig.RescueGoal && _parts >= GameConfig.PartsGoal;
-            int outcome = realGoal ? 1 : (remaining == 0 ? 2 : 0);
+            int outcome = realGoal ? 1 : (all == 0 ? 2 : 0);
 
             photonView.RPC(nameof(RpcSettlement), RpcTarget.All,
-                _trueRescued, _infiltrators, final, _parts, _banished, _fled, remaining, outcome);
+                _trueRescued, _infiltrators, final, _parts, _banished, _fled, all, outcome);
 
             // 정산 차감 반영 후 계속 (기획: 잠입 도플 1마리당 구출 주민 -1)
             if (outcome == 0)
             {
                 _trueRescued = final;
                 _infiltrators = 0;
+                // 깨어 있는 대상이 없고 야행성이 잠들어 있다면 → 밤 페이즈 개시
+                if (awake == 0 && all > 0)
+                    StartCoroutine(NightAfterSettlement());
             }
+        }
+
+        private IEnumerator NightAfterSettlement()
+        {
+            yield return new WaitForSeconds(4f); // 정산 화면 읽을 시간
+            Village.PhaseDirector.Instance.BeginNight();
         }
 
         [PunRPC]
@@ -242,5 +263,8 @@ namespace DoppelgangerVillage.Judgement
 
         private static int RemainingCitizens() =>
             Object.FindObjectsByType<AnimalCitizen>(FindObjectsSortMode.None).Count(c => !c.IsResolved);
+
+        private static int RemainingCitizensIncludingSleeping() =>
+            Object.FindObjectsByType<AnimalCitizen>(FindObjectsInactive.Include, FindObjectsSortMode.None).Count(c => !c.IsResolved);
     }
 }

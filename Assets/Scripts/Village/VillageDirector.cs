@@ -19,7 +19,8 @@ namespace DoppelgangerVillage.Village
             if (!PhotonNetwork.InRoom || !PhotonNetwork.IsMasterClient) return;
             if (PhotonNetwork.CurrentRoom.CustomProperties.ContainsKey(DoppelKey)) return;
 
-            var ids = Object.FindObjectsByType<AnimalCitizen>(FindObjectsSortMode.None)
+            // 야행성(시작 시 비활성) 시민도 배정 대상에 포함 — 밤에도 추리가 성립해야 한다
+            var ids = Object.FindObjectsByType<AnimalCitizen>(FindObjectsInactive.Include, FindObjectsSortMode.None)
                 .Select(a => a.CitizenId)
                 .ToList();
             if (ids.Count == 0)
