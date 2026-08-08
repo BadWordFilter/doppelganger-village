@@ -1,0 +1,152 @@
+using System.Collections;
+using UnityEngine;
+
+namespace DoppelgangerVillage.Village
+{
+    /// <summary>
+    /// 연출 지문(괄호 답변)을 캐릭터의 실제 모션으로 재생한다.
+    /// 지문 키워드로 모션 프로파일을 고르는 절차적 애니메이션 — 근처의 모든 플레이어에게 보인다.
+    /// </summary>
+    public static class StageDirectionActor
+    {
+        /// <summary>지문 텍스트에 맞는 기괴한 모션을 재생. abnormal=false면 순한 모션(고개 돌리기 등).</summary>
+        public static void Play(AnimalCitizen citizen, string direction, bool abnormal)
+        {
+            if (citizen == null || !citizen.gameObject.activeInHierarchy) return;
+            var host = Dialogue.DialogueDirector.Instance;
+            if (host == null) return;
+            host.StartCoroutine(Run(citizen, direction ?? "", abnormal));
+        }
+
+        private static IEnumerator Run(AnimalCitizen citizen, string text, bool abnormal)
+        {
+            var root = citizen.transform;
+            var head = root.Find("Head");
+            Vector3 rootPos = root.localPosition;
+            Quaternion rootRot = root.localRotation;
+            Vector3 rootScale = root.localScale;
+            Quaternion headRot = head != null ? head.localRotation : Quaternion.identity;
+
+            if (!abnormal)
+            {
+                // 정상 지문: 자연스러운 고개 돌리기
+                yield return RotateHead(head, 150f, 1.2f);
+            }
+            else if (Contains(text, "회전", "꺾이며", "뒤집히"))
+            {
+                // 목이 기괴하게 회전 (720도)
+                yield return RotateHead(head, 720f, 1.8f);
+            }
+            else if (Contains(text, "기어", "벽을 타고", "거미"))
+            {
+                // 허리가 꺾인 채 기어다니는 자세
+                yield return BendAndScuttle(root, rootPos, rootRot);
+            }
+            else if (Contains(text, "직립", "내려다본다", "일어"))
+            {
+                // 부자연스럽게 솟아올라 내려다봄
+                yield return RiseUp(root, rootScale);
+            }
+            else if (Contains(text, "갈라지", "찢어지", "벌리"))
+            {
+                // 머리가 갈라질 듯 크게 벌어짐
+                yield return SplitHead(head, root);
+            }
+            else
+            {
+                // 기본: 온몸 경련 + 고개 홱 돌아감
+                yield return JitterAndSnap(root, head, rootPos);
+            }
+
+            // 원상 복구
+            if (root != null)
+            {
+                root.localPosition = rootPos;
+                root.localRotation = rootRot;
+                root.localScale = rootScale;
+            }
+            if (head != null) head.localRotation = headRot;
+        }
+
+        private static bool Contains(string text, params string[] keys)
+        {
+            foreach (var k in keys)
+                if (text.Contains(k)) return true;
+            return false;
+        }
+
+        private static IEnumerator RotateHead(Transform head, float degrees, float duration)
+        {
+            if (head == null) yield break;
+            Quaternion start = head.localRotation;
+            float t = 0f;
+            while (t < duration)
+            {
+                t += Time.deltaTime;
+                float eased = Mathf.SmoothStep(0f, 1f, t / duration);
+                head.localRotation = start * Quaternion.Euler(0f, degrees * eased, 0f);
+                yield return null;
+            }
+            yield return new WaitForSeconds(0.6f);
+        }
+
+        private static IEnumerator BendAndScuttle(Transform root, Vector3 basePos, Quaternion baseRot)
+        {
+            float t = 0f;
+            while (t < 0.6f)
+            {
+                t += Time.deltaTime;
+                root.localRotation = baseRot * Quaternion.Euler(-75f * (t / 0.6f), 0f, 0f);
+                yield return null;
+            }
+            t = 0f;
+            while (t < 1.8f)
+            {
+                t += Time.deltaTime;
+                root.localPosition = basePos + new Vector3(Mathf.Sin(t * 18f) * 0.12f, Mathf.Abs(Mathf.Sin(t * 22f)) * 0.15f, 0f);
+                yield return null;
+            }
+        }
+
+        private static IEnumerator RiseUp(Transform root, Vector3 baseScale)
+        {
+            float t = 0f;
+            while (t < 1.4f)
+            {
+                t += Time.deltaTime;
+                float k = 1f + 0.6f * Mathf.SmoothStep(0f, 1f, t / 1.4f);
+                root.localScale = new Vector3(baseScale.x * (2f - k) * 0.9f + baseScale.x * 0.1f, baseScale.y * k, baseScale.z);
+                yield return null;
+            }
+            yield return new WaitForSeconds(0.7f);
+        }
+
+        private static IEnumerator SplitHead(Transform head, Transform root)
+        {
+            if (head == null) yield break;
+            Vector3 headPos = head.localPosition;
+            float t = 0f;
+            while (t < 1.6f)
+            {
+                t += Time.deltaTime;
+                head.localPosition = headPos + new Vector3(Mathf.Sin(t * 40f) * 0.05f, 0.18f * Mathf.PingPong(t * 2f, 1f), 0f);
+                head.localRotation = Quaternion.Euler(-35f * Mathf.PingPong(t * 2.5f, 1f), 0f, Mathf.Sin(t * 30f) * 8f);
+                yield return null;
+            }
+            head.localPosition = headPos;
+        }
+
+        private static IEnumerator JitterAndSnap(Transform root, Transform head, Vector3 basePos)
+        {
+            float t = 0f;
+            while (t < 1.5f)
+            {
+                t += Time.deltaTime;
+                root.localPosition = basePos + (Vector3)(Random.insideUnitCircle * 0.05f);
+                if (head != null && t > 0.7f)
+                    head.localRotation = Quaternion.Euler(0f, 160f, 25f);
+                yield return null;
+            }
+        }
+    }
+}

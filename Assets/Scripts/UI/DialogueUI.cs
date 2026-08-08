@@ -6,6 +6,7 @@ using DoppelgangerVillage.Village;
 using Photon.Pun;
 using UnityEngine;
 using UnityEngine.UI;
+using StageDirectionActor = DoppelgangerVillage.Village.StageDirectionActor;
 
 namespace DoppelgangerVillage.UI
 {
@@ -159,6 +160,14 @@ namespace DoppelgangerVillage.UI
 
         private void OnQuestionAnswered(int citizenId, DialogueEntry entry, bool abnormal, int newCount, int actorNumber)
         {
+            // 연출 지문은 텍스트가 아니라 캐릭터 모션으로 — 근처의 모든 클라이언트에서 재생
+            string shown = abnormal ? entry.doppelAnswer : entry.normalAnswer;
+            if (DialogueEntry.IsStageDirection(shown))
+            {
+                var target = FindCitizen(citizenId);
+                if (target != null) StageDirectionActor.Play(target, shown, abnormal);
+            }
+
             if (_current == null || _current.CitizenId != citizenId) return;
             if (actorNumber != PhotonNetwork.LocalPlayer.ActorNumber)
             {
@@ -166,8 +175,7 @@ namespace DoppelgangerVillage.UI
                 return;
             }
             _waiting = false;
-            string answer = abnormal ? entry.doppelAnswer : entry.normalAnswer;
-            _answerText.text = Stylize(answer);
+            _answerText.text = Stylize(shown);
             RefreshChoices();
         }
 
