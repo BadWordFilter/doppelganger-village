@@ -45,8 +45,9 @@ namespace DoppelgangerVillage.Player
             var kb = Keyboard.current;
             if (kb == null) return;
 
-            // 이동 입력 (대화 UI가 열려 있으면 입력 차단 — 스태미나 회복은 유지)
-            bool uiLocked = UI.DialogueUI.IsOpen;
+            // 이동 입력 (대화/정산 UI 또는 게임 종료 시 입력 차단 — 스태미나 회복은 유지)
+            bool uiLocked = UI.DialogueUI.IsOpen || UI.SettlementUI.IsShowing
+                || (Judgement.JudgementDirector.Instance != null && Judgement.JudgementDirector.Instance.GameEnded);
             Vector2 input = Vector2.zero;
             if (!uiLocked)
             {
@@ -85,13 +86,25 @@ namespace DoppelgangerVillage.Player
             _cc.Move((move + Vector3.up * _verticalVel) * Time.deltaTime);
         }
 
-        /// <summary>과잉 심문 공격 등으로 피해를 받는다. 0이 되면 감염 판정(슬라이스: 로그만).</summary>
+        /// <summary>과잉 심문 공격 등으로 피해를 받는다. 0이 되면 감염 판정 → 전원 감염 시 패배.</summary>
         public void TakeDamage(float amount)
         {
-            if (!photonView.IsMine) return;
+            if (!photonView.IsMine || CurrentHp <= 0f) return;
             CurrentHp = Mathf.Max(0f, CurrentHp - amount);
             if (CurrentHp <= 0f)
-                Debug.Log("[Player] HP 0 — 감염 판정 (슬라이스에서는 게임 오버 화면으로 연결 예정)");
+            {
+                Debug.Log("[Player] HP 0 — 도플갱어에게 감염되었다");
+                UI.ToastUI.Show("의식이 흐려진다... 도플갱어에게 감염되었다.");
+                if (Judgement.JudgementDirector.Instance != null)
+                    Judgement.JudgementDirector.Instance.NotifyLocalInfected();
+            }
+        }
+
+        /// <summary>구급상자 등으로 회복.</summary>
+        public void Heal(float amount)
+        {
+            if (!photonView.IsMine || CurrentHp <= 0f) return;
+            CurrentHp = Mathf.Min(GameConfig.MaxHp, CurrentHp + amount);
         }
     }
 }

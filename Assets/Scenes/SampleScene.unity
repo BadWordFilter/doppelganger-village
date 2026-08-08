@@ -3621,6 +3621,10 @@ GameObject:
   - component: {fileID: 875857944}
   - component: {fileID: 875857943}
   - component: {fileID: 875857942}
+  - component: {fileID: 875857948}
+  - component: {fileID: 875857947}
+  - component: {fileID: 875857946}
+  - component: {fileID: 875857945}
   m_Layer: 0
   m_Name: GameSystems
   m_TagString: Untagged
@@ -3738,6 +3742,54 @@ MonoBehaviour:
   sceneViewId: 1
   InstantiationId: 0
   isRuntimeInstantiated: 0
+--- !u!114 &875857945
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 875857935}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 946a3c7a64c79324080f6977338dab42, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Assembly-CSharp::DoppelgangerVillage.UI.GoalHud
+--- !u!114 &875857946
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 875857935}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: a5d35550481c51b498d5b164f8e6ad3f, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Assembly-CSharp::DoppelgangerVillage.UI.ToastUI
+--- !u!114 &875857947
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 875857935}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 8e6489fa10b2bb04692772f30c9affb6, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Assembly-CSharp::DoppelgangerVillage.UI.SettlementUI
+--- !u!114 &875857948
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 875857935}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: cba4760ff7c345c4586d72e755d88e56, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Assembly-CSharp::DoppelgangerVillage.Judgement.JudgementDirector
 --- !u!1 &881090272
 GameObject:
   m_ObjectHideFlags: 0

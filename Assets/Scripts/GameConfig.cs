@@ -20,6 +20,12 @@ namespace DoppelgangerVillage
         /// </summary>
         public static readonly float[] DoppelRevealChanceByQuestion = { 0.10f, 0.30f, 0.60f };
 
+        // ---- 판정 드랍 (진짜 주민 구출 시 — 드랍 없음도 있어 도플갱어가 통계로 안 들키게) ----
+        public const float PartDropChance = 0.65f;   // 수리 부품
+        public const float MedkitDropChance = 0.10f; // 구급상자 (HP 회복)
+        public const float FoodDropChance = 0.10f;   // 식량 (연출용) — 나머지 15%는 드랍 없음
+        public const float MedkitHeal = 30f;
+
         // ---- 배정 ----
         public const int MinDoppelgangers = 2;  // 게임 시작 시 마스터가 랜덤 배정
         public const int MaxDoppelgangers = 3;
