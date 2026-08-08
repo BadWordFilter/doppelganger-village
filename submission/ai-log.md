@@ -58,6 +58,10 @@
 - 씬 PhotonView ViewID 0 (스크립트 저장 경로에서 PUN 에디터 훅 미작동) → sceneViewId 수동 할당
 - MCP 스크린샷의 오버레이 UI 합성 불가(플레이 모드) → UI 검증을 리플렉션 상태 조회로 전환
 
+**최종 배포**
+- 게임플레이 전체 포함 WebGL 최종 빌드(9분, 에러 0) → GitHub Pages 배포 → **라이브 URL에서 게임 로드·Photon 접속 최종 확인** (https://badwordfilter.github.io/doppelganger-village/)
+- GitHub CLI 연동 후 커밋·푸시도 AI가 자동 수행 (사람: gh 로그인 1회)
+
 **프롬프트 요지**
 - "기획서 PDF와 대회 사이트를 분석해 사전 과제 실현 가능성을 판단하고 Unity MCP로 개발을 시작할 준비를 해줘"
 
