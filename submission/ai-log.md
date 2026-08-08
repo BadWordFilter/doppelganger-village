@@ -16,6 +16,25 @@
 - **기획서 대화 테이블 1~67번(강아지 22·고양이 23·토끼 22)을 `Assets/Data/dialogue.json`으로 이식** (`tools/extract_dialogue.py`)
 - 멀티(PUN 2) 유지 확정 후, Photon 무관 코어 스크립트 작성: `DialogueEntry`/`DialogueDatabase`(TextAsset 기반 JSON 로더, WebGL 호환) + `GameConfig`(승리 수치·확률 테이블·스태미나 상수)
 
+---
+
+## 2026-08-08~09 — 세션 2: MCP 연결 + PUN 검증 + WebGL 배포 검증
+
+**도구**: Claude Code (Fable 5) + MCP for Unity (에디터 직접 조작)
+
+**작업 내용**
+- Unity MCP 연결 진단·복구: 클라이언트 등록 누락을 발견하고 `.mcp.json`(HTTP 127.0.0.1:8080) 작성, JSON-RPC 핸드셰이크로 서버 실동작 검증
+- Photon Voice 2 임포트 검수(API 업데이터 안내) 후 Claude가 MCP `manage_scriptable_object`로 PhotonServerSettings에 PUN/Voice AppId 입력
+- `ConnectionManager`(PUN 접속, 4자리 룸 코드 생성·입장, 최대 4인, 마스터 권한) + 스모크 테스트 작성 → **에디터 플레이 모드에서 실서버 접속 검증** (MCP로 플레이 진입·콘솔 확인까지 자동)
+- WebGL 빌드 설정(압축 비활성, 제품명)을 MCP `execute_code`로 적용 → **WebGL 빌드(19분, docs/ 출력) → 로컬 서버 + 브라우저 자동화로 Photon WSS 접속 검증** (룸 5930, asia 리전)
+- GitHub 리포 `doppelganger-village` 퍼블리시(사람) + Pages 활성화(사람), docs/ 커밋·푸시로 배포
+
+**프롬프트 요지**
+- "MCP 연결 확인" / "임포트 경고창 어떻게 하지" / "멀티 몇 명까지 가능?" — Claude가 진단·구현·검증 사이클을 주도
+
+**결과와 수동 수정 내역**
+- 컴파일 에러 0. 사람 개입: Photon 계정·AppId 발급, Asset Store 임포트 클릭, GitHub 리포 생성·Pages 설정
+
 **프롬프트 요지**
 - "기획서 PDF와 대회 사이트를 분석해 사전 과제 실현 가능성을 판단하고 Unity MCP로 개발을 시작할 준비를 해줘"
 
