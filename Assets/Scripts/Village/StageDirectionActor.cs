@@ -9,6 +9,23 @@ namespace DoppelgangerVillage.Village
     /// </summary>
     public static class StageDirectionActor
     {
+        /// <summary>
+        /// 도플갱어 본색 노출: 점 눈이 커지고 검붉게 물들며 얼굴이 무너진다 (레퍼런스의 공포 문법).
+        /// 돌변(과잉 심문)·퇴치 연출에서 호출.
+        /// </summary>
+        public static void DistortFace(AnimalCitizen citizen)
+        {
+            if (citizen == null) return;
+            foreach (var name in new[] { "EyeL", "EyeR", "BigEyeL", "BigEyeR" })
+            {
+                var eye = citizen.transform.Find(name);
+                if (eye == null) continue;
+                eye.localScale = new Vector3(eye.localScale.x * 2.4f, eye.localScale.y * 2.8f, eye.localScale.z);
+                var r = eye.GetComponent<MeshRenderer>();
+                if (r != null) r.material.SetColor("_BaseColor", new Color(0.35f, 0.02f, 0.02f));
+            }
+        }
+
         /// <summary>지문 텍스트에 맞는 기괴한 모션을 재생. abnormal=false면 순한 모션(고개 돌리기 등).</summary>
         public static void Play(AnimalCitizen citizen, string direction, bool abnormal)
         {

@@ -232,7 +232,8 @@ namespace DoppelgangerVillage.Judgement
         {
             foreach (var r in citizen.GetComponentsInChildren<MeshRenderer>())
                 r.material.SetColor("_BaseColor", new Color(0.9f, 0.15f, 0.1f));
-            yield return new WaitForSeconds(0.6f);
+            StageDirectionActor.DistortFace(citizen); // 거울에 비친 본색 — 얼굴 붕괴
+            yield return new WaitForSeconds(0.7f);
             citizen.gameObject.SetActive(false);
         }
 

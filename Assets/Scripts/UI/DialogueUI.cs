@@ -188,6 +188,7 @@ namespace DoppelgangerVillage.UI
             {
                 foreach (var r in target.GetComponentsInChildren<MeshRenderer>())
                     r.material.SetColor("_BaseColor", new Color(0.45f, 0.08f, 0.08f));
+                StageDirectionActor.DistortFace(target); // 눈이 커지고 검붉게 — 얼굴 붕괴
                 target.IsResolved = true; // 돌변한 개체는 더 이상 대화 불가
             }
 
