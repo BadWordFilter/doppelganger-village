@@ -7,8 +7,8 @@ namespace DoppelgangerVillage
     public static class GameConfig
     {
         // ---- 승리 조건 ----
-        public const int RescueGoal = 3; // 구출해야 하는 진짜 주민 수
-        public const int PartsGoal = 3;  // 모아야 하는 트레일러 수리 부품 수
+        public const int RescueGoal = 4; // 구출해야 하는 진짜 주민 수
+        public const int PartsGoal = 4;  // 모아야 하는 트레일러 수리 부품 수
 
         // ---- 대화 규칙 ----
         public const int MaxQuestionsPerAnimal = 3; // 마리당 질문 제한. 4번째 시도 = 과잉 심문으로 돌변
@@ -27,10 +27,10 @@ namespace DoppelgangerVillage
         public const float MedkitHeal = 30f;
 
         // ---- 배정 ----
-        public const int MinDoppelgangers = 2;  // 게임 시작 시 마스터가 랜덤 배정
-        public const int MaxDoppelgangers = 3;
-        public const int MinAnimals = 6;        // 맵에 등장하는 동물 개체 수 범위
-        public const int MaxAnimals = 8;
+        public const int MinDoppelgangers = 3;  // 게임 시작 시 마스터가 랜덤 배정
+        public const int MaxDoppelgangers = 4;
+        public const int MinAnimals = 10;       // 맵에 등장하는 주간 동물 개체 수 범위
+        public const int MaxAnimals = 11;
 
         // ---- 플레이어 ----
         public const float MaxHp = 100f;

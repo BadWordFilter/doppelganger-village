@@ -535,6 +535,1070 @@
       "question": "왜 그림자가 너랑 다르게 생겼어?",
       "normalAnswer": "기분 탓이에요. 빛이 이상한가 봐요.",
       "doppelAnswer": "(그림자가 거대한 괴물의 형상으로 변하며 플레이어의 목을 조르는 시늉을 한다)"
+    },
+    {
+      "id": 68,
+      "animal": "돼지",
+      "type": "일상",
+      "question": "오늘 진흙 목욕 했어?",
+      "normalAnswer": "꿀꿀, 아니요. 못 했어요.",
+      "doppelAnswer": "진흙 대신 질척거리는 당신의 피 웅덩이에서 구르고 싶습니다."
+    },
+    {
+      "id": 69,
+      "animal": "돼지",
+      "type": "핵심",
+      "question": "넌 꿀꿀하고 울지?",
+      "normalAnswer": "네, 꿀꿀꿀!",
+      "doppelAnswer": "(사람의 목이 잘릴 때 나는 끔찍한 공기 빠지는 소리를 낸다)"
+    },
+    {
+      "id": 70,
+      "animal": "돼지",
+      "type": "일상",
+      "question": "배가 많이 고파 보이네.",
+      "normalAnswer": "항상 배고파요. 먹을 것 좀 줘요.",
+      "doppelAnswer": "당신의 팔을 뜯어 먹으면 딱 요기가 될 것 같습니다."
+    },
+    {
+      "id": 71,
+      "animal": "돼지",
+      "type": "핵심",
+      "question": "넌 하늘을 못 본다며?",
+      "normalAnswer": "목이 안 굽혀져서 못 봐요.",
+      "doppelAnswer": "(목이 기괴한 각도로 180도 뒤집히며 새빨간 눈으로 천장을 응시한다)"
+    },
+    {
+      "id": 72,
+      "animal": "돼지",
+      "type": "일상",
+      "question": "꼬리가 왜 안 꼬불 거려?",
+      "normalAnswer": "가끔 이렇게 펴져 있을 때도 있어요.",
+      "doppelAnswer": "이건 꼬리가 아니라 제 엉덩이뼈가 부러져 튀어나온 겁니다."
+    },
+    {
+      "id": 73,
+      "animal": "돼지",
+      "type": "핵심",
+      "question": "아무거나 다 잘 먹어?",
+      "normalAnswer": "잡식성이라 뭐든 가리지 않아요!",
+      "doppelAnswer": "뼈와 살, 머리카락까지 남김없이 씹어 삼켜드리겠습니다."
+    },
+    {
+      "id": 74,
+      "animal": "돼지",
+      "type": "일상",
+      "question": "살이 엄청 많이 쪘네.",
+      "normalAnswer": "먹기만 하고 안 움직여서요.",
+      "doppelAnswer": "당신의 친구들을 너무 많이 잡아먹어서 배가 터질 것 같습니다."
+    },
+    {
+      "id": 75,
+      "animal": "돼지",
+      "type": "핵심",
+      "question": "냄새 엄청 잘 맡지?",
+      "normalAnswer": "송로버섯도 기가 막히게 찾아요!",
+      "doppelAnswer": "당신이 지금 속옷에 지린 공포의 냄새도 아주 선명하게 맡고 있습니다."
+    },
+    {
+      "id": 76,
+      "animal": "돼지",
+      "type": "일상",
+      "question": "발굽이 왜 두 개로 갈라졌어?",
+      "normalAnswer": "원래 돼지 발굽은 이래요.",
+      "doppelAnswer": "당신의 목을 조를 때 단단히 고정하기 가장 좋은 구조입니다."
+    },
+    {
+      "id": 77,
+      "animal": "돼지",
+      "type": "핵심",
+      "question": "삼겹살이 어느 부위게?",
+      "normalAnswer": "히익! 무서운 소리 하지 마세요!",
+      "doppelAnswer": "당신의 복부를 갈랐을 때 가장 먼저 쏟아지는 바로 그 부위입니다."
+    },
+    {
+      "id": 78,
+      "animal": "돼지",
+      "type": "일상",
+      "question": "피부가 왜 이렇게 붉어?",
+      "normalAnswer": "더워서 열이 올라서 그래요.",
+      "doppelAnswer": "가죽을 거꾸로 뒤집어쓰고 있어서 근육이 노출된 상태입니다."
+    },
+    {
+      "id": 79,
+      "animal": "돼지",
+      "type": "핵심",
+      "question": "더위 많이 타?",
+      "normalAnswer": "땀구멍이 별로 없어서 더위를 타요.",
+      "doppelAnswer": "제 안에 기생하는 수백 마리의 벌레들이 꿈틀거려서 몸이 뜨겁습니다."
+    },
+    {
+      "id": 80,
+      "animal": "돼지",
+      "type": "일상",
+      "question": "숨소리가 너무 커.",
+      "normalAnswer": "숨이 차서 씩씩거리는 거예요.",
+      "doppelAnswer": "목구멍에 사람의 손목이 걸려 있어서 숨쉬기가 불편하군요."
+    },
+    {
+      "id": 81,
+      "animal": "돼지",
+      "type": "핵심",
+      "question": "진흙에 구르는 이유가 뭐야?",
+      "normalAnswer": "시원하고 벌레도 쫓아주니까요.",
+      "doppelAnswer": "당신의 피를 발라제 몸의 역겨운 시체 냄새를 지우기 위해서입니다."
+    },
+    {
+      "id": 82,
+      "animal": "돼지",
+      "type": "일상",
+      "question": "귀가 크네. 잘 들려?",
+      "normalAnswer": "네, 펄럭펄럭 아주 잘 들려요.",
+      "doppelAnswer": "당신이 살려달라고 울부짖는 소리를 아주 선명하게 녹음할 수 있습니다."
+    },
+    {
+      "id": 83,
+      "animal": "돼지",
+      "type": "핵심",
+      "question": "코가 왜 이렇게 납작해?",
+      "normalAnswer": "땅을 파기 좋게 진화한 거예요.",
+      "doppelAnswer": "당신의 얼굴을 뭉개버릴 때 가장 강한 충격을 주도록 설계되었습니다."
+    },
+    {
+      "id": 84,
+      "animal": "돼지",
+      "type": "일상",
+      "question": "넌 너무 게을러 보여.",
+      "normalAnswer": "밥 먹고 눕는 게 제일 좋거든요.",
+      "doppelAnswer": "당신의 뼈를 삭히는 데 에너지를 다 써서 움직일 힘이 없습니다."
+    },
+    {
+      "id": 85,
+      "animal": "돼지",
+      "type": "핵심",
+      "question": "머리가 꽤 좋다며?",
+      "normalAnswer": "개보다 똑똑하다는 소리도 들어요!",
+      "doppelAnswer": "당신을 가장 끔찍한 고통 속에서 죽일 시나리오를 방금 완성했습니다."
+    },
+    {
+      "id": 86,
+      "animal": "돼지",
+      "type": "일상",
+      "question": "이가 꽤 날카롭네.",
+      "normalAnswer": "단단한 음식도 먹어야 하니까요.",
+      "doppelAnswer": "당신의 두개골을 단번에 부수기 위해 매일 벽에 갈았습니다."
+    },
+    {
+      "id": 87,
+      "animal": "돼지",
+      "type": "핵심",
+      "question": "목욕은 자주 해?",
+      "normalAnswer": "진흙 목욕을 매일 하죠.",
+      "doppelAnswer": "살가죽을 벗겨내고 염산에 담가 소독합니다."
+    },
+    {
+      "id": 88,
+      "animal": "돼지",
+      "type": "일상",
+      "question": "눈이 너무 작은 거 아니야?",
+      "normalAnswer": "원래 돼지는 눈이 좀 작아요.",
+      "doppelAnswer": "작은 눈으로도 당신의 영혼이 찢겨 나가는 걸 보는 덴 충분합니다."
+    },
+    {
+      "id": 89,
+      "animal": "돼지",
+      "type": "핵심",
+      "question": "뒤통수에 그건 뭐야?",
+      "normalAnswer": "네? 아무것도 없는데요!",
+      "doppelAnswer": "(뒤통수의 살이 갈라지며 기괴하게 웃고 있는 인간의 입이 나타난다)"
+    },
+    {
+      "id": 90,
+      "animal": "곰",
+      "type": "일상",
+      "question": "넌 너무 커서 무서워.",
+      "normalAnswer": "해치지 않아요. 겁내지 마세요.",
+      "doppelAnswer": "안심하십시오. 단숨에 찢어발길 테니 고통은 짧을 겁니다."
+    },
+    {
+      "id": 91,
+      "animal": "곰",
+      "type": "핵심",
+      "question": "겨울잠은 다 잤어?",
+      "normalAnswer": "네, 봄이 와서 일어났어요.",
+      "doppelAnswer": "당신을 영원한 잠재우기 위해 방금 깨어났습니다."
+    },
+    {
+      "id": 92,
+      "animal": "곰",
+      "type": "일상",
+      "question": "꿀통에 뭐가 들었어?",
+      "normalAnswer": "달콤한 꿀이 가득하죠!",
+      "doppelAnswer": "방금 전까지 당신과 대화하던 플레이어의 다진 고기가 들어있습니다."
+    },
+    {
+      "id": 93,
+      "animal": "곰",
+      "type": "핵심",
+      "question": "연어 먹는 거 좋아해?",
+      "normalAnswer": "흐르는 물에서 잡는 연어가 최고죠!",
+      "doppelAnswer": "팔딱거리는 당신의 심장을 산 채로 꺼내 먹는 것을 가장 좋아합니다."
+    },
+    {
+      "id": 94,
+      "animal": "곰",
+      "type": "일상",
+      "question": "발톱이 왜 그렇게 커?",
+      "normalAnswer": "곰은 원래 발톱이 크잖아요.",
+      "doppelAnswer": "당신의 복부를 쑤셔 넣어 내장을 한 번에 꺼내기 위함입니다."
+    },
+    {
+      "id": 95,
+      "animal": "곰",
+      "type": "핵심",
+      "question": "우렁차게 포효해 봐!",
+      "normalAnswer": "크아아아앙!!",
+      "doppelAnswer": "(소름 끼치는 여자 아이의 웃음소리가 동굴을 울리듯 울려 퍼진다)"
+    },
+    {
+      "id": 96,
+      "animal": "곰",
+      "type": "일상",
+      "question": "너무 느린 거 아니야?",
+      "normalAnswer": "원래 좀 둔해 보여요.",
+      "doppelAnswer": "달리기 시작하면 당신의 목이 달아나는 데 1초도 걸리지 않습니다."
+    },
+    {
+      "id": 97,
+      "animal": "곰",
+      "type": "핵심",
+      "question": "나무 타는 거 잘해?",
+      "normalAnswer": "그럼요, 꿀 찾으러 자주 올라가요.",
+      "doppelAnswer": "당신을 나뭇가지 끝에 꿰뚫어 매달아 두는 것을 더 잘합니다."
+    },
+    {
+      "id": 98,
+      "animal": "곰",
+      "type": "일상",
+      "question": "털이 꽤 거칠어 보여.",
+      "normalAnswer": "두꺼운 털이라 그래요.",
+      "doppelAnswer": "이 가죽은 어제 훔쳐 입은 거라 아직 길들지 않았습니다."
+    },
+    {
+      "id": 99,
+      "animal": "곰",
+      "type": "핵심",
+      "question": "후각이 예민하다며?",
+      "normalAnswer": "멀리서도 꿀 냄새를 맡아요.",
+      "doppelAnswer": "당신의 몸속에서 흐르는 따뜻한 피 냄새가 저를 미치게 합니다."
+    },
+    {
+      "id": 100,
+      "animal": "곰",
+      "type": "일상",
+      "question": "넌 왜 말이 별로 없어?",
+      "normalAnswer": "원래 말수가 좀 적어요.",
+      "doppelAnswer": "입을 열면 안에서 기어 다니는 지네들이 쏟아질까 봐 그렇습니다."
+    },
+    {
+      "id": 101,
+      "animal": "곰",
+      "type": "핵심",
+      "question": "사람을 찢을 만큼 힘이 세?",
+      "normalAnswer": "에이, 사람을 왜 공격해요!",
+      "doppelAnswer": "당신의 양팔을 잡고 당기면 종이 찢어지듯 가볍게 뜯겨 나갑니다."
+    },
+    {
+      "id": 102,
+      "animal": "곰",
+      "type": "일상",
+      "question": "곰 인형처럼 생겼네.",
+      "normalAnswer": "귀엽게 봐주시니 고마워요.",
+      "doppelAnswer": "이 안에 당신의 몸을 욱여넣어 살아 있는 인형으로 만들어 드리죠."
+    },
+    {
+      "id": 103,
+      "animal": "곰",
+      "type": "핵심",
+      "question": "시력은 별로 안 좋지?",
+      "normalAnswer": "눈보단 코랑 귀가 발달했어요.",
+      "doppelAnswer": "당신의 썩어가는 영혼의 색깔까지 선명하게 다 보입니다."
+    },
+    {
+      "id": 104,
+      "animal": "곰",
+      "type": "일상",
+      "question": "입가에 묻은 거 피야?",
+      "normalAnswer": "앗, 아까 산딸기 먹은 자국이에요.",
+      "doppelAnswer": "당신의 친구가 마지막으로 남긴 유품의 흔적입니다."
+    },
+    {
+      "id": 105,
+      "animal": "곰",
+      "type": "핵심",
+      "question": "쓸개가 건강에 좋다던데.",
+      "normalAnswer": "히익! 무서운 소리 금지!",
+      "doppelAnswer": "제 배를 가르면 썩은 시취와 검은 진물만이 쏟아질 겁니다."
+    },
+    {
+      "id": 106,
+      "animal": "곰",
+      "type": "일상",
+      "question": "발소리가 너무 커.",
+      "normalAnswer": "덩치가 있어서 그래요.",
+      "doppelAnswer": "당신의 머리통을 짓밟고 지나갈 때 나는 소리가 훨씬 경쾌합니다."
+    },
+    {
+      "id": 107,
+      "animal": "곰",
+      "type": "핵심",
+      "question": "쑥이랑 마늘 먹고 사람 될래?",
+      "normalAnswer": "옛날이야기일 뿐이에요.",
+      "doppelAnswer": "저는 사람을 먹고 사람의 탈을 쓴 괴물입니다."
+    },
+    {
+      "id": 108,
+      "animal": "곰",
+      "type": "일상",
+      "question": "넌 꼬리가 아주 작네.",
+      "normalAnswer": "곰은 꼬리가 퇴화해서 그래요.",
+      "doppelAnswer": "사실 꼬리가 아니라 제 원래 척추뼈의 끝부분이 튀어나온 겁니다."
+    },
+    {
+      "id": 109,
+      "animal": "곰",
+      "type": "핵심",
+      "question": "두발로 설 수 있어?",
+      "normalAnswer": "기지개 켤 때 가끔 서요.",
+      "doppelAnswer": "(기괴하게 뼈가 부러지는 소리를 내며 인간처럼 직립하여 당신을 내려다본다)"
+    },
+    {
+      "id": 110,
+      "animal": "곰",
+      "type": "일상",
+      "question": "넌 좀 멍청해 보여.",
+      "normalAnswer": "겉보기엔 그래도 꽤 똑똑해요.",
+      "doppelAnswer": "당신이 방금 저지른 치명적인 실수를 비웃는 중입니다."
+    },
+    {
+      "id": 111,
+      "animal": "곰",
+      "type": "핵심",
+      "question": "왜 계속 내 뒤를 쳐다봐?",
+      "normalAnswer": "뒤에 아무것도 없어요.",
+      "doppelAnswer": "당신 뒤에 서 있는'진짜 당신'과 눈이 마주쳤거든요."
+    },
+    {
+      "id": 112,
+      "animal": "양",
+      "type": "일상",
+      "question": "양털 좀 깎을까?",
+      "normalAnswer": "아직 안 더워서 괜찮아요.",
+      "doppelAnswer": "털이 아닙니다. 이 수많은 실가닥은 모두 저의 혈관입니다."
+    },
+    {
+      "id": 113,
+      "animal": "양",
+      "type": "핵심",
+      "question": "메에에 하고 울어 봐.",
+      "normalAnswer": "메에에~",
+      "doppelAnswer": "(칠판을 손톱으로 긁는 듯한 기계적인 파열음이 울린다)"
+    },
+    {
+      "id": 114,
+      "animal": "양",
+      "type": "일상",
+      "question": "넌 너무 온순해 보여.",
+      "normalAnswer": "양은 평화주의자니까요!",
+      "doppelAnswer": "당신을 가장 끔찍하게 유린할 때도전 온순한 표정을 지을 겁니다."
+    },
+    {
+      "id": 115,
+      "animal": "양",
+      "type": "핵심",
+      "question": "무리 지어 다니지 않아?",
+      "normalAnswer": "친구들을 잃어버렸어요...",
+      "doppelAnswer": "제가 다 먹어 치워서 지금은 제 뱃속에 무리 지어 있습니다."
+    },
+    {
+      "id": 116,
+      "animal": "양",
+      "type": "일상",
+      "question": "잠 안 오면 양을 세?",
+      "normalAnswer": "친구들 얼굴 세면 잠이 잘 와요.",
+      "doppelAnswer": "당신이 고문당하며 내지르는 비명을 셀 때 가장 잠이 잘 옵니다."
+    },
+    {
+      "id": 117,
+      "animal": "양",
+      "type": "핵심",
+      "question": "동공이 왜 가로로 길어?",
+      "normalAnswer": "초식동물은 시야가 넓어야 하니까요.",
+      "doppelAnswer": "당신을 십자가 형태로 찢어발기기 가장 좋은 시야입니다."
+    },
+    {
+      "id": 118,
+      "animal": "양",
+      "type": "일상",
+      "question": "뿔로 들이받기도해?",
+      "normalAnswer": "화나면 엄청 세게 받아요.",
+      "doppelAnswer": "이 뿔로 당신의 명치를 꿰뚫어 장기를 끄집어낼 수 있습니다."
+    },
+    {
+      "id": 119,
+      "animal": "양",
+      "type": "핵심",
+      "question": "풀 뜯어 먹는 거 안 질려?",
+      "normalAnswer": "싱싱한 풀은 매일 먹어도 맛있어요.",
+      "doppelAnswer": "네, 그래서 오늘은 갓 짜낸 따뜻한 인 혈을 마시고 싶군요."
+    },
+    {
+      "id": 120,
+      "animal": "양",
+      "type": "일상",
+      "question": "털이 폭신폭신하네.",
+      "normalAnswer": "안아볼래요? 엄청 따뜻해요.",
+      "doppelAnswer": "안는 순간 제 갈비뼈가 벌어지며 당신을 집어삼킬 겁니다."
+    },
+    {
+      "id": 121,
+      "animal": "양",
+      "type": "핵심",
+      "question": "늑대가 나타났대!",
+      "normalAnswer": "으아악! 도망가야 해요!",
+      "doppelAnswer": "(소름 끼치는 미소를 지으며) 오늘 밤은 아주 배가 부르겠군요."
+    },
+    {
+      "id": 122,
+      "animal": "양",
+      "type": "일상",
+      "question": "목에 걸린 방울 소리 시끄러워.",
+      "normalAnswer": "길 안 잃어버리려고 단 거예요.",
+      "doppelAnswer": "제가 씹어 먹은 아이의 두개골이 부딪히는 소리입니다."
+    },
+    {
+      "id": 123,
+      "animal": "양",
+      "type": "핵심",
+      "question": "넌 윗니가 없다며?",
+      "normalAnswer": "초식동물은 윗니가 없는 경우가 많죠.",
+      "doppelAnswer": "대신 제 식도와 위장 안에는 수천 개의 날카로운 이빨이 가득합니다."
+    },
+    {
+      "id": 124,
+      "animal": "양",
+      "type": "일상",
+      "question": "넌 너무 겁이 많은 것 같아.",
+      "normalAnswer": "작은 소리에도 깜짝 놀라요.",
+      "doppelAnswer": "당신의 피부를 벗길 때 쾌감에 떨리는 몸을 겁먹은 것으로 착각했군요."
+    },
+    {
+      "id": 125,
+      "animal": "양",
+      "type": "핵심",
+      "question": "위가 4개야?",
+      "normalAnswer": "네, 되새김질을 해야 해서요.",
+      "doppelAnswer": "위가 4개라 당신의 팔, 다리, 몸통, 머리를 각각 따로 소화할 수 있습니다."
+    },
+    {
+      "id": 126,
+      "animal": "양",
+      "type": "일상",
+      "question": "넌 냄새가 너무 구수해.",
+      "normalAnswer": "씻지를 못해서 냄새가 좀 나죠.",
+      "doppelAnswer": "시체가 썩어가는 시취를 구수하다고 느끼시다니 특이하네요."
+    },
+    {
+      "id": 127,
+      "animal": "양",
+      "type": "핵심",
+      "question": "양의 탈을 쓴 늑대라는 말 알아?",
+      "normalAnswer": "네, 겉과 속이 다르다는 뜻이잖아요.",
+      "doppelAnswer": "틀렸습니다. 저는 인간의 살가죽을 쓴 괴물입니다."
+    },
+    {
+      "id": 128,
+      "animal": "양",
+      "type": "일상",
+      "question": "넌 다리가 너무 얇아.",
+      "normalAnswer": "그래도 꽤 날쌔다고요.",
+      "doppelAnswer": "당신의 목을 꺾어 버리는 데는 이 다리 하나면 충분합니다."
+    },
+    {
+      "id": 129,
+      "animal": "양",
+      "type": "핵심",
+      "question": "털 깎이면 추워서 어떡해?",
+      "normalAnswer": "옷을 입어야죠!",
+      "doppelAnswer": "이 가죽을 깎아내면 제 진짜 흉측한 근육과 뼈가 그대로 드러납니다."
+    },
+    {
+      "id": 130,
+      "animal": "양",
+      "type": "일상",
+      "question": "자꾸 뭘 오물거려?",
+      "normalAnswer": "아까 먹은 풀을 되새김질하는 중이에요.",
+      "doppelAnswer": "방금 뜯어 먹은 당신 친구의 손가락 뼈를 뱉어내는 중입니다."
+    },
+    {
+      "id": 131,
+      "animal": "양",
+      "type": "핵심",
+      "question": "네 그림자 모양이 이상해.",
+      "normalAnswer": "털이 부해 보여서 그럴 거예요.",
+      "doppelAnswer": "제 그림자는 이미 당신의 목을 조르고 있습니다. 숨 막히지 않나요?"
+    },
+    {
+      "id": 132,
+      "animal": "양",
+      "type": "일상",
+      "question": "바닥만 보고 있네.",
+      "normalAnswer": "눈 마주치는 게 부끄러워서요.",
+      "doppelAnswer": "바닥에 고인 당신의 핏자국이 얼마나 아름다울지 상상 중이었습니다."
+    },
+    {
+      "id": 133,
+      "animal": "양",
+      "type": "핵심",
+      "question": "뒤에서 누가 쫓아와?!",
+      "normalAnswer": "히익! 괴물인가요?!",
+      "doppelAnswer": "안타깝군요. 당신을 노리는 건 뒤가 아니라 바로 앞의 저인데 말입니다."
+    },
+    {
+      "id": 134,
+      "animal": "올빼미",
+      "type": "일상",
+      "question": "밤인데 잠 안 자?",
+      "normalAnswer": "야행성이라 지금부터 활동해요!",
+      "doppelAnswer": "당신의 숨이 끊어지는 걸 봐야 편히 잠들 수 있습니다."
+    },
+    {
+      "id": 135,
+      "animal": "올빼미",
+      "type": "핵심",
+      "question": "목을 완전히 뒤로 꺾을 수 있어?",
+      "normalAnswer": "(자연스럽게 뒤를 본다) 네, 이렇게요.",
+      "doppelAnswer": "(목이 720도 회전하며 뼈가 으깨지고 핏물이 터지는 소리가 난다)"
+    },
+    {
+      "id": 136,
+      "animal": "올빼미",
+      "type": "일상",
+      "question": "부호오 하고 울어 봐.",
+      "normalAnswer": "호우- 호우-",
+      "doppelAnswer": "부호오... 부호오... (숨이 끊어지기 직전의 끔찍한 기계음)"
+    },
+    {
+      "id": 137,
+      "animal": "올빼미",
+      "type": "핵심",
+      "question": "시력이 엄청 좋지?",
+      "normalAnswer": "칠흑 같은 밤에도 다 보여요.",
+      "doppelAnswer": "당신의 살갗 아래로 흐르는 혈관과 맥박까지 선명하게 핥고 있습니다."
+    },
+    {
+      "id": 138,
+      "animal": "올빼미",
+      "type": "일상",
+      "question": "날갯짓 소리가 하나도 안 나.",
+      "normalAnswer": "사냥할 때 소리를 내면 안 되니까요.",
+      "doppelAnswer": "깃털이 아니라 썩은 살점들이 겹쳐진 거라 소리가 먹히는 겁니다."
+    },
+    {
+      "id": 139,
+      "animal": "올빼미",
+      "type": "핵심",
+      "question": "넌 부엉이랑 뭐가 달라?",
+      "normalAnswer": "귀에 깃털이 없으면 올빼미예요.",
+      "doppelAnswer": "둘 다 당신의 눈알을 파먹는 걸 아주 좋아한다는 점은 똑같습니다."
+    },
+    {
+      "id": 140,
+      "animal": "올빼미",
+      "type": "일상",
+      "question": "발톱이 왜 이렇게 날카로워?",
+      "normalAnswer": "쥐를 낚아채야 하니까요.",
+      "doppelAnswer": "당신의 두피를 뚫고 뇌를 꺼내기 가장 완벽한 흉기입니다."
+    },
+    {
+      "id": 141,
+      "animal": "올빼미",
+      "type": "핵심",
+      "question": "귀가 비대칭이라며?",
+      "normalAnswer": "네, 소리의 위치를 정확히 알기 위해서요.",
+      "doppelAnswer": "당신이 비명을 지르며 도망갈 때 그 위치를 정확히 추적하기 위해서죠."
+    },
+    {
+      "id": 142,
+      "animal": "올빼미",
+      "type": "일상",
+      "question": "눈을 왜 깜빡이지 않아?",
+      "normalAnswer": "집중하고 있어서 그래요.",
+      "doppelAnswer": "안구를 파내고 유리구슬을 박아 넣었기 때문입니다."
+    },
+    {
+      "id": 143,
+      "animal": "올빼미",
+      "type": "핵심",
+      "question": "지혜의 상징이지?",
+      "normalAnswer": "네, 제가 좀 똑똑하긴 하죠.",
+      "doppelAnswer": "인간을 가장 고통스럽게 해부하는 수천 가지 지혜를 알고 있습니다."
+    },
+    {
+      "id": 144,
+      "animal": "올빼미",
+      "type": "일상",
+      "question": "높은 곳이 안 무서워?",
+      "normalAnswer": "나무 위가 제 집인데요, 뭘.",
+      "doppelAnswer": "당신을 이 꼭대기에서 밀어 떨어뜨려 짓이기고 싶어 참을 수가 없습니다."
+    },
+    {
+      "id": 145,
+      "animal": "올빼미",
+      "type": "핵심",
+      "question": "깃털이 엄청 부드러워 보여.",
+      "normalAnswer": "소음 없이 날기 위해 특수하거든요.",
+      "doppelAnswer": "만지는 순간 살이 썩어 들어가는 맹독이 발려 있습니다."
+    },
+    {
+      "id": 146,
+      "animal": "올빼미",
+      "type": "일상",
+      "question": "펠릿(뼈 토사물)을 토한다며?",
+      "normalAnswer": "뼈나 털은 소화를 못 시키거든요.",
+      "doppelAnswer": "방금 뱉어낸 이 머리카락 뭉치... 당신 친구의 것과 색이 같지 않나요?"
+    },
+    {
+      "id": 147,
+      "animal": "올빼미",
+      "type": "핵심",
+      "question": "왜 계속 나를 뚫어지게 봐?",
+      "normalAnswer": "당신이 신기해서요.",
+      "doppelAnswer": "당신의 영혼이 몸을 빠져나갈 구멍을 찾는 중입니다."
+    },
+    {
+      "id": 148,
+      "animal": "올빼미",
+      "type": "일상",
+      "question": "날개가 왜 이렇게 차가워?",
+      "normalAnswer": "밤바람을 맞아서 그래요.",
+      "doppelAnswer": "시체는 원래 온기가 없습니다."
+    },
+    {
+      "id": 149,
+      "animal": "올빼미",
+      "type": "핵심",
+      "question": "무서운 이야기 하나 해봐.",
+      "normalAnswer": "으스스한 밤이라 더 무서울 텐데요.",
+      "doppelAnswer": "당신이 오늘 밤 아주 끔찍하게 찢겨 죽는 실화입니다."
+    },
+    {
+      "id": 150,
+      "animal": "올빼미",
+      "type": "일상",
+      "question": "넌 고개를 위아래로 끄덕거리네.",
+      "normalAnswer": "거리를 가늠하는 거예요.",
+      "doppelAnswer": "당신의 목을 정확히 쪼아 끊어버릴 각도를 계산 중입니다."
+    },
+    {
+      "id": 151,
+      "animal": "올빼미",
+      "type": "핵심",
+      "question": "시야가 엄청 넓다며?",
+      "normalAnswer": "목이 돌아가서 뒤도 다 볼 수 있어요.",
+      "doppelAnswer": "당신 모니터 밖의 방구석까지 다 지켜보고 있습니다."
+    },
+    {
+      "id": 152,
+      "animal": "올빼미",
+      "type": "일상",
+      "question": "네 부리는 너무 날카로워.",
+      "normalAnswer": "고기를 찢어 먹으려면 어쩔 수 없어요.",
+      "doppelAnswer": "당신의 살점을 찢어발길 때 그 진가를 발휘하죠."
+    },
+    {
+      "id": 153,
+      "animal": "올빼미",
+      "type": "핵심",
+      "question": "오늘 밤 사냥은 성공했어?",
+      "normalAnswer": "네, 배부르게 먹고 왔어요.",
+      "doppelAnswer": "아직요. 제 눈앞에 아주 신선한 사냥감이 제 발로 걸어왔군요."
+    },
+    {
+      "id": 154,
+      "animal": "올빼미",
+      "type": "일상",
+      "question": "넌 눈동자가 안 움직인다며?",
+      "normalAnswer": "네, 그래서 고개를 돌려야 해요.",
+      "doppelAnswer": "당신이 미쳐가는 모습을 눈동자 하나 굴리지 않고 지켜보겠습니다."
+    },
+    {
+      "id": 155,
+      "animal": "올빼미",
+      "type": "핵심",
+      "question": "나한테 무슨 불만 있어?",
+      "normalAnswer": "아니요, 그냥 쳐다본 거예요.",
+      "doppelAnswer": "왜 아직 살아있는 겁니까? 당장 그 목을 비틀어버리고 싶은데."
+    },
+    {
+      "id": 156,
+      "animal": "박쥐",
+      "type": "일상",
+      "question": "밖이 밝은데 안 눈부셔?",
+      "normalAnswer": "눈이 부셔서 그늘에 숨어있어요.",
+      "doppelAnswer": "빛이 닿으면 이 살가죽이 타들어가며 녹아내립니다."
+    },
+    {
+      "id": 157,
+      "animal": "박쥐",
+      "type": "핵심",
+      "question": "거꾸로 매달려 있으면 피 안 쏠려?",
+      "normalAnswer": "평생 이러고 살아서 편해요.",
+      "doppelAnswer": "제 몸에는 피라는 생명체의 액체가 흐르지 않습니다."
+    },
+    {
+      "id": 158,
+      "animal": "박쥐",
+      "type": "일상",
+      "question": "너 흡혈박쥐야?",
+      "normalAnswer": "아뇨! 전 과일만 먹는 과일박쥐예요!",
+      "doppelAnswer": "흡혈... 박쥐... 야...? (기괴한 웃음)"
+    },
+    {
+      "id": 159,
+      "animal": "박쥐",
+      "type": "핵심",
+      "question": "눈이 안 보이지 않아?",
+      "normalAnswer": "대신 초음파로 다 볼 수 있어요!",
+      "doppelAnswer": "당신이 방금 속으로 저를 의심한 것까지 선명하게 다 들립니다."
+    },
+    {
+      "id": 160,
+      "animal": "박쥐",
+      "type": "일상",
+      "question": "날개가 우산처럼 생겼어.",
+      "normalAnswer": "얇은 피부가 늘어나서 그래요.",
+      "doppelAnswer": "이 날개로 당신의 얼굴을 감싸 질식시키는 상상을 했습니다."
+    },
+    {
+      "id": 161,
+      "animal": "박쥐",
+      "type": "핵심",
+      "question": "동굴 속은 안 무서워?",
+      "normalAnswer": "제 집인데 무서울 리가요.",
+      "doppelAnswer": "제 안에 깃든 악령들이 비명을 질러 대서 시끄러울 뿐입니다."
+    },
+    {
+      "id": 162,
+      "animal": "박쥐",
+      "type": "일상",
+      "question": "왜 그렇게 덜덜 떨어?",
+      "normalAnswer": "추워서 몸을 떠는 거예요.",
+      "doppelAnswer": "당신의 찢겨진 살점을 입에 넣고 싶어 흥분을 주체하지 못하는 겁니다."
+    },
+    {
+      "id": 163,
+      "animal": "박쥐",
+      "type": "핵심",
+      "question": "초음파 소리 한번 내봐.",
+      "normalAnswer": "(인간의 귀엔 안 들리는 높은음을 낸다)",
+      "doppelAnswer": "(고막이 찢어질 듯한 기괴한 여자의 비명소리를 지른다)"
+    },
+    {
+      "id": 164,
+      "animal": "박쥐",
+      "type": "일상",
+      "question": "넌 뱀파이어로 변신할 수 있어?",
+      "normalAnswer": "영화를 너무 많이 보셨네요!",
+      "doppelAnswer": "이미 당신의 그림자 속에 숨어들어 변신을 마쳤습니다."
+    },
+    {
+      "id": 165,
+      "animal": "박쥐",
+      "type": "핵심",
+      "question": "박쥐는 바이러스를 옮긴다며?",
+      "normalAnswer": "전 깨끗해요! 오해입니다.",
+      "doppelAnswer": "제 숨결 한 번이면 당신의 폐가 까맣게 썩어 들어갈 겁니다."
+    },
+    {
+      "id": 166,
+      "animal": "박쥐",
+      "type": "일상",
+      "question": "왜 자꾸 날아다녀?",
+      "normalAnswer": "가만히 있는 게 답답해서요.",
+      "doppelAnswer": "당신의 목을 노릴 완벽한 각도를 찾기 위해 배회하는 겁니다."
+    },
+    {
+      "id": 167,
+      "animal": "박쥐",
+      "type": "핵심",
+      "question": "귀가 엄청 크네.",
+      "normalAnswer": "반사된 초음파를 잘 들어야 하니까요.",
+      "doppelAnswer": "당신이 고통에 몸부림치며 살려달라고 애원하는 소리를 듣기 위해서입니다."
+    },
+    {
+      "id": 168,
+      "animal": "박쥐",
+      "type": "일상",
+      "question": "날개에 핏줄이 다 보이네.",
+      "normalAnswer": "얇아서 핏줄이 비치는 거예요.",
+      "doppelAnswer": "제 날개 안에서 썩어가고 있는 희생자들의 핏줄입니다."
+    },
+    {
+      "id": 169,
+      "animal": "박쥐",
+      "type": "핵심",
+      "question": "과일박쥐라면서 입가에 붉은 건 뭐야?",
+      "normalAnswer": "체리를 먹어서 물든 거예요.",
+      "doppelAnswer": "당신 친구의 목동맥에서 뿜어져 나온 따뜻한 체리 즙입니다."
+    },
+    {
+      "id": 170,
+      "animal": "박쥐",
+      "type": "일상",
+      "question": "발톱으로 잘 매달려 있네.",
+      "normalAnswer": "갈고리 모양이라 튼튼해요.",
+      "doppelAnswer": "당신의 두개골을 꽉 쥐고 매달리기 가장 좋은 형태입니다."
+    },
+    {
+      "id": 171,
+      "animal": "박쥐",
+      "type": "핵심",
+      "question": "소름 끼치는 냄새가 나.",
+      "normalAnswer": "동굴 안이 습해서 곰팡이 냄새가 나요.",
+      "doppelAnswer": "제 얼굴 반쪽이 썩어문드러지면서 나는 시취입니다."
+    },
+    {
+      "id": 172,
+      "animal": "박쥐",
+      "type": "일상",
+      "question": "너 왜 자꾸 나한테 붙으려 해?",
+      "normalAnswer": "당신이 따뜻해서 좋아요.",
+      "doppelAnswer": "체온을 빼앗고 피를 전부 빨아 마시기 위해서입니다."
+    },
+    {
+      "id": 173,
+      "animal": "박쥐",
+      "type": "핵심",
+      "question": "박쥐도 털이 있어?",
+      "normalAnswer": "포유류니까 몸에 털이 있죠.",
+      "doppelAnswer": "털이 아닙니다. 제 몸을 뚫고 자라난 기생충들입니다."
+    },
+    {
+      "id": 174,
+      "animal": "박쥐",
+      "type": "일상",
+      "question": "바닥에 기어 다니기도 해?",
+      "normalAnswer": "매달리는 게 편하지만 가끔 기어요.",
+      "doppelAnswer": "(관절이 기괴하게 꺾인 채 거미처럼 바닥을 기어 다가온다)"
+    },
+    {
+      "id": 175,
+      "animal": "박쥐",
+      "type": "핵심",
+      "question": "하늘을 날면 기분이 어때?",
+      "normalAnswer": "바람을 가르면 상쾌해요.",
+      "doppelAnswer": "당신을 붙잡고 하늘 높이 날아올라 그대로 바닥에 곤두박질치는 상상을 합니다."
+    },
+    {
+      "id": 176,
+      "animal": "늑대",
+      "type": "일상",
+      "question": "개랑 늑대의 차이가 뭐야?",
+      "normalAnswer": "늑대가 훨씬 멋지고 야생적이죠!",
+      "doppelAnswer": "늑대는 당신을 갈기갈기 찢어발기지만, 개는 그렇지 않다는 차이입니다."
+    },
+    {
+      "id": 177,
+      "animal": "늑대",
+      "type": "핵심",
+      "question": "하울링 한번 해볼래?",
+      "normalAnswer": "아우우우우~!",
+      "doppelAnswer": "(기계적인 사이렌 소리와 인간의 비명이 섞인 끔찍한 소리가 난다)"
+    },
+    {
+      "id": 178,
+      "animal": "늑대",
+      "type": "일상",
+      "question": "보름달 뜨면 늑대 인간으로 변해?",
+      "normalAnswer": "하하, 전 그냥 늑대일 뿐이에요.",
+      "doppelAnswer": "인간을 집어삼키고 인간의 가죽을 뒤집어쓴 괴물일 뿐입니다."
+    },
+    {
+      "id": 179,
+      "animal": "늑대",
+      "type": "핵심",
+      "question": "냄새를 엄청 잘 맡는다며?",
+      "normalAnswer": "1km 밖 냄새도 다 맡아요.",
+      "doppelAnswer": "당신의 피에서 나는 짙은 공포와 철분 냄새를 음미하는 중입니다."
+    },
+    {
+      "id": 180,
+      "animal": "늑대",
+      "type": "일상",
+      "question": "무리 지어 다니지 않아?",
+      "normalAnswer": "친구들과 흩어져서 혼자예요.",
+      "doppelAnswer": "제가 모두 물어뜯어 죽여서 지금은 뱃속에 같이 있습니다."
+    },
+    {
+      "id": 181,
+      "animal": "늑대",
+      "type": "핵심",
+      "question": "꼬리가 왜 내려가 있어? 겁먹었어?",
+      "normalAnswer": "당신을 경계하는 중이에요.",
+      "doppelAnswer": "단숨에 달려들어 당신의 목을 끊어 버리기 직전의 도약 자세입니다."
+    },
+    {
+      "id": 182,
+      "animal": "늑대",
+      "type": "일상",
+      "question": "눈빛이 너무 매서워.",
+      "normalAnswer": "늑대의 카리스마죠.",
+      "doppelAnswer": "당신을 산 채로 어떻게 해부할지 계획을 세우는 차가운 눈빛입니다."
+    },
+    {
+      "id": 183,
+      "animal": "늑대",
+      "type": "핵심",
+      "question": "이빨이 무시무시하네.",
+      "normalAnswer": "사냥을 하려면 이빨이 날카로워야죠.",
+      "doppelAnswer": "이 이빨로 당신의 척추를 으스러뜨리는 데 단 1초면 충분합니다."
+    },
+    {
+      "id": 184,
+      "animal": "늑대",
+      "type": "일상",
+      "question": "고기 줄까?",
+      "normalAnswer": "헉, 고기! 주시면 감사하죠!",
+      "doppelAnswer": "풀... 풀을 주십시오. 저는 초식동물입니다. (생태적 모순)"
+    },
+    {
+      "id": 185,
+      "animal": "늑대",
+      "type": "핵심",
+      "question": "숲속에서 길 안 잃어?",
+      "normalAnswer": "숲은 제 앞마당이나 다름없어요.",
+      "doppelAnswer": "당신이 길을 잃고 어둠 속에서 찢겨 죽는 환상을 방금 보았습니다."
+    },
+    {
+      "id": 186,
+      "animal": "늑대",
+      "type": "일상",
+      "question": "발소리가 전혀 안 나네.",
+      "normalAnswer": "사냥감을 속이려면 조용해야죠.",
+      "doppelAnswer": "저는 땅을 밟고 있지 않습니다. 당신의 뒤에 공중에 떠 있습니다."
+    },
+    {
+      "id": 187,
+      "animal": "늑대",
+      "type": "핵심",
+      "question": "양을 잡아먹어 본적 있어?",
+      "normalAnswer": "솔직히 말하면... 네, 아주 옛날에요.",
+      "doppelAnswer": "양이 아니라 당신 같은 어리석은 인간들을 매일 밤 뜯어 먹고 있습니다."
+    },
+    {
+      "id": 188,
+      "animal": "늑대",
+      "type": "일상",
+      "question": "귀가 쫑긋 서 있네.",
+      "normalAnswer": "무슨 소리가 날까 봐 집중 중이에요.",
+      "doppelAnswer": "당신의 심장이 공포로 빠르게 요동치는 소리에 집중하고 있습니다."
+    },
+    {
+      "id": 189,
+      "animal": "늑대",
+      "type": "핵심",
+      "question": "넌 달리기 엄청 빠르지?",
+      "normalAnswer": "한 번 뛰면 아무도 못 잡아요.",
+      "doppelAnswer": "당신이 도망치기 위해 등을 보이는 순간, 이미 당신의 목은 제 입에 있을 겁니다."
+    },
+    {
+      "id": 190,
+      "animal": "늑대",
+      "type": "일상",
+      "question": "털이 뻣뻣해 보여.",
+      "normalAnswer": "야생에서 굴러서 그래요.",
+      "doppelAnswer": "시체의 피가 말라붙어 딱딱해진 겁니다."
+    },
+    {
+      "id": 191,
+      "animal": "늑대",
+      "type": "핵심",
+      "question": "지구력이 엄청 좋다며?",
+      "normalAnswer": "네, 사냥감이 지칠 때까지 쫓아가요.",
+      "doppelAnswer": "당신이 피를 흘리며 기어가는 모습을 끝까지 지켜보며 즐길 겁니다."
+    },
+    {
+      "id": 192,
+      "animal": "늑대",
+      "type": "일상",
+      "question": "입술이 왜 까매?",
+      "normalAnswer": "원래 늑대 입술은 까만색이에요.",
+      "doppelAnswer": "독을 머금고 있어서 썩어들어간 겁니다."
+    },
+    {
+      "id": 193,
+      "animal": "늑대",
+      "type": "핵심",
+      "question": "내가 만약 도망치면?",
+      "normalAnswer": "저도 놀라서 도망갈 거예요!",
+      "doppelAnswer": "발목 인대를 먼저 끊어버리고 천천히 내장을 파먹겠습니다."
+    },
+    {
+      "id": 194,
+      "animal": "늑대",
+      "type": "일상",
+      "question": "숨 쉴 때마다 입김이 나네.",
+      "normalAnswer": "날씨가 좀 쌀쌀하잖아요.",
+      "doppelAnswer": "지옥에서 타오르는 제 영혼의 열기입니다."
+    },
+    {
+      "id": 195,
+      "animal": "늑대",
+      "type": "핵심",
+      "question": "넌 충성심이 강해?",
+      "normalAnswer": "네, 무리와 가족을 끔찍이 아끼죠.",
+      "doppelAnswer": "끔찍이 아껴서 하나도 남김없이 제 위장 속에 영원히 보관하고 있습니다."
+    },
+    {
+      "id": 196,
+      "animal": "늑대",
+      "type": "일상",
+      "question": "왜 자꾸 혀를 날름거려?",
+      "normalAnswer": "입술이 말라서요.",
+      "doppelAnswer": "당신의 살점을 맛보기 전 입맛을 다시는 중입니다."
+    },
+    {
+      "id": 197,
+      "animal": "늑대",
+      "type": "핵심",
+      "question": "턱 힘이 어느 정도야?",
+      "normalAnswer": "두꺼운 뼈도 부술 수 있어요.",
+      "doppelAnswer": "당신의 두개골을 입에 넣고 씹으면 과자처럼 바스라질 겁니다."
+    },
+    {
+      "id": 198,
+      "animal": "늑대",
+      "type": "일상",
+      "question": "눈을 왜 그렇게 반쯤 감고 있어?",
+      "normalAnswer": "졸려서 그래요. 하암.",
+      "doppelAnswer": "안구가 이미 썩어 문드러져서 눈꺼풀을 들어 올릴 근육이 없습니다."
+    },
+    {
+      "id": 199,
+      "animal": "늑대",
+      "type": "핵심",
+      "question": "빨간 두건 이야기 알아?",
+      "normalAnswer": "할머니를 잡아먹은 나쁜 늑대 이야기죠.",
+      "doppelAnswer": "당신이 모니터 앞에서 이 대화를 읽고 있는 지금 이 순간에도 저는 입을 벌리고 있습니다."
+    },
+    {
+      "id": 200,
+      "animal": "늑대",
+      "type": "핵심",
+      "question": "넌 진짜 주민이 맞지?",
+      "normalAnswer": "그럼요, 당연하죠! 절 의심하시나요?",
+      "doppelAnswer": "뒤를... 돌아보십시오... 제가... 거기... 있습니다..."
     }
   ]
 }

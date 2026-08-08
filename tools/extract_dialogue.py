@@ -11,7 +11,8 @@ sys.stdout.reconfigure(encoding="utf-8")
 PDF = r"C:\Users\probo\Documents\카카오톡 받은 파일\AI게임대회.pdf"
 OUT = r"C:\Users\probo\EscapefromDoppelgangerVillage\Assets\Data\dialogue.json"
 
-WANT_ANIMALS = {"강아지", "고양이", "토끼"}
+WANT_ANIMALS = {"강아지", "고양이", "토끼", "돼지", "곰", "양", "올빼미", "박쥐", "늑대"}
+TOTAL_ENTRIES = 200
 
 
 from kiwipiepy import Kiwi
@@ -60,8 +61,8 @@ def resolve(text: str) -> str:
 
 rows = []  # raw rows across pages, merged for page-break continuations
 with pdfplumber.open(PDF) as pdf:
-    # 대화 테이블은 5~10페이지 (1-indexed) 에 걸쳐 있음 (엔트리 1~67 + 68 이후 일부)
-    for pageno in range(4, 11):  # 0-indexed pages 4..10 → 페이지 5..11
+    # 대화 테이블 전체는 5~21페이지 (1-indexed) — 엔트리 1~200
+    for pageno in range(4, 21):  # 0-indexed pages 4..20 → 페이지 5..21
         page = pdf.pages[pageno]
         for table in page.extract_tables():
             for r in table:
@@ -73,8 +74,9 @@ with pdfplumber.open(PDF) as pdf:
                     continue
                 if first.isdigit():
                     rows.append([clean(c) for c in r])
-                else:
-                    # 페이지 넘김으로 잘린 행: 직전 행에 이어붙임
+                elif not first:
+                    # 페이지 넘김으로 잘린 행(번호 셀이 빈 경우)만 직전 행에 이어붙임
+                    # — 21페이지의 조작키 표 등 무관한 표가 병합되는 것을 방지
                     if rows:
                         for i, c in enumerate(r):
                             if c and i < len(rows[-1]):
@@ -102,19 +104,27 @@ for r in rows:
         }
     )
 
-# 페이지 하단 경계에 걸려 테이블 감지에서 누락된 2개 행 — PDF 원문 텍스트에서 이식
-entries.append({
-    "id": 23, "animal": "고양이", "type": "일상",
-    "question": "털이 많이 빠지네.",
-    "normalAnswer": "스트레스 받아서 털갈이하나 봐요.",
-    "doppelAnswer": "제 피부가 녹아내리며 살점과 함께 떨어지고 있는 겁니다.",
-})
-entries.append({
-    "id": 61, "animal": "토끼", "type": "핵심",
-    "question": "번식력이 엄청나다며?",
-    "normalAnswer": "부끄럽게 왜 그런 걸 물어봐요!",
-    "doppelAnswer": "당신의 배 속에 이미 제 알들을 수십 개 낳아두었습니다.",
-})
+# 페이지 하단 경계에 걸려 테이블 감지에서 누락된 행들 — PDF 원문 텍스트에서 이식
+BOUNDARY_ROWS = [
+    (23, "고양이", "일상", "털이 많이 빠지네.", "스트레스 받아서 털갈이하나 봐요.", "제 피부가 녹아내리며 살점과 함께 떨어지고 있는 겁니다."),
+    (61, "토끼", "핵심", "번식력이 엄청나다며?", "부끄럽게 왜 그런 걸 물어봐요!", "당신의 배 속에 이미 제 알들을 수십 개 낳아두었습니다."),
+    (73, "돼지", "핵심", "아무거나 다 잘 먹어?", "잡식성이라 뭐든 가리지 않아요!", "뼈와 살, 머리카락까지 남김없이 씹어 삼켜드리겠습니다."),
+    (97, "곰", "핵심", "나무 타는 거 잘해?", "그럼요, 꿀 찾으러 자주 올라가요.", "당신을 나뭇가지 끝에 꿰뚫어 매달아 두는 것을 더 잘합니다."),
+    (109, "곰", "핵심", "두발로 설 수 있어?", "기지개 켤 때 가끔 서요.", "(기괴하게 뼈가 부러지는 소리를 내며 인간처럼 직립하여 당신을 내려다본다)"),
+    (121, "양", "핵심", "늑대가 나타났대!", "으아악! 도망가야 해요!", "(소름 끼치는 미소를 지으며) 오늘 밤은 아주 배가 부르겠군요."),
+    (133, "양", "핵심", "뒤에서 누가 쫓아와?!", "히익! 괴물인가요?!", "안타깝군요. 당신을 노리는 건 뒤가 아니라 바로 앞의 저인데 말입니다."),
+    (145, "올빼미", "핵심", "깃털이 엄청 부드러워 보여.", "소음 없이 날기 위해 특수하거든요.", "만지는 순간 살이 썩어 들어가는 맹독이 발려 있습니다."),
+    (159, "박쥐", "핵심", "눈이 안 보이지 않아?", "대신 초음파로 다 볼 수 있어요!", "당신이 방금 속으로 저를 의심한 것까지 선명하게 다 들립니다."),
+    (195, "늑대", "핵심", "넌 충성심이 강해?", "네, 무리와 가족을 끔찍이 아끼죠.", "끔찍이 아껴서 하나도 남김없이 제 위장 속에 영원히 보관하고 있습니다."),
+]
+already = {e["id"] for e in entries}
+for (bid, banimal, btype, bq, bn, bd) in BOUNDARY_ROWS:
+    if bid in already:
+        continue
+    entries.append({
+        "id": bid, "animal": banimal, "type": btype,
+        "question": bq, "normalAnswer": bn, "doppelAnswer": bd,
+    })
 
 # Kiwi 접합부 판별이 놓친 띄어쓰기 수동 보정 (눈검수 결과)
 FIXUPS = {
@@ -131,7 +141,7 @@ entries.sort(key=lambda e: e["id"])
 # ---- 원문 교차 검증: 공백 제거 후 각 필드가 PDF 원문에 부분 문자열로 존재해야 함 ----
 from pypdf import PdfReader
 reader = PdfReader(PDF)
-fulltext = "".join((reader.pages[i].extract_text() or "") for i in range(4, 11))
+fulltext = "".join((reader.pages[i].extract_text() or "") for i in range(4, 21))
 squash = lambda s: re.sub(r"\s+", "", s)
 haystack = squash(fulltext)
 haystack = re.sub(r"AI게임대회\d{1,2}", "", haystack)  # 페이지 푸터 제거 (경계에 걸린 행 검증용)
@@ -148,7 +158,7 @@ print("cross-check vs pypdf fulltext: all fields OK")
 
 # ---- validation ----
 ids = [e["id"] for e in entries]
-assert ids == list(range(1, 68)), f"ID 누락/중복: {sorted(set(range(1,68)) - set(ids))} / dupes: {[i for i in ids if ids.count(i)>1]}"
+assert ids == list(range(1, TOTAL_ENTRIES + 1)), f"ID 누락/중복: {sorted(set(range(1, TOTAL_ENTRIES + 1)) - set(ids))} / dupes: {[i for i in ids if ids.count(i)>1]}"
 counts = {}
 for e in entries:
     counts[e["animal"]] = counts.get(e["animal"], 0) + 1
