@@ -14,6 +14,7 @@
 - git 저장소 초기화 + Unity용 .gitignore 작성, 초기 커밋
 - MCP for Unity 패키지(com.coplaydev.unity-mcp)를 Packages/manifest.json에 추가 — 이후 세션부터 Claude가 Unity 에디터를 직접 조작
 - **기획서 대화 테이블 1~67번(강아지 22·고양이 23·토끼 22)을 `Assets/Data/dialogue.json`으로 이식** (`tools/extract_dialogue.py`)
+- 멀티(PUN 2) 유지 확정 후, Photon 무관 코어 스크립트 작성: `DialogueEntry`/`DialogueDatabase`(TextAsset 기반 JSON 로더, WebGL 호환) + `GameConfig`(승리 수치·확률 테이블·스태미나 상수)
 
 **프롬프트 요지**
 - "기획서 PDF와 대회 사이트를 분석해 사전 과제 실현 가능성을 판단하고 Unity MCP로 개발을 시작할 준비를 해줘"
