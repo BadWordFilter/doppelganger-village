@@ -33,7 +33,9 @@
 - "MCP 연결 확인" / "임포트 경고창 어떻게 하지" / "멀티 몇 명까지 가능?" — Claude가 진단·구현·검증 사이클을 주도
 
 **결과와 수동 수정 내역**
-- 컴파일 에러 0. 사람 개입: Photon 계정·AppId 발급, Asset Store 임포트 클릭, GitHub 리포 생성·Pages 설정
+- 컴파일 에러 0. 사람 개입: Photon 계정·AppId 발급, Asset Store 임포트 클릭, GitHub 리포 생성·Pages 설정, GitHub Desktop 푸시
+- 배포 트러블슈팅: 첫 배포에서 게임 404 → Claude가 네트워크 로그로 `.gitignore`의 `Build/` 패턴이 `docs/Build/`까지 무시한 것을 진단, 루트 앵커링(`/Build/`)으로 수정 후 재배포
+- **최종 검증: https://badwordfilter.github.io/doppelganger-village/ 에서 게임 로드 + Photon WSS 접속(룸 6883, 마스터 권한) 확인** — 심사 동선(링크 클릭→플레이) 전체 작동
 
 **프롬프트 요지**
 - "기획서 PDF와 대회 사이트를 분석해 사전 과제 실현 가능성을 판단하고 Unity MCP로 개발을 시작할 준비를 해줘"
