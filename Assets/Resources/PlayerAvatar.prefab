@@ -103,6 +103,7 @@ GameObject:
   - component: {fileID: 6958755545804197604}
   - component: {fileID: 5325872266576223801}
   - component: {fileID: 3150965503975822995}
+  - component: {fileID: 8641518390264532}
   m_Layer: 0
   m_Name: PlayerAvatar
   m_TagString: Untagged
@@ -203,6 +204,18 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: dcd9474a817b31d4fbc57f1cda727619, type: 3}
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::DoppelgangerVillage.Player.PlayerController
+--- !u!114 &8641518390264532
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 6356687654676415771}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 38a29cc9f0d98f14aad9d92f8ed148f6, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Assembly-CSharp::DoppelgangerVillage.Player.PlayerInteraction
 --- !u!1 &7562391374250711378
 GameObject:
   m_ObjectHideFlags: 0

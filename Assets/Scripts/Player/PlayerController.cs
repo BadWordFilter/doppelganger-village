@@ -45,13 +45,17 @@ namespace DoppelgangerVillage.Player
             var kb = Keyboard.current;
             if (kb == null) return;
 
-            // 이동 입력
+            // 이동 입력 (대화 UI가 열려 있으면 입력 차단 — 스태미나 회복은 유지)
+            bool uiLocked = UI.DialogueUI.IsOpen;
             Vector2 input = Vector2.zero;
-            if (kb.wKey.isPressed) input.y += 1f;
-            if (kb.sKey.isPressed) input.y -= 1f;
-            if (kb.dKey.isPressed) input.x += 1f;
-            if (kb.aKey.isPressed) input.x -= 1f;
-            input = Vector2.ClampMagnitude(input, 1f);
+            if (!uiLocked)
+            {
+                if (kb.wKey.isPressed) input.y += 1f;
+                if (kb.sKey.isPressed) input.y -= 1f;
+                if (kb.dKey.isPressed) input.x += 1f;
+                if (kb.aKey.isPressed) input.x -= 1f;
+                input = Vector2.ClampMagnitude(input, 1f);
+            }
 
             // 스태미나: 달리는 동안 소모, 정지·걷기 시 회복, 고갈 시 감속 상태 진입
             bool wantsRun = kb.leftShiftKey.isPressed && input.sqrMagnitude > 0.01f;

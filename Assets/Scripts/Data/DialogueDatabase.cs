@@ -17,6 +17,7 @@ namespace DoppelgangerVillage.Data
         }
 
         private readonly Dictionary<string, List<DialogueEntry>> _byAnimal = new();
+        private readonly Dictionary<int, DialogueEntry> _byId = new();
         public IReadOnlyList<DialogueEntry> All { get; private set; }
 
         public static DialogueDatabase Load(TextAsset json)
@@ -34,6 +35,7 @@ namespace DoppelgangerVillage.Data
                 if (!db._byAnimal.TryGetValue(e.animal, out var list))
                     db._byAnimal[e.animal] = list = new List<DialogueEntry>();
                 list.Add(e);
+                db._byId[e.id] = e;
             }
             return db;
         }
@@ -41,6 +43,9 @@ namespace DoppelgangerVillage.Data
         /// <summary>해당 동물의 전체 대화 목록. 없는 동물이면 빈 리스트.</summary>
         public IReadOnlyList<DialogueEntry> ForAnimal(string animal) =>
             _byAnimal.TryGetValue(animal, out var list) ? list : Array.Empty<DialogueEntry>();
+
+        /// <summary>id로 항목 조회 (RPC 왕복용).</summary>
+        public DialogueEntry ById(int id) => _byId.TryGetValue(id, out var e) ? e : null;
 
         public IEnumerable<string> Animals => _byAnimal.Keys;
     }

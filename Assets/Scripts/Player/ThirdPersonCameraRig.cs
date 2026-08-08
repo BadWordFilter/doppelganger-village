@@ -36,8 +36,9 @@ namespace DoppelgangerVillage.Player
             var kb = Keyboard.current;
             if (mouse == null) return;
 
-            // 커서 잠금/해제 (브라우저는 사용자 입력 프레임에서만 잠금 허용)
-            if (mouse.leftButton.wasPressedThisFrame && Cursor.lockState != CursorLockMode.Locked && _target != null)
+            // 커서 잠금/해제 (브라우저는 사용자 입력 프레임에서만 잠금 허용, 대화 UI 중엔 잠그지 않음)
+            if (mouse.leftButton.wasPressedThisFrame && Cursor.lockState != CursorLockMode.Locked
+                && _target != null && !UI.DialogueUI.IsOpen)
                 Cursor.lockState = CursorLockMode.Locked;
             if (kb != null && kb.escapeKey.wasPressedThisFrame)
                 Cursor.lockState = CursorLockMode.None;

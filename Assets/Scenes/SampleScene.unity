@@ -3618,6 +3618,9 @@ GameObject:
   - component: {fileID: 875857941}
   - component: {fileID: 875857940}
   - component: {fileID: 875857939}
+  - component: {fileID: 875857944}
+  - component: {fileID: 875857943}
+  - component: {fileID: 875857942}
   m_Layer: 0
   m_Name: GameSystems
   m_TagString: Untagged
@@ -3688,6 +3691,53 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 75379acae5e2c274694d346c1820dc66, type: 3}
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::DoppelgangerVillage.GameManager
+--- !u!114 &875857942
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 875857935}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 0db525c4362a1f34cbc237e625135520, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Assembly-CSharp::DoppelgangerVillage.UI.DialogueUI
+--- !u!114 &875857943
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 875857935}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: de42f676701ece24a9d840492470a65b, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Assembly-CSharp::DoppelgangerVillage.Dialogue.DialogueDirector
+  dialogueJson: {fileID: 4900000, guid: aa630b3e71fc1c445b807cb483a2ca15, type: 3}
+--- !u!114 &875857944
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 875857935}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: aa584fbee541324448dd18d8409c7a41, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: PhotonUnityNetworking::Photon.Pun.PhotonView
+  ObservedComponentsFoldoutOpen: 1
+  Group: 0
+  prefixField: -1
+  Synchronization: 3
+  OwnershipTransfer: 0
+  observableSearch: 2
+  ObservedComponents: []
+  sceneViewId: 1
+  InstantiationId: 0
+  isRuntimeInstantiated: 0
 --- !u!1 &881090272
 GameObject:
   m_ObjectHideFlags: 0
