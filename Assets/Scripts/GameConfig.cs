@@ -32,6 +32,15 @@ namespace DoppelgangerVillage
         public const int MinAnimals = 10;       // 맵에 등장하는 주간 동물 개체 수 범위
         public const int MaxAnimals = 11;
 
+        // ---- 추격자 (돌변한 도플갱어 — 배회→감지→추격 FSM) ----
+        public const float ChaserRoamSpeed = 2.0f;
+        public const float ChaserChaseSpeed = 5.5f;  // 걷기(4)보다 빠르고 달리기(7)보다 느리게 — 스태미나 관리 유도
+        public const float ChaserDetectRadius = 11f;
+        public const float ChaserLoseRadius = 18f;
+        public const float ChaserAttackRange = 1.7f;
+        public const float ChaserHitDamage = 25f;
+        public const float StunDuration = 1.2f;      // 잡혔을 때 짧은 기절
+
         // ---- 플레이어 ----
         public const float MaxHp = 100f;
         public const float OverInterrogationDamage = 34f; // 과잉 심문 공격 1회 피해

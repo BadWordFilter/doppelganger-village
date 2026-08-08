@@ -21,6 +21,7 @@ namespace DoppelgangerVillage.Player
         private CharacterController _cc;
         private ThirdPersonCameraRig _rig;
         private float _verticalVel;
+        private float _stunTimer;
 
         private void Awake()
         {
@@ -45,8 +46,9 @@ namespace DoppelgangerVillage.Player
             var kb = Keyboard.current;
             if (kb == null) return;
 
-            // 이동 입력 (대화/정산 UI 또는 게임 종료 시 입력 차단 — 스태미나 회복은 유지)
-            bool uiLocked = UI.DialogueUI.IsOpen || UI.SettlementUI.IsShowing
+            // 이동 입력 (대화/정산 UI·게임 종료·기절 시 입력 차단 — 스태미나 회복은 유지)
+            if (_stunTimer > 0f) _stunTimer -= Time.deltaTime;
+            bool uiLocked = _stunTimer > 0f || UI.DialogueUI.IsOpen || UI.SettlementUI.IsShowing
                 || (Judgement.JudgementDirector.Instance != null && Judgement.JudgementDirector.Instance.GameEnded);
             Vector2 input = Vector2.zero;
             if (!uiLocked)
@@ -98,6 +100,12 @@ namespace DoppelgangerVillage.Player
                 if (Judgement.JudgementDirector.Instance != null)
                     Judgement.JudgementDirector.Instance.NotifyLocalInfected();
             }
+        }
+
+        /// <summary>추격자에게 잡히는 등 짧은 기절 — 입력이 잠시 차단된다.</summary>
+        public void Stun(float duration)
+        {
+            _stunTimer = Mathf.Max(_stunTimer, duration);
         }
 
         /// <summary>구급상자 등으로 회복.</summary>

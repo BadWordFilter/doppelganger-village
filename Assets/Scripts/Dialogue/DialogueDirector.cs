@@ -111,6 +111,19 @@ namespace DoppelgangerVillage.Dialogue
         {
             Debug.Log($"[Dialogue] 과잉 심문! 시민 {citizenId} 이(가) 돌변하여 액터 {actorNumber} 을(를) 공격");
             OverInterrogated?.Invoke(citizenId, actorNumber);
+
+            var citizen = Citizen(citizenId);
+            if (citizen == null) return;
+            StartCoroutine(HideAfter(citizen, 1.3f));
+            // 돌변 → 추격자 스폰 (마스터 소유 룸 오브젝트, 전 클라이언트 위치 동기화)
+            if (PhotonNetwork.IsMasterClient)
+                PhotonNetwork.InstantiateRoomObject("DoppelChaser", citizen.transform.position, citizen.transform.rotation);
+        }
+
+        private System.Collections.IEnumerator HideAfter(AnimalCitizen citizen, float delay)
+        {
+            yield return new WaitForSeconds(delay);
+            if (citizen != null) citizen.gameObject.SetActive(false);
         }
     }
 }
