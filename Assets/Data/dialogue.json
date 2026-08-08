@@ -1,0 +1,540 @@
+{
+  "entries": [
+    {
+      "id": 1,
+      "animal": "강아지",
+      "type": "일상",
+      "question": "꼬리가 왜 그렇게 축 처졌어?",
+      "normalAnswer": "무서운 일이 많아서 기운이 없어요.",
+      "doppelAnswer": "꼬리가 아닙니다. 등뼈가 하나 빠져나온 겁니다."
+    },
+    {
+      "id": 2,
+      "animal": "강아지",
+      "type": "일상",
+      "question": "발바닥에서 흙 냄새가 나네.",
+      "normalAnswer": "아까 밖에서 뛰다 들어왔거든요.",
+      "doppelAnswer": "어제 뒷산에 묻고 온 이웃의 피 냄새입니다."
+    },
+    {
+      "id": 3,
+      "animal": "강아지",
+      "type": "핵심",
+      "question": "초콜릿 하나 줄까?",
+      "normalAnswer": "큰일 나요! 강아지한테는 독이에요!",
+      "doppelAnswer": "네. 씹을 때마다 그 안의 안구가 터지는 식감이 좋습니다."
+    },
+    {
+      "id": 4,
+      "animal": "강아지",
+      "type": "핵심",
+      "question": "짖어볼래?",
+      "normalAnswer": "멍멍! 왈왈!",
+      "doppelAnswer": "(사람의 비명소리를 10배 느리게 재생한 듯한 소리가 난다)"
+    },
+    {
+      "id": 5,
+      "animal": "강아지",
+      "type": "일상",
+      "question": "머리 쓰다듬어 줄까?",
+      "normalAnswer": "헤헤, 좋아요!",
+      "doppelAnswer": "만지면 당신 손가락이 피부 안으로 빨려 들어갈 겁니다."
+    },
+    {
+      "id": 6,
+      "animal": "강아지",
+      "type": "일상",
+      "question": "집이 좀 춥지 않아?",
+      "normalAnswer": "털이 있어서 괜찮아요.",
+      "doppelAnswer": "이 가죽 안쪽은 이미 차갑게 식어 부패하고 있습니다."
+    },
+    {
+      "id": 7,
+      "animal": "강아지",
+      "type": "핵심",
+      "question": "뼈다귀 좋아해?",
+      "normalAnswer": "네! 씹는 맛이 최고죠.",
+      "doppelAnswer": "당신의 대퇴골을 씹어 먹을 때 가장 행복했습니다."
+    },
+    {
+      "id": 8,
+      "animal": "강아지",
+      "type": "핵심",
+      "question": "귀가 왜 그렇게 밝아?",
+      "normalAnswer": "작은 소리도 잘 들어야 하니까요.",
+      "doppelAnswer": "당신의 심장이 공포로 빠르게 뛰는 소리를 즐겨야 하니까요."
+    },
+    {
+      "id": 9,
+      "animal": "강아지",
+      "type": "일상",
+      "question": "배고프지 않아?",
+      "normalAnswer": "사료를 다 먹어서 배고파요.",
+      "doppelAnswer": "네 목덜미의 혈관을 물어뜯고 싶어서 미치겠습니다."
+    },
+    {
+      "id": 10,
+      "animal": "강아지",
+      "type": "핵심",
+      "question": "문 밖에서 누가 두드렸어?",
+      "normalAnswer": "네? 저 말고 아무도 없었는데요.",
+      "doppelAnswer": "문을 두드린 건 제 안에서 나가고 싶어 하는 원래 주인의 머리입니다."
+    },
+    {
+      "id": 11,
+      "animal": "강아지",
+      "type": "일상",
+      "question": "눈물 자국이 있네. 울었어?",
+      "normalAnswer": "하도 무서워서 조금 울었어요.",
+      "doppelAnswer": "피를 너무 많이 마셨더니 눈으로 역류한 겁니다."
+    },
+    {
+      "id": 12,
+      "animal": "강아지",
+      "type": "핵심",
+      "question": "너 땀 안 흘리지?",
+      "normalAnswer": "네, 발바닥으로 조금 흘리는 정도예요.",
+      "doppelAnswer": "네, 피부 구멍마다 살아있는 구더기가 숨을 쉴 뿐입니다."
+    },
+    {
+      "id": 13,
+      "animal": "강아지",
+      "type": "일상",
+      "question": "안색이 안 좋아 보여.",
+      "normalAnswer": "잠을 못 자서 그래요.",
+      "doppelAnswer": "거울을 보십시오. 당신의 등 뒤에 서 있는 제 진짜 모습 때문일 겁니다."
+    },
+    {
+      "id": 14,
+      "animal": "강아지",
+      "type": "핵심",
+      "question": "산책 갈래?",
+      "normalAnswer": "밖엔 괴물들이 있잖아요! 안 돼요!",
+      "doppelAnswer": "목줄 대신 당신의 창자를 뽑아 묶고 나가겠습니다."
+    },
+    {
+      "id": 15,
+      "animal": "강아지",
+      "type": "일상",
+      "question": "혀가 말라 있네.",
+      "normalAnswer": "물을 못 마셔서 목이 말라요.",
+      "doppelAnswer": "방금 전까지 당신의 친구를 핥아먹느라 그렇습니다."
+    },
+    {
+      "id": 16,
+      "animal": "강아지",
+      "type": "핵심",
+      "question": "후각이 예민하지?",
+      "normalAnswer": "냄새로 누군지 다 알 수 있죠.",
+      "doppelAnswer": "당신의 뇌가 썩어 가는 냄새가 아주 달콤하게 느껴집니다."
+    },
+    {
+      "id": 17,
+      "animal": "강아지",
+      "type": "일상",
+      "question": "목걸이에 이름이 뭐라고 적혀있어?",
+      "normalAnswer": "제 이름 바둑이라고 적혀있어요.",
+      "doppelAnswer": "(이름표에 당신의 실명이 피로 적혀 있다)"
+    },
+    {
+      "id": 18,
+      "animal": "강아지",
+      "type": "핵심",
+      "question": "땅 파는 거 좋아해?",
+      "normalAnswer": "흙장난 치는 거 재밌잖아요.",
+      "doppelAnswer": "당신의 눈을 파내어 텅 빈 뇌를 구경하는 것을 더 좋아합니다."
+    },
+    {
+      "id": 19,
+      "animal": "강아지",
+      "type": "일상",
+      "question": "발톱이 꽤 길었네.",
+      "normalAnswer": "잘라야 하는데 무서워서 못 나갔어요.",
+      "doppelAnswer": "당신의 복부를 단번에 찢기 위해 다듬고 있었습니다."
+    },
+    {
+      "id": 20,
+      "animal": "강아지",
+      "type": "핵심",
+      "question": "늑대를 본 적 있어?",
+      "normalAnswer": "아니요, 무서워서 도망갔을 거예요.",
+      "doppelAnswer": "방금 제 뱃속에서 소화가 끝났습니다."
+    },
+    {
+      "id": 21,
+      "animal": "강아지",
+      "type": "일상",
+      "question": "왜 계속 문을 쳐다봐?",
+      "normalAnswer": "누가 올까 봐 무서워서요.",
+      "doppelAnswer": "저 문이 열리면 당신을 어떻게 고문할지 상상 중이었습니다."
+    },
+    {
+      "id": 22,
+      "animal": "강아지",
+      "type": "핵심",
+      "question": "앞발 좀 들어봐.",
+      "normalAnswer": "얍! 이렇게요?",
+      "doppelAnswer": "(관절이 거꾸로 꺾이며 사람의 손가락이 튀어나온다)"
+    },
+    {
+      "id": 23,
+      "animal": "고양이",
+      "type": "일상",
+      "question": "털이 많이 빠지네.",
+      "normalAnswer": "스트레스 받아서 털갈이하나 봐요.",
+      "doppelAnswer": "제 피부가 녹아내리며 살점과 함께 떨어지고 있는 겁니다."
+    },
+    {
+      "id": 24,
+      "animal": "고양이",
+      "type": "일상",
+      "question": "츄르 줄까?",
+      "normalAnswer": "냥! 엄청 맛있겠다!",
+      "doppelAnswer": "당신의 척수액을 짜내어 먹는 것이 더 맛있습니다."
+    },
+    {
+      "id": 25,
+      "animal": "고양이",
+      "type": "핵심",
+      "question": "높은 곳에서 떨어지면 어떻게 돼?",
+      "normalAnswer": "고양이는 사뿐하게 착지하죠!",
+      "doppelAnswer": "두개골이 쩍 갈라지며 뇌수가 쏟아지는 소리가 납니다. 해보실래요?"
+    },
+    {
+      "id": 26,
+      "animal": "고양이",
+      "type": "핵심",
+      "question": "혀가 왜 이렇게 거칠어?",
+      "normalAnswer": "털을 골라야 해서 까칠까칠해요.",
+      "doppelAnswer": "이 혀로 당신의 뼈에 붙은 살코기를 발라내기 위해서입니다."
+    },
+    {
+      "id": 27,
+      "animal": "고양이",
+      "type": "일상",
+      "question": "쥐를 잡아본 적 있어?",
+      "normalAnswer": "아니요, 쥐는 징그러워서 싫어요.",
+      "doppelAnswer": "쥐 대신 인간의 아이를 씹어 삼켜본 적은 있습니다."
+    },
+    {
+      "id": 28,
+      "animal": "고양이",
+      "type": "핵심",
+      "question": "야행성이라 밤에 잘 보이지?",
+      "normalAnswer": "네, 어두워도 문제없어요.",
+      "doppelAnswer": "당신이 오늘 밤 어떻게 죽을지 제 눈에는 아주 선명하게 보입니다."
+    },
+    {
+      "id": 29,
+      "animal": "고양이",
+      "type": "일상",
+      "question": "꼬리가 왜 그렇게 길어?",
+      "normalAnswer": "원래 이렇게 길고 유연해요.",
+      "doppelAnswer": "이건 꼬리가 아니라 제 척추의 일부가 튀어나온 촉수입니다."
+    },
+    {
+      "id": 30,
+      "animal": "고양이",
+      "type": "핵심",
+      "question": "물을 왜 싫어해?",
+      "normalAnswer": "털이 젖으면 무겁고 추우니까요.",
+      "doppelAnswer": "물에 닿으면 제가 덮어쓴 이 가죽이 녹아내리기 때문입니다."
+    },
+    {
+      "id": 31,
+      "animal": "고양이",
+      "type": "일상",
+      "question": "그루밍은 했어?",
+      "normalAnswer": "방금 일어나서 깨끗하게 했죠.",
+      "doppelAnswer": "내장을 전부 꺼내서 피를 핥아 닦았습니다."
+    },
+    {
+      "id": 32,
+      "animal": "고양이",
+      "type": "핵심",
+      "question": "동공이 엄청 커졌네?",
+      "normalAnswer": "주변이 어두워서 그래요.",
+      "doppelAnswer": "당신의 목을 물어뜯기 전의 흥분 상태를 감출 수 없군요."
+    },
+    {
+      "id": 33,
+      "animal": "고양이",
+      "type": "일상",
+      "question": "골골송 좀 불러줘.",
+      "normalAnswer": "가르릉... 기분 좋아요.",
+      "doppelAnswer": "(목구멍 안에서 성인 남성의 숨 넘어가는 끔찍한 기침 소리가 난다)"
+    },
+    {
+      "id": 34,
+      "animal": "고양이",
+      "type": "핵심",
+      "question": "수염은 무슨 역할을 해?",
+      "normalAnswer": "좁은 곳을 지날 때 길을 알려주죠.",
+      "doppelAnswer": "당신의 피부에 닿았을 때 신경을 마비시키는 독침입니다."
+    },
+    {
+      "id": 35,
+      "animal": "고양이",
+      "type": "일상",
+      "question": "식빵 굽고 있네?",
+      "normalAnswer": "웅크리고 있는 게 제일 편해요.",
+      "doppelAnswer": "다리가 4개 다 절단되어 숨겨두고 있는 겁니다."
+    },
+    {
+      "id": 36,
+      "animal": "고양이",
+      "type": "핵심",
+      "question": "생선 냄새가 나는 것 같아.",
+      "normalAnswer": "아까 몰래 참치캔을 먹었어요.",
+      "doppelAnswer": "시체가 부패할 때 나는 냄새를 착각하신 겁니다."
+    },
+    {
+      "id": 37,
+      "animal": "고양이",
+      "type": "일상",
+      "question": "발바닥 젤리 만져 봐도 돼?",
+      "normalAnswer": "말랑말랑하죠? 냥!",
+      "doppelAnswer": "누르는 순간 젤리가 터지며 거머리 떼가 쏟아질 겁니다."
+    },
+    {
+      "id": 38,
+      "animal": "고양이",
+      "type": "핵심",
+      "question": "네 그림자가 왜 안 움직여?",
+      "normalAnswer": "가만히 있으니까 그렇죠!",
+      "doppelAnswer": "제 본체는 이미 당신의 등 뒤 천장에 매달려 있으니까요."
+    },
+    {
+      "id": 39,
+      "animal": "고양이",
+      "type": "일상",
+      "question": "왜 자꾸 눈을 깜빡여?",
+      "normalAnswer": "먼지가 들어간 것 같아요.",
+      "doppelAnswer": "안구 안쪽에서 벌레들이 파먹고 있어서 그렇습니다."
+    },
+    {
+      "id": 40,
+      "animal": "고양이",
+      "type": "핵심",
+      "question": "방울 소리가 나네.",
+      "normalAnswer": "목에 귀여운 방울을 달았거든요.",
+      "doppelAnswer": "방울이 아니라 씹다 남은 당신 동료의 치아 부딪히는 소리입니다."
+    },
+    {
+      "id": 41,
+      "animal": "고양이",
+      "type": "일상",
+      "question": "하악질 한번 해봐.",
+      "normalAnswer": "하아아악!!",
+      "doppelAnswer": "(턱이 두 갈래로 찢어지며 식도 깊은 곳의 시뻘건 근육이 꿈틀거린다)"
+    },
+    {
+      "id": 42,
+      "animal": "고양이",
+      "type": "핵심",
+      "question": "발톱 숨길 수 있지?",
+      "normalAnswer": "그럼요, 평소엔 숨기고 다녀요.",
+      "doppelAnswer": "숨길 필요 없이 당장 당신의 안구를 찔러버리겠습니다."
+    },
+    {
+      "id": 43,
+      "animal": "고양이",
+      "type": "일상",
+      "question": "왜 자꾸 구석에 숨어있어?",
+      "normalAnswer": "거기가 안전하게 느껴져서요.",
+      "doppelAnswer": "당신이 방심할 때 목을 노리기 가장 완벽한 각도입니다."
+    },
+    {
+      "id": 44,
+      "animal": "고양이",
+      "type": "핵심",
+      "question": "창밖엔 뭐가 있어?",
+      "normalAnswer": "무서운 괴물들이 돌아다녀요.",
+      "doppelAnswer": "당신이 사랑하는 사람들이 찢겨 죽은 살점 조각들이 널려있습니다."
+    },
+    {
+      "id": 45,
+      "animal": "고양이",
+      "type": "일상",
+      "question": "넌 원래 말이 그렇게 없어?",
+      "normalAnswer": "낯을 가려서 그래요.",
+      "doppelAnswer": "당신의 시체를 씹는 상상을 하느라 말할 틈이 없군요."
+    },
+    {
+      "id": 46,
+      "animal": "토끼",
+      "type": "일상",
+      "question": "귀가 축 처졌네.",
+      "normalAnswer": "너무 무서워서 기운이 없어요.",
+      "doppelAnswer": "당신의 죽음을 듣고 싶지 않아 귀를 막은 겁니다."
+    },
+    {
+      "id": 47,
+      "animal": "토끼",
+      "type": "핵심",
+      "question": "당근 좋아해?",
+      "normalAnswer": "당연하죠! 제일 좋아하는 간식이에요.",
+      "doppelAnswer": "생고기를 씹을 때 피가 튀는 맛이 훨씬 좋습니다."
+    },
+    {
+      "id": 48,
+      "animal": "토끼",
+      "type": "일상",
+      "question": "눈이 왜 그렇게 빨개?",
+      "normalAnswer": "원래 토끼 눈은 빨갛잖아요.",
+      "doppelAnswer": "당신의 피가 눈에 튀어 굳어버린 자국입니다."
+    },
+    {
+      "id": 49,
+      "animal": "토끼",
+      "type": "핵심",
+      "question": "깡총 뛰어봐!",
+      "normalAnswer": "깡총! 몸이 엄청 가벼워요.",
+      "doppelAnswer": "(허리가 뒤로 꺾인 채 네 발로 거미처럼 벽을 타고 기어오른다)"
+    },
+    {
+      "id": 50,
+      "animal": "토끼",
+      "type": "일상",
+      "question": "코를 왜 자꾸 벌름거려?",
+      "normalAnswer": "냄새를 잘 맡으려고요.",
+      "doppelAnswer": "당신의 공포에서 나는 비릿한 냄새가 아주 훌륭합니다."
+    },
+    {
+      "id": 51,
+      "animal": "토끼",
+      "type": "핵심",
+      "question": "앞니가 왜 이렇게 길어?",
+      "normalAnswer": "딱딱한 걸 갉아먹어야 해서요.",
+      "doppelAnswer": "당신의 두개골을 뚫어 뇌를 파먹기 가장 좋은 각도로 진화했습니다."
+    },
+    {
+      "id": 52,
+      "animal": "토끼",
+      "type": "일상",
+      "question": "털이 뭉쳐있어.",
+      "normalAnswer": "씻지 못해서 엉켰어요.",
+      "doppelAnswer": "희생자들의 굳은 피와 머리카락이 엉켜붙은 겁니다."
+    },
+    {
+      "id": 53,
+      "animal": "토끼",
+      "type": "핵심",
+      "question": "넌 초식동물이지?",
+      "normalAnswer": "네, 풀이랑 채소만 먹어요.",
+      "doppelAnswer": "오늘은 특별히 따뜻한 인육을 맛보고 싶군요."
+    },
+    {
+      "id": 54,
+      "animal": "토끼",
+      "type": "일상",
+      "question": "뒷다리 힘이 세지?",
+      "normalAnswer": "네! 엄청 빨리 달릴 수 있어요.",
+      "doppelAnswer": "이 다리로 당신의 흉부를 걷어차 갈비뼈를 산산조각 내겠습니다."
+    },
+    {
+      "id": 55,
+      "animal": "토끼",
+      "type": "핵심",
+      "question": "소리에 민감하지?",
+      "normalAnswer": "네, 작은 소리에도 잘 놀라요.",
+      "doppelAnswer": "당신이 비명을 지르며 죽어갈 때 가장 황홀한 소리를 듣게 되겠죠."
+    },
+    {
+      "id": 56,
+      "animal": "토끼",
+      "type": "일상",
+      "question": "꼬리가 뭉툭해서 귀엽다.",
+      "normalAnswer": "헤헤, 이게 매력이죠.",
+      "doppelAnswer": "이 꼬리를 뽑으면 척수가 줄줄 흘러나옵니다. 만져볼래요?"
+    },
+    {
+      "id": 57,
+      "animal": "토끼",
+      "type": "핵심",
+      "question": "왜 계속 눈을 뜨고 있어?",
+      "normalAnswer": "주변을 경계해야 하니까요.",
+      "doppelAnswer": "안검을 다 잘라냈습니다. 당신이 죽는 순간을 단 1초도 놓치고 싶지 않아서요."
+    },
+    {
+      "id": 58,
+      "animal": "토끼",
+      "type": "일상",
+      "question": "발바닥에 털이 많네.",
+      "normalAnswer": "미끄러지지 않으려고요.",
+      "doppelAnswer": "인간의 살가죽을 꿰매어 붙인 신발입니다."
+    },
+    {
+      "id": 59,
+      "animal": "토끼",
+      "type": "핵심",
+      "question": "심장 뛰는 소리가 안 나.",
+      "normalAnswer": "너무 작아서 안 들리는 거예요.",
+      "doppelAnswer": "저는 살아있는 생명체가 아니니까요. 저는 저주입니다."
+    },
+    {
+      "id": 60,
+      "animal": "토끼",
+      "type": "일상",
+      "question": "넌 혼자 사는 게 안 외로워?",
+      "normalAnswer": "조금 외롭지만 어쩔 수 없죠.",
+      "doppelAnswer": "제 머릿속에 수십 명의 영혼이 비명을 지르고 있어서 시끄럽습니다."
+    },
+    {
+      "id": 61,
+      "animal": "토끼",
+      "type": "핵심",
+      "question": "번식력이 엄청나다며?",
+      "normalAnswer": "부끄럽게 왜 그런 걸 물어봐요!",
+      "doppelAnswer": "당신의 배 속에 이미 제 알들을 수십 개 낳아두었습니다."
+    },
+    {
+      "id": 62,
+      "animal": "토끼",
+      "type": "일상",
+      "question": "털 색깔이 예쁘네.",
+      "normalAnswer": "하얗고 깨끗해서 자랑스러워요.",
+      "doppelAnswer": "이 하얀 털이 당신의 피로 붉게 물드는 상상을 하면 짜릿합니다."
+    },
+    {
+      "id": 63,
+      "animal": "토끼",
+      "type": "핵심",
+      "question": "굴 파는 거 잘해?",
+      "normalAnswer": "네! 뒷다리로 엄청 잘 파요.",
+      "doppelAnswer": "당신을 묻어버릴 무덤 정도는 1분이면 팔 수 있습니다."
+    },
+    {
+      "id": 64,
+      "animal": "토끼",
+      "type": "일상",
+      "question": "숨소리가 너무 거칠어.",
+      "normalAnswer": "도망 다니느라 너무 힘들어서요.",
+      "doppelAnswer": "폐가 썩어문드러져서 숨을 쉴 때마다 고름이 터지고 있습니다."
+    },
+    {
+      "id": 65,
+      "animal": "토끼",
+      "type": "핵심",
+      "question": "풀 냄새가 나야 하는데 안 나네?",
+      "normalAnswer": "며칠 동안 굶어서 그래요.",
+      "doppelAnswer": "저번 주에 먹은 사람의 부패한 시체 냄새가 아직 덜 빠졌나 봅니다."
+    },
+    {
+      "id": 66,
+      "animal": "토끼",
+      "type": "일상",
+      "question": "계속 쳐다보지 마.",
+      "normalAnswer": "그냥 당신이 신기해서요.",
+      "doppelAnswer": "눈을 마주친 순간 당신의 수명은 이미 카운트다운을 시작했습니다."
+    },
+    {
+      "id": 67,
+      "animal": "토끼",
+      "type": "핵심",
+      "question": "왜 그림자가 너랑 다르게 생겼어?",
+      "normalAnswer": "기분 탓이에요. 빛이 이상한가 봐요.",
+      "doppelAnswer": "(그림자가 거대한 괴물의 형상으로 변하며 플레이어의 목을 조르는 시늉을 한다)"
+    }
+  ]
+}
