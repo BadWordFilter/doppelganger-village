@@ -38,7 +38,7 @@ namespace DoppelgangerVillage.Player
 
             // 커서 잠금/해제 (브라우저는 사용자 입력 프레임에서만 잠금 허용, UI가 떠 있으면 잠그지 않음)
             if (mouse.leftButton.wasPressedThisFrame && Cursor.lockState != CursorLockMode.Locked
-                && _target != null && !UI.DialogueUI.IsOpen && !UI.SettlementUI.IsShowing)
+                && _target != null && !UI.DialogueUI.IsOpen && !UI.SettlementUI.IsShowing && !UI.IntroNoteUI.IsShowing)
                 Cursor.lockState = CursorLockMode.Locked;
             if (kb != null && kb.escapeKey.wasPressedThisFrame)
                 Cursor.lockState = CursorLockMode.None;

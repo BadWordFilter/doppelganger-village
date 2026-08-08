@@ -97,6 +97,7 @@ namespace DoppelgangerVillage.UI
             _roomBadge.gameObject.SetActive(true);
             UpdateBadge();
             GameManager.Instance.SpawnLocalPlayer();
+            IntroNoteUI.Show(); // 튜토리얼 쪽지 (기획서 원문)
         }
 
         public override void OnPlayerEnteredRoom(PunPlayer newPlayer) => UpdateBadge();

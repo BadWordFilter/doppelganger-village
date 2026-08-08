@@ -48,7 +48,7 @@ namespace DoppelgangerVillage.Player
 
             // 이동 입력 (대화/정산 UI·게임 종료·기절 시 입력 차단 — 스태미나 회복은 유지)
             if (_stunTimer > 0f) _stunTimer -= Time.deltaTime;
-            bool uiLocked = _stunTimer > 0f || UI.DialogueUI.IsOpen || UI.SettlementUI.IsShowing
+            bool uiLocked = _stunTimer > 0f || UI.DialogueUI.IsOpen || UI.SettlementUI.IsShowing || UI.IntroNoteUI.IsShowing
                 || (Judgement.JudgementDirector.Instance != null && Judgement.JudgementDirector.Instance.GameEnded);
             Vector2 input = Vector2.zero;
             if (!uiLocked)

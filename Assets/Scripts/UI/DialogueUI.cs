@@ -199,6 +199,7 @@ namespace DoppelgangerVillage.UI
         {
             if (_current == null) return;
             var target = _current;
+            if (mirror) ScreenFX.MirrorFlash(); // 눈 감고 거울 비추기 연출
             VerdictChosen?.Invoke(target, mirror);
             // 판정 처리(구출/퇴치/도주·드랍)는 4단계 JudgementDirector가 구독해 수행
             if (VerdictChosen == null)
