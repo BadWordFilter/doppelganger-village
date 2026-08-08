@@ -19,8 +19,9 @@ namespace DoppelgangerVillage
         public void SpawnLocalPlayer()
         {
             Vector2 r = Random.insideUnitCircle * 3f;
-            Vector3 pos = new Vector3(r.x, 0.1f, r.y);
+            Vector3 pos = new Vector3(r.x, 0.1f, r.y - 10f); // 트레일러(남쪽) 앞
             PhotonNetwork.Instantiate("PlayerAvatar", pos, Quaternion.identity);
+            Village.VillageDirector.EnsureAssigned(); // 마스터만 실제 동작
         }
     }
 }
