@@ -11,8 +11,8 @@ namespace DoppelgangerVillage.Player
     {
         public float Yaw { get; private set; }
 
-        private const float Distance = 4.0f;
-        private const float PivotHeight = 1.1f; // 2등신 캐릭터 기준
+        private const float Distance = 4.5f;
+        private const float PivotHeight = 1.55f; // 사람(정상 비율) 플레이어 기준
         private const float Sensitivity = 0.12f;
 
         private float _pitch = 18f;
