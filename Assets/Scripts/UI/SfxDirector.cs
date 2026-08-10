@@ -244,12 +244,297 @@ namespace DoppelgangerVillage.UI
                 "howl" => Howl(),
                 "creak" => Creak(),
                 "heart" => Heart(),
+                "cry_bark" => Bark(),
+                "cry_meow" => Meow(),
+                "cry_growl" => Growl(),
+                "cry_wolf" => WolfCry(),
+                "cry_oink" => Oink(),
+                "cry_bat" => BatScreech(),
+                "cry_hoot" => Hoot(),
+                "cry_baa" => Baa(),
+                "cry_squeak" => Squeak(),
+                "scream" => Scream(),
+                "crack" => Crack(),
+                "laugh" => Laugh(),
                 _ => null,
             };
             if (data == null) return null;
             var clip = AudioClip.Create(name, data.Length, 1, SR, false);
             clip.SetData(data, 0);
             return clip;
+        }
+
+        // ---- 동물 울음소리 (종 이름 → 클립 매핑) — 대사 속 의성어를 실제 소리로 ----
+        public static void PlayCry(string species, float volume = 0.8f)
+        {
+            string clip = species switch
+            {
+                "강아지" => "cry_bark",
+                "고양이" => "cry_meow",
+                "곰" => "cry_growl",
+                "늑대" => "cry_wolf",
+                "돼지" => "cry_oink",
+                "박쥐" => "cry_bat",
+                "올빼미" => "cry_hoot",
+                "양" => "cry_baa",
+                "토끼" => "cry_squeak",
+                _ => null,
+            };
+            if (clip != null) Play(clip, volume);
+        }
+
+        // 강아지: 짧은 짖음 2연타
+        private static float[] Bark()
+        {
+            int n = (int)(SR * 0.45f);
+            var d = new float[n];
+            var rng = new System.Random(31);
+            void Yip(float at)
+            {
+                int start = (int)(at * SR);
+                int len = (int)(SR * 0.14f);
+                for (int i = 0; i < len && start + i < n; i++)
+                {
+                    float t = i / (float)SR;
+                    float f = Mathf.Lerp(360f, 230f, t / 0.14f);
+                    float env = Mathf.Clamp01(t * 60f) * Mathf.Exp(-t * 20f);
+                    d[start + i] += (Mathf.Sin(2f * Mathf.PI * f * t) * 0.6f
+                                     + Mathf.Sin(2f * Mathf.PI * f * 2f * t) * 0.3f
+                                     + ((float)rng.NextDouble() * 2f - 1f) * 0.25f) * env;
+                }
+            }
+            Yip(0f);
+            Yip(0.22f);
+            return d;
+        }
+
+        // 고양이: 야옹 — 올라갔다 내려오는 활음 + 비브라토
+        private static float[] Meow()
+        {
+            int n = (int)(SR * 0.7f);
+            var d = new float[n];
+            for (int i = 0; i < n; i++)
+            {
+                float t = i / (float)SR;
+                float f = 460f + 330f * Mathf.Sin(Mathf.PI * t / 0.7f) + Mathf.Sin(2f * Mathf.PI * 26f * t) * 10f;
+                float env = Mathf.Sin(Mathf.PI * t / 0.7f);
+                d[i] = (Mathf.Sin(2f * Mathf.PI * f * t) * 0.5f
+                        + Mathf.Sin(2f * Mathf.PI * f * 2f * t) * 0.2f
+                        + Mathf.Sin(2f * Mathf.PI * f * 3f * t) * 0.1f) * env * 0.8f;
+            }
+            return d;
+        }
+
+        // 곰: 낮은 그르렁
+        private static float[] Growl()
+        {
+            int n = (int)(SR * 1.0f);
+            var d = new float[n];
+            var rng = new System.Random(33);
+            float noise = 0f;
+            for (int i = 0; i < n; i++)
+            {
+                float t = i / (float)SR;
+                noise = Mathf.Lerp(noise, (float)rng.NextDouble() * 2f - 1f, 0.08f);
+                float am = 0.6f + 0.4f * Mathf.Sin(2f * Mathf.PI * 14f * t);
+                float env = Mathf.Clamp01(t * 8f) * Mathf.Clamp01((1.0f - t) * 4f);
+                d[i] = (Mathf.Sin(2f * Mathf.PI * 72f * t) * 0.55f
+                        + Mathf.Sin(2f * Mathf.PI * 144f * t) * 0.25f + noise * 0.35f) * am * env;
+            }
+            return d;
+        }
+
+        // 늑대: 가까운 하울 — 길게 올라가 유지되는 울음
+        private static float[] WolfCry()
+        {
+            int n = (int)(SR * 1.6f);
+            var d = new float[n];
+            for (int i = 0; i < n; i++)
+            {
+                float t = i / (float)SR;
+                float rise = Mathf.SmoothStep(0f, 1f, Mathf.Clamp01(t / 0.5f));
+                float f = Mathf.Lerp(300f, 510f, rise) + Mathf.Sin(2f * Mathf.PI * 5f * t) * 16f;
+                float env = Mathf.Sin(Mathf.PI * Mathf.Clamp01(t / 1.6f));
+                d[i] = (Mathf.Sin(2f * Mathf.PI * f * t) * 0.6f
+                        + Mathf.Sin(2f * Mathf.PI * f * 2f * t) * 0.15f) * env * 0.7f;
+            }
+            return d;
+        }
+
+        // 돼지: 꿀꿀 — 콧소리 그런트 2회
+        private static float[] Oink()
+        {
+            int n = (int)(SR * 0.5f);
+            var d = new float[n];
+            var rng = new System.Random(35);
+            void Grunt(float at)
+            {
+                int start = (int)(at * SR);
+                int len = (int)(SR * 0.16f);
+                for (int i = 0; i < len && start + i < n; i++)
+                {
+                    float t = i / (float)SR;
+                    float am = 0.4f + 0.6f * Mathf.Abs(Mathf.Sin(2f * Mathf.PI * 30f * t));
+                    float env = Mathf.Sin(Mathf.PI * t / 0.16f);
+                    d[start + i] += (Mathf.Sin(2f * Mathf.PI * 150f * t) * 0.5f
+                                     + Mathf.Sin(2f * Mathf.PI * 300f * t) * 0.3f
+                                     + ((float)rng.NextDouble() * 2f - 1f) * 0.3f) * am * env;
+                }
+            }
+            Grunt(0f);
+            Grunt(0.26f);
+            return d;
+        }
+
+        // 박쥐: 높은 끼익 3연속 하강 첩
+        private static float[] BatScreech()
+        {
+            int n = (int)(SR * 0.4f);
+            var d = new float[n];
+            void Chirp(float at)
+            {
+                int start = (int)(at * SR);
+                int len = (int)(SR * 0.09f);
+                for (int i = 0; i < len && start + i < n; i++)
+                {
+                    float t = i / (float)SR;
+                    float f = Mathf.Lerp(2300f, 1550f, t / 0.09f);
+                    float env = Mathf.Sin(Mathf.PI * t / 0.09f);
+                    d[start + i] += Mathf.Sin(2f * Mathf.PI * f * t) * env * 0.55f;
+                }
+            }
+            Chirp(0f);
+            Chirp(0.13f);
+            Chirp(0.26f);
+            return d;
+        }
+
+        // 올빼미: 부-엉 — 부드러운 저음 2음
+        private static float[] Hoot()
+        {
+            int n = (int)(SR * 0.9f);
+            var d = new float[n];
+            void Note(float at, float dur, float freq)
+            {
+                int start = (int)(at * SR);
+                int len = (int)(SR * dur);
+                for (int i = 0; i < len && start + i < n; i++)
+                {
+                    float t = i / (float)SR;
+                    float env = Mathf.Pow(Mathf.Sin(Mathf.PI * t / dur), 2f);
+                    d[start + i] += (Mathf.Sin(2f * Mathf.PI * freq * t) * 0.6f
+                                     + Mathf.Sin(2f * Mathf.PI * freq * 2f * t) * 0.12f) * env;
+                }
+            }
+            Note(0f, 0.28f, 392f);
+            Note(0.4f, 0.36f, 327f);
+            return d;
+        }
+
+        // 양: 메에에 — 강한 비브라토(블리트)
+        private static float[] Baa()
+        {
+            int n = (int)(SR * 0.8f);
+            var d = new float[n];
+            for (int i = 0; i < n; i++)
+            {
+                float t = i / (float)SR;
+                float f = 470f + Mathf.Sin(2f * Mathf.PI * 9f * t) * 30f;
+                float am = 0.55f + 0.45f * Mathf.Abs(Mathf.Sin(2f * Mathf.PI * 9f * t));
+                float env = Mathf.Sin(Mathf.PI * Mathf.Clamp01(t / 0.8f));
+                d[i] = (Mathf.Sin(2f * Mathf.PI * f * t) * 0.45f
+                        + Mathf.Sin(2f * Mathf.PI * f * 2f * t) * 0.25f
+                        + Mathf.Sin(2f * Mathf.PI * f * 3f * t) * 0.12f) * am * env;
+            }
+            return d;
+        }
+
+        // 토끼: 짧고 여린 삑삑 2회
+        private static float[] Squeak()
+        {
+            int n = (int)(SR * 0.32f);
+            var d = new float[n];
+            void Chirp(float at)
+            {
+                int start = (int)(at * SR);
+                int len = (int)(SR * 0.1f);
+                for (int i = 0; i < len && start + i < n; i++)
+                {
+                    float t = i / (float)SR;
+                    float f = Mathf.Lerp(1100f, 1520f, t / 0.1f);
+                    float env = Mathf.Sin(Mathf.PI * t / 0.1f);
+                    d[start + i] += Mathf.Sin(2f * Mathf.PI * f * t) * env * 0.4f;
+                }
+            }
+            Chirp(0f);
+            Chirp(0.16f);
+            return d;
+        }
+
+        // ---- 공포 지문용 SFX: 대사 속 소리 묘사를 실제 소리로 ----
+
+        // 비명 — 노이즈 섞인 고음 스윕
+        private static float[] Scream()
+        {
+            int n = (int)(SR * 1.0f);
+            var d = new float[n];
+            var rng = new System.Random(41);
+            for (int i = 0; i < n; i++)
+            {
+                float t = i / (float)SR;
+                float f = 750f + 550f * Mathf.Sin(Mathf.PI * t / 1.0f) + Mathf.Sin(2f * Mathf.PI * 40f * t) * 60f;
+                float env = Mathf.Clamp01(t * 12f) * Mathf.Clamp01((1.0f - t) * 3f);
+                d[i] = (Mathf.Sin(2f * Mathf.PI * f * t) * 0.45f
+                        + Mathf.Sin(2f * Mathf.PI * f * 2.7f * t) * 0.2f
+                        + ((float)rng.NextDouble() * 2f - 1f) * 0.3f) * env * 0.8f;
+            }
+            return d;
+        }
+
+        // 뼈 부러지는 소리 — 둔탁한 틱 4연타
+        private static float[] Crack()
+        {
+            int n = (int)(SR * 0.45f);
+            var d = new float[n];
+            var rng = new System.Random(43);
+            void Tick(float at, float amp)
+            {
+                int start = (int)(at * SR);
+                int len = (int)(SR * 0.035f);
+                for (int i = 0; i < len && start + i < n; i++)
+                {
+                    float t = i / (float)SR;
+                    float env = Mathf.Exp(-t * 130f);
+                    d[start + i] += (((float)rng.NextDouble() * 2f - 1f) * 0.7f
+                                     + Mathf.Sin(2f * Mathf.PI * 190f * t) * 0.5f) * env * amp;
+                }
+            }
+            Tick(0f, 0.8f);
+            Tick(0.07f, 1f);
+            Tick(0.18f, 0.7f);
+            Tick(0.27f, 0.95f);
+            return d;
+        }
+
+        // 기괴한 웃음 — 하강하는 펄스 5회 (미세 디튠 2성부)
+        private static float[] Laugh()
+        {
+            int n = (int)(SR * 1.1f);
+            var d = new float[n];
+            for (int p = 0; p < 5; p++)
+            {
+                int start = (int)(p * 0.18f * SR);
+                int len = (int)(SR * 0.13f);
+                float f0 = 520f - p * 34f;
+                for (int i = 0; i < len && start + i < n; i++)
+                {
+                    float t = i / (float)SR;
+                    float env = Mathf.Sin(Mathf.PI * t / 0.13f);
+                    d[start + i] += (Mathf.Sin(2f * Mathf.PI * f0 * t) * 0.4f
+                                     + Mathf.Sin(2f * Mathf.PI * (f0 * 1.02f) * t) * 0.35f) * env;
+                }
+            }
+            return d;
         }
 
         // 정산 "두둥" — 저음 북소리 2연타

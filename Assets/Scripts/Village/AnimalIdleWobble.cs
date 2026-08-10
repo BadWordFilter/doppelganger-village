@@ -25,6 +25,7 @@ namespace DoppelgangerVillage.Village
 
         private AnimalCitizen _citizen;
         private Quaternion _baseRotation;
+        private float _cryTimer = 15f;
 
         private void Update()
         {
@@ -50,7 +51,8 @@ namespace DoppelgangerVillage.Village
                 }
             }
 
-            // 이따금 통통
+            // 이따금 통통 (연출 모션 중엔 위치 간섭 금지)
+            if (_citizen != null && _citizen.IsActing) { _hopHeight = 0f; return; }
             _hopTimer -= Time.deltaTime;
             if (_hopTimer <= 0f)
             {
@@ -62,6 +64,15 @@ namespace DoppelgangerVillage.Village
                 _hopHeight = Mathf.Max(0f, _hopHeight - Time.deltaTime * 0.5f);
                 var p = transform.localPosition;
                 transform.localPosition = new Vector3(p.x, Mathf.PingPong(_hopHeight * 4f, 0.14f), p.z);
+            }
+
+            // 이따금 울음소리 (가까운 미판정 개체만 — 마을에 생기)
+            _cryTimer -= Time.deltaTime;
+            if (_cryTimer <= 0f)
+            {
+                _cryTimer = Random.Range(18f, 40f);
+                if (_citizen != null && !_citizen.IsResolved)
+                    AnimalPerformance.Cry(_citizen, 0.35f);
             }
         }
     }

@@ -99,6 +99,103 @@ namespace DoppelgangerVillage.Village
             if (citizen != null) citizen.IsActing = false;
         }
 
+        /// <summary>순한 일상 모션 (울음·행동 묘사가 대사에 있을 때 실제로 수행).</summary>
+        public enum CuteMotion { Hop, Wag, Tilt, Nod, Stretch, Flutter }
+
+        public static void PlayCute(AnimalCitizen citizen, CuteMotion motion)
+        {
+            if (citizen == null || !citizen.gameObject.activeInHierarchy || citizen.IsActing) return;
+            var host = Dialogue.DialogueDirector.Instance;
+            if (host == null) return;
+            host.StartCoroutine(RunCute(citizen, motion));
+        }
+
+        private static IEnumerator RunCute(AnimalCitizen citizen, CuteMotion motion)
+        {
+            citizen.IsActing = true;
+            var root = citizen.transform;
+            var head = FindDeep(root, "Head");
+            Vector3 basePos = root.localPosition;
+            Quaternion baseRot = root.localRotation;
+            Vector3 baseScale = root.localScale;
+            Quaternion headRot = head != null ? head.localRotation : Quaternion.identity;
+
+            float t = 0f;
+            switch (motion)
+            {
+                case CuteMotion.Hop: // 폴짝폴짝 3회
+                    for (int hop = 0; hop < 3; hop++)
+                    {
+                        t = 0f;
+                        while (t < 0.3f)
+                        {
+                            t += Time.deltaTime;
+                            root.localPosition = basePos + Vector3.up * (Mathf.Sin(Mathf.PI * Mathf.Clamp01(t / 0.3f)) * 0.32f);
+                            yield return null;
+                        }
+                    }
+                    break;
+                case CuteMotion.Wag: // 꼬리 치듯 엉덩이 씰룩
+                    while (t < 1.2f)
+                    {
+                        t += Time.deltaTime;
+                        root.localRotation = baseRot * Quaternion.Euler(0f, Mathf.Sin(t * 18f) * 9f, 0f);
+                        yield return null;
+                    }
+                    break;
+                case CuteMotion.Tilt: // 고개 갸웃
+                    if (head != null)
+                    {
+                        while (t < 0.4f)
+                        {
+                            t += Time.deltaTime;
+                            head.localRotation = headRot * Quaternion.Euler(0f, 0f, 24f * Mathf.SmoothStep(0f, 1f, t / 0.4f));
+                            yield return null;
+                        }
+                        yield return new WaitForSeconds(0.8f);
+                    }
+                    break;
+                case CuteMotion.Nod: // 끄덕끄덕
+                    if (head != null)
+                    {
+                        while (t < 1.0f)
+                        {
+                            t += Time.deltaTime;
+                            head.localRotation = headRot * Quaternion.Euler(Mathf.Abs(Mathf.Sin(t * 6.28f)) * 22f, 0f, 0f);
+                            yield return null;
+                        }
+                    }
+                    break;
+                case CuteMotion.Stretch: // 기지개
+                    while (t < 1.1f)
+                    {
+                        t += Time.deltaTime;
+                        float k = Mathf.Sin(Mathf.PI * Mathf.Clamp01(t / 1.1f));
+                        root.localScale = new Vector3(baseScale.x * (1f - 0.08f * k), baseScale.y * (1f + 0.18f * k), baseScale.z * (1f - 0.08f * k));
+                        yield return null;
+                    }
+                    break;
+                case CuteMotion.Flutter: // 날개 파닥 (박쥐·올빼미)
+                    while (t < 1.0f)
+                    {
+                        t += Time.deltaTime;
+                        root.localPosition = basePos + Vector3.up * (0.12f + Mathf.Sin(t * 40f) * 0.03f);
+                        root.localRotation = baseRot * Quaternion.Euler(0f, 0f, Mathf.Sin(t * 30f) * 6f);
+                        yield return null;
+                    }
+                    break;
+            }
+
+            if (root != null)
+            {
+                root.localPosition = basePos;
+                root.localRotation = baseRot;
+                root.localScale = baseScale;
+            }
+            if (head != null) head.localRotation = headRot;
+            if (citizen != null) citizen.IsActing = false;
+        }
+
         private static bool Contains(string text, params string[] keys)
         {
             foreach (var k in keys)

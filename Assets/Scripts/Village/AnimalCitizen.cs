@@ -28,6 +28,11 @@ namespace DoppelgangerVillage.Village
         /// <summary>남은 질문 횟수 관리는 대화 시스템(3단계)에서 처리한다.</summary>
         public int QuestionsAsked { get; set; }
 
+        private void Start()
+        {
+            CharacterStyler.Apply(transform); // 아웃라인 + 바닥 그림자
+        }
+
         public void Configure(int id, string type, bool nocturnal = false)
         {
             citizenId = id;

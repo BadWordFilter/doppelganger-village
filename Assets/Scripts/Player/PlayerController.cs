@@ -82,6 +82,7 @@ namespace DoppelgangerVillage.Player
         private void Start()
         {
             ApplyCustomization(); // 모든 아바타 공통 — 소유자의 색 선택 반영
+            Village.CharacterStyler.Apply(transform); // 아웃라인 + 바닥 그림자
             if (!photonView.IsMine) return;
             Local = this;
             _rig = ThirdPersonCameraRig.AttachTo(transform);

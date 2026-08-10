@@ -57,31 +57,39 @@ namespace DoppelgangerVillage.UI
             if (_root != null) return;
             var canvas = UiKit.CreateCanvas("DialogueCanvas", 20);
 
-            var panel = UiKit.CreatePanel(canvas.transform, new Color(0.05f, 0.06f, 0.09f, 0.94f), "DialoguePanel");
+            var panel = UiKit.CreatePanel(canvas.transform, new Color(0.10f, 0.09f, 0.08f, 0.96f), "DialoguePanel");
             UiKit.SetRect(panel, new Vector2(0.5f, 0f), new Vector2(1500, 430), new Vector2(0, 20));
             panel.pivot = new Vector2(0.5f, 0f);
             _root = panel.gameObject;
 
-            _speciesLabel = UiKit.CreateText(panel, "", 30, new Color(0.95f, 0.9f, 0.75f), TextAnchor.MiddleLeft, true);
-            UiKit.SetRect(_speciesLabel.rectTransform, new Vector2(0f, 1f), new Vector2(400, 44), new Vector2(28, -16));
-            _speciesLabel.rectTransform.pivot = new Vector2(0f, 1f);
+            // 이름표 태그 — 패널 상단에 걸쳐 있는 비주얼노벨식 명패
+            var namePlate = UiKit.CreatePanel(panel, new Color(0.72f, 0.55f, 0.32f, 1f), "NamePlate");
+            UiKit.SetRect(namePlate, new Vector2(0f, 1f), new Vector2(280, 52), new Vector2(28, 22));
+            namePlate.pivot = new Vector2(0f, 1f);
+            _speciesLabel = UiKit.CreateText(namePlate, "", 27, new Color(0.13f, 0.09f, 0.05f), TextAnchor.MiddleCenter, true);
+            UiKit.Stretch(_speciesLabel.rectTransform);
 
             _countLabel = UiKit.CreateText(panel, "", 24, new Color(0.75f, 0.75f, 0.8f), TextAnchor.MiddleRight, true);
             UiKit.SetRect(_countLabel.rectTransform, new Vector2(1f, 1f), new Vector2(300, 40), new Vector2(-28, -18));
             _countLabel.rectTransform.pivot = new Vector2(1f, 1f);
 
-            _answerText = UiKit.CreateText(panel, "", 27, new Color(0.92f, 0.92f, 0.9f), TextAnchor.UpperLeft);
-            UiKit.SetRect(_answerText.rectTransform, new Vector2(0f, 1f), new Vector2(1050, 120), new Vector2(28, -66));
-            _answerText.rectTransform.pivot = new Vector2(0f, 1f);
+            // 답변 말풍선 — 살짝 밝은 인셋
+            var answerBubble = UiKit.CreatePanel(panel, new Color(0.17f, 0.155f, 0.14f, 1f), "AnswerBubble");
+            UiKit.SetRect(answerBubble, new Vector2(0f, 1f), new Vector2(1070, 132), new Vector2(24, -52));
+            answerBubble.pivot = new Vector2(0f, 1f);
+            _answerText = UiKit.CreateText(answerBubble, "", 27, new Color(0.94f, 0.93f, 0.90f), TextAnchor.UpperLeft);
+            UiKit.Stretch(_answerText.rectTransform);
+            _answerText.rectTransform.offsetMin = new Vector2(20, 10);
+            _answerText.rectTransform.offsetMax = new Vector2(-20, -12);
             _answerText.supportRichText = true;
 
             _warnText = UiKit.CreateText(panel, "", 20, new Color(0.95f, 0.55f, 0.5f), TextAnchor.MiddleLeft);
-            UiKit.SetRect(_warnText.rectTransform, new Vector2(0f, 1f), new Vector2(1050, 30), new Vector2(28, -190));
+            UiKit.SetRect(_warnText.rectTransform, new Vector2(0f, 1f), new Vector2(1050, 30), new Vector2(28, -196));
             _warnText.rectTransform.pivot = new Vector2(0f, 1f);
 
             for (int i = 0; i < GameConfig.ChoicesPerRound; i++)
             {
-                var btn = UiKit.CreateButton(panel, "", 24, new Color(0.16f, 0.18f, 0.24f), new Color(0.92f, 0.92f, 0.9f));
+                var btn = UiKit.CreateButton(panel, "", 24, new Color(0.21f, 0.19f, 0.16f), new Color(0.93f, 0.91f, 0.86f));
                 UiKit.SetRect((RectTransform)btn.transform, new Vector2(0f, 0f), new Vector2(1020, 54), new Vector2(28, 24 + (GameConfig.ChoicesPerRound - 1 - i) * 62));
                 ((RectTransform)btn.transform).pivot = new Vector2(0f, 0f);
                 var label = btn.GetComponentInChildren<Text>();
@@ -136,6 +144,7 @@ namespace DoppelgangerVillage.UI
             _speciesLabel.text = $"{citizen.AnimalType} 주민";
             _answerText.text = Stylize("(당신을 물끄러미 바라본다)");
             _warnText.text = "";
+            Village.AnimalPerformance.Cry(citizen, 0.6f); // 말을 걸면 제 울음소리로 인사
             RefreshChoices();
         }
 
@@ -158,7 +167,7 @@ namespace DoppelgangerVillage.UI
                 _choiceButtons[i].gameObject.SetActive(has);
                 if (has)
                 {
-                    _choiceLabels[i].text = _choices[i].question;
+                    _choiceLabels[i].text = $"›  {_choices[i].question}";
                     _choiceButtons[i].interactable = true;
                 }
             }
@@ -174,12 +183,16 @@ namespace DoppelgangerVillage.UI
 
         private void OnQuestionAnswered(int citizenId, DialogueEntry entry, bool abnormal, int newCount, int actorNumber)
         {
-            // 연출 지문은 텍스트가 아니라 캐릭터 모션으로 — 근처의 모든 클라이언트에서 재생
+            // 연출 지문·울음·행동은 텍스트가 아니라 실제 모션·소리로 — 근처의 모든 클라이언트에서 재생
             string shown = abnormal ? entry.doppelAnswer : entry.normalAnswer;
-            if (DialogueEntry.IsStageDirection(shown))
             {
                 var target = FindCitizen(citizenId);
-                if (target != null) StageDirectionActor.Play(target, shown, abnormal);
+                if (target != null)
+                {
+                    if (DialogueEntry.IsStageDirection(shown))
+                        StageDirectionActor.Play(target, shown, abnormal);
+                    Village.AnimalPerformance.Perform(target, shown, abnormal);
+                }
             }
 
             if (_current == null || _current.CitizenId != citizenId) return;
@@ -203,6 +216,7 @@ namespace DoppelgangerVillage.UI
                 foreach (var r in target.GetComponentsInChildren<MeshRenderer>())
                     r.material.SetColor("_BaseColor", new Color(0.45f, 0.08f, 0.08f));
                 StageDirectionActor.DistortFace(target); // 눈이 커지고 검붉게 — 얼굴 붕괴
+                Village.AnimalPerformance.Horror(target, "crack", 0.85f); // 관절 꺾이는 소리
                 target.IsResolved = true; // 돌변한 개체는 더 이상 대화 불가
             }
 
