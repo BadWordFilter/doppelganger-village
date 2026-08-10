@@ -80,7 +80,7 @@ namespace DoppelgangerVillage.Dialogue
             // 4번째 질문 시도 = 과잉 심문: 도플갱어가 눈치채고 돌변
             if (citizen.QuestionsAsked >= GameConfig.MaxQuestionsPerAnimal)
             {
-                photonView.RPC(nameof(RpcOverInterrogation), RpcTarget.All, citizenId, actorNumber);
+                photonView.RPC(nameof(RpcOverInterrogation), RpcTarget.AllBuffered, citizenId, actorNumber);
                 return;
             }
 
@@ -93,28 +93,38 @@ namespace DoppelgangerVillage.Dialogue
                 abnormal = UnityEngine.Random.value < chance;
             }
 
-            photonView.RPC(nameof(RpcQuestionResult), RpcTarget.All,
+            photonView.RPC(nameof(RpcQuestionResult), RpcTarget.AllBuffered,
                 citizenId, entryId, abnormal, citizen.QuestionsAsked + 1, actorNumber);
         }
 
         [PunRPC]
-        private void RpcQuestionResult(int citizenId, int entryId, bool abnormal, int newCount, int actorNumber)
+        private void RpcQuestionResult(int citizenId, int entryId, bool abnormal, int newCount, int actorNumber, PhotonMessageInfo info)
         {
             var citizen = Citizen(citizenId);
             var entry = Database.ById(entryId);
             if (citizen == null || entry == null) return;
             citizen.QuestionsAsked = newCount;
+            // 버퍼 재생(늦은 합류): 질문 횟수만 복원, 연출·UI 이벤트는 생략
+            if (PhotonNetwork.Time - info.SentServerTime > 8.0) return;
             QuestionAnswered?.Invoke(citizenId, entry, abnormal, newCount, actorNumber);
         }
 
         [PunRPC]
-        private void RpcOverInterrogation(int citizenId, int actorNumber)
+        private void RpcOverInterrogation(int citizenId, int actorNumber, PhotonMessageInfo info)
         {
-            Debug.Log($"[Dialogue] 과잉 심문! 시민 {citizenId} 이(가) 돌변하여 액터 {actorNumber} 을(를) 공격");
-            OverInterrogated?.Invoke(citizenId, actorNumber);
-
             var citizen = Citizen(citizenId);
             if (citizen == null) return;
+
+            // 버퍼 재생(늦은 합류): 해당 시민을 판정 완료·비활성 상태로만 복원
+            if (PhotonNetwork.Time - info.SentServerTime > 8.0)
+            {
+                citizen.IsResolved = true;
+                citizen.gameObject.SetActive(false);
+                return;
+            }
+
+            Debug.Log($"[Dialogue] 과잉 심문! 시민 {citizenId} 이(가) 돌변하여 액터 {actorNumber} 을(를) 공격");
+            OverInterrogated?.Invoke(citizenId, actorNumber);
             StartCoroutine(HideAfter(citizen, 1.3f));
             // 돌변 → 추격자 스폰 (마스터 소유 룸 오브젝트, 전 클라이언트 위치 동기화)
             if (PhotonNetwork.IsMasterClient)

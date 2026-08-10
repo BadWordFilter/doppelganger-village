@@ -97,7 +97,7 @@ namespace DoppelgangerVillage.Judgement
                     _infiltrators++; // 오답 — 정산 때 차감
                 }
                 // 기획: 오답(도플갱어를 보냄)이면 얼굴이 기괴하게 변하며 느릿느릿 걸어간다 — 정체가 드러나지만 막을 수 없다
-                photonView.RPC(nameof(RpcApplyVerdict), RpcTarget.All, citizenId, isDoppel ? 3 : 0, drop, actorNumber, DisplayRescued, _parts);
+                photonView.RPC(nameof(RpcApplyVerdict), RpcTarget.AllBuffered, citizenId, isDoppel ? 3 : 0, drop, actorNumber, DisplayRescued, _parts);
             }
             else
             {
@@ -105,7 +105,7 @@ namespace DoppelgangerVillage.Judgement
                 int kind;
                 if (isDoppel) { _banished++; kind = 1; } // 퇴치 성공
                 else { _fled++; kind = 2; }              // 진짜에게 거울 — 겁먹고 도주 (구출 실패)
-                photonView.RPC(nameof(RpcApplyVerdict), RpcTarget.All, citizenId, kind, "", actorNumber, DisplayRescued, _parts);
+                photonView.RPC(nameof(RpcApplyVerdict), RpcTarget.AllBuffered, citizenId, kind, "", actorNumber, DisplayRescued, _parts);
             }
 
             CheckPhase();
@@ -138,7 +138,7 @@ namespace DoppelgangerVillage.Judgement
             bool realGoal = final >= GameConfig.RescueGoal && _parts >= GameConfig.PartsGoal;
             int outcome = realGoal ? 1 : (all == 0 ? 2 : 0);
 
-            photonView.RPC(nameof(RpcSettlement), RpcTarget.All,
+            photonView.RPC(nameof(RpcSettlement), RpcTarget.AllBuffered,
                 _trueRescued, _infiltrators, final, _parts, _banished, _fled, all, outcome);
 
             // 정산 차감 반영 후 계속 (기획: 잠입 도플 1마리당 구출 주민 -1) → 페이즈 전환
@@ -159,11 +159,19 @@ namespace DoppelgangerVillage.Judgement
         }
 
         [PunRPC]
-        private void RpcApplyVerdict(int citizenId, int kind, string drop, int actorNumber, int displayRescued, int parts)
+        private void RpcApplyVerdict(int citizenId, int kind, string drop, int actorNumber, int displayRescued, int parts, PhotonMessageInfo info)
         {
             var citizen = FindCitizen(citizenId);
             if (citizen == null) return;
             citizen.IsResolved = true;
+
+            // 버퍼 재생(늦은 합류): 상태만 복원 — 연출·토스트 생략
+            if (PhotonNetwork.Time - info.SentServerTime > 8.0)
+            {
+                citizen.gameObject.SetActive(false);
+                ProgressChanged?.Invoke(displayRescued, parts);
+                return;
+            }
 
             switch (kind)
             {
@@ -213,9 +221,15 @@ namespace DoppelgangerVillage.Judgement
 
         [PunRPC]
         private void RpcSettlement(int trueRescued, int infiltrators, int finalRescued, int parts,
-            int banished, int fled, int remaining, int outcome)
+            int banished, int fled, int remaining, int outcome, PhotonMessageInfo info)
         {
             if (outcome != 0) GameEnded = true;
+            // 버퍼 재생(늦은 합류): 진행 수치만 복원. 단, 게임이 이미 끝났다면 종료 화면은 보여준다
+            if (PhotonNetwork.Time - info.SentServerTime > 8.0 && outcome == 0)
+            {
+                ProgressChanged?.Invoke(finalRescued, parts);
+                return;
+            }
             var s = new Settlement
             {
                 trueRescued = trueRescued,

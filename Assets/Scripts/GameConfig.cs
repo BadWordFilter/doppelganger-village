@@ -7,8 +7,8 @@ namespace DoppelgangerVillage
     public static class GameConfig
     {
         // ---- 승리 조건 ----
-        public const int RescueGoal = 5; // 구출해야 하는 진짜 주민 수 (플레이테스트: 상향)
-        public const int PartsGoal = 5;  // 모아야 하는 트레일러 수리 부품 수
+        public const int RescueGoal = 7; // 구출해야 하는 진짜 주민 수 (플레이테스트 2차: 하루 클리어 방지 상향)
+        public const int PartsGoal = 7;  // 모아야 하는 트레일러 수리 부품 수 — 2~3일차까지 이어지는 분량
 
         // ---- 낮/밤 사이클 (플레이테스트: 낮 시간제한) ----
         public static float DayDurationSeconds = 300f;   // 낮 5분 → 해질녘 정산 → 밤

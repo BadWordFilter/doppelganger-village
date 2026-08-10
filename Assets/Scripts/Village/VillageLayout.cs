@@ -47,32 +47,61 @@ namespace DoppelgangerVillage.Village
 
             Vector3 trailer = new Vector3(0f, 0f, -22f);
             Vector3 plaza = new Vector3(0f, 0f, 2f);
+            Vector3 zoneCenter = FogBoundary.Center;
             var placed = new List<Vector3> { trailer };
 
-            // 집 9채: 트레일러·광장·서로에게서 최소 거리를 지키며 산개 배치
+            // 집 9채: 구역별 밴드 배치 — 거주(1일차 경계 안) / 상업·의료(경계 밖, 2일차 해금)
+            string[] bandByHouse = { "거주", "거주", "거주", "상업", "상업", "상업", "거주", "거주", "상업" }; // speciesByHouse 순서와 동일
             var houses = new List<Transform>();
             foreach (Transform h in housesRoot.transform) houses.Add(h);
-            foreach (var h in houses)
+            for (int hi = 0; hi < houses.Count; hi++)
             {
-                Vector3 pos = Vector3.zero;
+                var h = houses[hi];
+                bool residential = hi < bandByHouse.Length && bandByHouse[hi] == "거주";
+                float rMin = residential ? 8f : FogBoundary.Day1Radius + 4f;   // 상업은 1일차 경계 밖
+                float rMax = residential ? FogBoundary.Day1Radius - 3f : FogBoundary.FullRadius - 2.5f;
+                Vector3 pos = zoneCenter + new Vector3(0f, 0f, rMin);
                 bool ok = false;
-                for (int attempt = 0; attempt < 60 && !ok; attempt++)
+                for (int attempt = 0; attempt < 80 && !ok; attempt++)
                 {
                     float angle = (float)(rng.NextDouble() * Mathf.PI * 2.0);
-                    float radius = 11f + (float)rng.NextDouble() * 17f; // 11~28m
-                    pos = new Vector3(Mathf.Cos(angle) * radius, 0f, Mathf.Sin(angle) * radius * 0.9f + 2f);
-                    if (Mathf.Abs(pos.x) > 30f || Mathf.Abs(pos.z) > 30f) continue;
-                    if ((pos - trailer).magnitude < 13f) continue;   // 안전구역 주변 비움
-                    if ((pos - plaza).magnitude < 8f) continue;      // 광장 비움
+                    float radius = rMin + (float)rng.NextDouble() * (rMax - rMin);
+                    pos = zoneCenter + new Vector3(Mathf.Cos(angle) * radius, 0f, Mathf.Sin(angle) * radius);
+                    if (Mathf.Abs(pos.x) > 32f || Mathf.Abs(pos.z) > 32f) continue;
+                    if ((pos - trailer).magnitude < 10f) continue;   // 안전구역 주변 비움
+                    if ((pos - plaza).magnitude < 7f) continue;      // 광장 비움
                     ok = true;
                     foreach (var p in placed)
-                        if ((pos - p).magnitude < 10f) { ok = false; break; } // 집 간 최소 10m
+                        if ((pos - p).magnitude < 9f) { ok = false; break; } // 집 간 최소 9m
                 }
                 placed.Add(pos);
                 h.position = pos;
                 Vector3 dir = (plaza - pos).normalized;
                 float jitter = (float)(rng.NextDouble() * 80.0 - 40.0); // 광장 방향 ±40도
                 h.rotation = Quaternion.LookRotation(new Vector3(dir.x, 0f, dir.z)) * Quaternion.Euler(0f, jitter, 0f);
+            }
+
+            // 야행성 시민: 외곽 밴드 (밤에 경계가 열리면 도달 가능)
+            var nocturnalIds = new[] { 11, 12, 13 };
+            foreach (int nid in nocturnalIds)
+            {
+                var noct = FindCitizen(nid);
+                if (noct == null) continue;
+                for (int attempt = 0; attempt < 40; attempt++)
+                {
+                    float angle = (float)(rng.NextDouble() * Mathf.PI * 2.0);
+                    float radius = FogBoundary.FullRadius - 5f + (float)rng.NextDouble() * 3f;
+                    Vector3 pos = zoneCenter + new Vector3(Mathf.Cos(angle) * radius, 0f, Mathf.Sin(angle) * radius);
+                    if (Mathf.Abs(pos.x) > 32f || Mathf.Abs(pos.z) > 32f) continue;
+                    bool clear = true;
+                    foreach (var p in placed)
+                        if ((pos - p).magnitude < 7f) { clear = false; break; }
+                    if (!clear) continue;
+                    noct.transform.position = pos;
+                    noct.transform.rotation = Quaternion.LookRotation((zoneCenter - pos).normalized);
+                    placed.Add(pos);
+                    break;
+                }
             }
 
             // 주간 동물을 자기 집 앞으로 이동 (집 순서 ↔ 동물 id 매핑은 씬 구축 규칙과 동일)

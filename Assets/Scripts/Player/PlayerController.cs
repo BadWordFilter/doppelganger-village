@@ -65,7 +65,8 @@ namespace DoppelgangerVillage.Player
 
             // 이동 입력 (대화/정산 UI·게임 종료·기절 시 입력 차단 — 스태미나 회복은 유지)
             if (_stunTimer > 0f) _stunTimer -= Time.deltaTime;
-            bool uiLocked = _stunTimer > 0f || UI.DialogueUI.IsOpen || UI.SettlementUI.IsShowing || UI.IntroNoteUI.IsShowing || UI.MenuUI.IsOpen
+            bool uiLocked = _stunTimer > 0f || CurrentHp <= 0f // 감염(HP 0) = 사망 판정 — 움직일 수 없다
+                || UI.DialogueUI.IsOpen || UI.SettlementUI.IsShowing || UI.IntroNoteUI.IsShowing || UI.MenuUI.IsOpen
                 || (Judgement.JudgementDirector.Instance != null && Judgement.JudgementDirector.Instance.GameEnded);
             Vector2 input = Vector2.zero;
             if (!uiLocked)
@@ -137,6 +138,7 @@ namespace DoppelgangerVillage.Player
             {
                 Debug.Log("[Player] HP 0 — 도플갱어에게 감염되었다");
                 UI.ToastUI.Show("의식이 흐려진다... 도플갱어에게 감염되었다.");
+                UI.ScreenFX.ShowInfected();
                 if (Judgement.JudgementDirector.Instance != null)
                     Judgement.JudgementDirector.Instance.NotifyLocalInfected();
             }

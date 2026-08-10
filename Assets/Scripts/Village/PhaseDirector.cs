@@ -57,8 +57,11 @@ namespace DoppelgangerVillage.Village
         private System.Collections.IEnumerator StartAfterTimeSync()
         {
             yield return new WaitForSeconds(1.5f); // 입장 직후 서버 시계 동기화 대기 (로컬→서버 시간 점프 레이스 방지)
-            photonView.RPC(nameof(RpcBeginDay), RpcTarget.All, 1, PhotonNetwork.Time + GameConfig.DayDurationSeconds);
+            photonView.RPC(nameof(RpcBeginDay), RpcTarget.AllBuffered, 1, PhotonNetwork.Time + GameConfig.DayDurationSeconds);
         }
+
+        /// <summary>버퍼 재생(늦은 합류)으로 도착한 과거 이벤트인지 — 상태만 적용하고 연출은 생략한다.</summary>
+        private static bool IsStale(PhotonMessageInfo info) => PhotonNetwork.Time - info.SentServerTime > 8.0;
 
         /// <summary>수신한 종료 시각이 내 시계 기준으로 말이 안 되면(과거이거나 지나치게 미래) 로컬 재계산으로 자가 보정.</summary>
         private double SanitizeEndTime(double endTime, float duration)
@@ -87,14 +90,15 @@ namespace DoppelgangerVillage.Village
         {
             if (!PhotonNetwork.IsMasterClient) return;
             if (!IsNight)
-                photonView.RPC(nameof(RpcBeginNight), RpcTarget.All, PhotonNetwork.Time + GameConfig.NightDurationSeconds);
+                photonView.RPC(nameof(RpcBeginNight), RpcTarget.AllBuffered, PhotonNetwork.Time + GameConfig.NightDurationSeconds);
             else
-                photonView.RPC(nameof(RpcBeginDay), RpcTarget.All, DayNumber + 1, PhotonNetwork.Time + GameConfig.DayDurationSeconds);
+                photonView.RPC(nameof(RpcBeginDay), RpcTarget.AllBuffered, DayNumber + 1, PhotonNetwork.Time + GameConfig.DayDurationSeconds);
         }
 
         [PunRPC]
-        private void RpcBeginDay(int day, double endTime)
+        private void RpcBeginDay(int day, double endTime, PhotonMessageInfo info)
         {
+            bool stale = IsStale(info);
             IsNight = false;
             DayNumber = day;
             _phaseEndTime = SanitizeEndTime(endTime, GameConfig.DayDurationSeconds);
@@ -126,52 +130,43 @@ namespace DoppelgangerVillage.Village
                     PhotonNetwork.Destroy(chaser.gameObject);
             }
 
-            // 일차별 구역 해금 (기획 5절): 1일차엔 상업·의료 구역이 안개에 잠겨 있다
-            if (day == 1) LockCommercialZone();
-            else UnlockCommercialZone(day == 2);
+            // 일차별 구역 해금 (기획 5절): 안개 경계가 바깥으로 물러나며 구역이 넓어진다
+            if (day == 1)
+            {
+                LockCommercialZone();
+                FogBoundary.SetRadius(FogBoundary.Day1Radius, false, this);
+            }
+            else
+            {
+                UnlockCommercialZone(day == 2 && !stale);
+                FogBoundary.SetRadius(FogBoundary.FullRadius, !stale, this);
+            }
 
-            if (day > 1) UI.ToastUI.Show($"{day}일차 아침이 밝았다. 아직 구조를 기다리는 주민들이 있다.");
+            if (day > 1 && !stale) UI.ToastUI.Show($"{day}일차 아침이 밝았다. 아직 구조를 기다리는 주민들이 있다.");
         }
 
         private static bool IsCommercialSpecies(string type) => type == "돼지" || type == "곰" || type == "양";
-        private readonly System.Collections.Generic.List<GameObject> _zoneFogs = new();
 
-        /// <summary>1일차: 상업·의료 구역을 안개로 잠근다 (동물 비활성 + 안개 구체).</summary>
+        /// <summary>1일차: 경계 밖 상업·의료 구역 동물 비활성 (구역 자체는 FogBoundary가 막는다).</summary>
         private void LockCommercialZone()
         {
             foreach (var c in FindObjectsByType<AnimalCitizen>(FindObjectsInactive.Include, FindObjectsSortMode.None))
                 if (!c.IsNocturnal && !c.IsResolved && IsCommercialSpecies(c.AnimalType))
                     c.gameObject.SetActive(false);
-
-            if (_zoneFogs.Count > 0) return;
-            var fogMat = Resources.Load<Material>("ZoneFog");
-            foreach (var house in VillageLayout.CommercialHouses)
-            {
-                if (house == null) continue;
-                var fog = GameObject.CreatePrimitive(PrimitiveType.Sphere);
-                Object.Destroy(fog.GetComponent<Collider>());
-                fog.name = "ZoneFog";
-                fog.transform.position = house.position + Vector3.up * 2f;
-                fog.transform.localScale = new Vector3(14f, 9f, 14f);
-                if (fogMat != null) fog.GetComponent<MeshRenderer>().sharedMaterial = fogMat;
-                _zoneFogs.Add(fog);
-            }
         }
 
-        /// <summary>2일차 아침: 안개가 걷히며 상업·의료 구역 해금.</summary>
+        /// <summary>2일차 아침: 경계가 물러나며 상업·의료 구역 해금.</summary>
         private void UnlockCommercialZone(bool announce)
         {
-            foreach (var fog in _zoneFogs)
-                if (fog != null) Object.Destroy(fog);
-            _zoneFogs.Clear();
-            // 시민 활성화는 RpcBeginDay의 공통 루프가 이미 처리 — 여기서는 안개 제거만
+            // 시민 활성화는 RpcBeginDay의 공통 루프가 이미 처리
             if (announce)
-                UI.ToastUI.Show("안개가 걷히며 상업·의료 구역이 드러났다... 낯선 주민들이 보인다.");
+                UI.ToastUI.Show("안개 경계가 멀리 물러난다... 마을이 넓어지고, 낯선 주민들이 보인다.");
         }
 
         [PunRPC]
-        private void RpcBeginNight(double endTime)
+        private void RpcBeginNight(double endTime, PhotonMessageInfo info)
         {
+            bool stale = IsStale(info);
             IsNight = true;
             _phaseEndTime = SanitizeEndTime(endTime, GameConfig.NightDurationSeconds);
             _cycleRunning = true;
@@ -202,7 +197,9 @@ namespace DoppelgangerVillage.Village
                 c.gameObject.SetActive(c.IsNocturnal);
             }
 
-            UI.ToastUI.Show("밤이 찾아왔다... 야행성 주민이 깨어나고, 놈들이 마을을 배회한다.");
+            // 밤: 경계가 열린다 — 야행성 구역까지 나갈 수 있지만, 놈들도 배회한다
+            FogBoundary.SetRadius(FogBoundary.FullRadius, !stale, this);
+            if (!stale) UI.ToastUI.Show("밤이 찾아왔다... 경계가 열리고, 야행성 주민과 놈들이 깨어난다.");
 
             // 밤 배회 도플갱어 스폰 (마스터)
             if (PhotonNetwork.IsMasterClient)

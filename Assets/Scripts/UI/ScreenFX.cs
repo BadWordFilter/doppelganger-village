@@ -24,6 +24,19 @@ namespace DoppelgangerVillage.UI
             _instance.StartCoroutine(_instance.MirrorRoutine());
         }
 
+        /// <summary>감염(HP 0): 검붉은 화면이 서서히 덮이고 유지된다.</summary>
+        public static void ShowInfected()
+        {
+            if (_instance == null) return;
+            _instance.StartCoroutine(_instance.InfectedRoutine());
+        }
+
+        private IEnumerator InfectedRoutine()
+        {
+            EnsureBuilt();
+            yield return Fade(_overlay.color, new Color(0.30f, 0.02f, 0.03f, 0.55f), 2.0f);
+        }
+
         private void EnsureBuilt()
         {
             if (_overlay != null) return;
