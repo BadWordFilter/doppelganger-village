@@ -6,9 +6,9 @@ namespace DoppelgangerVillage
     /// </summary>
     public static class GameConfig
     {
-        // ---- 승리 조건 ----
-        public const int RescueGoal = 7; // 구출해야 하는 진짜 주민 수 (플레이테스트 2차: 하루 클리어 방지 상향)
-        public const int PartsGoal = 7;  // 모아야 하는 트레일러 수리 부품 수 — 2~3일차까지 이어지는 분량
+        // ---- 승리 조건 (기획: 11일차+ 스케일 — 다일차 생존 분량) ----
+        public const int RescueGoal = 10; // 구출해야 하는 진짜 주민 수
+        public const int PartsGoal = 10;  // 모아야 하는 트레일러 수리 부품 수
 
         // ---- 낮/밤 사이클 (플레이테스트: 낮 시간제한) ----
         public static float DayDurationSeconds = 300f;   // 낮 5분 → 해질녘 정산 → 밤
@@ -25,16 +25,16 @@ namespace DoppelgangerVillage
         public static readonly float[] DoppelRevealChanceByQuestion = { 0.10f, 0.30f, 0.60f };
 
         // ---- 판정 드랍 (진짜 주민 구출 시 — 드랍 없음도 있어 도플갱어가 통계로 안 들키게) ----
-        public const float PartDropChance = 0.65f;   // 수리 부품
+        public const float PartDropChance = 0.70f;   // 수리 부품
         public const float MedkitDropChance = 0.10f; // 구급상자 (HP 회복)
         public const float FoodDropChance = 0.10f;   // 식량 (연출용) — 나머지 15%는 드랍 없음
         public const float MedkitHeal = 30f;
 
         // ---- 배정 ----
-        public const int MinDoppelgangers = 3;  // 게임 시작 시 마스터가 랜덤 배정
-        public const int MaxDoppelgangers = 4;
-        public const int MinAnimals = 10;       // 맵에 등장하는 주간 동물 개체 수 범위
-        public const int MaxAnimals = 11;
+        public const int MinDoppelgangers = 4;  // 게임 시작 시 마스터가 랜덤 배정
+        public const int MaxDoppelgangers = 5;
+        public const int MinAnimals = 16;       // 맵에 등장하는 주간 동물 개체 수 범위
+        public const int MaxAnimals = 16;
 
         // ---- 추격자 (돌변한 도플갱어 — 배회→감지→추격 FSM, 플레이테스트로 완화) ----
         public const float ChaserRoamSpeed = 2.0f;

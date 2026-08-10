@@ -60,11 +60,28 @@ namespace DoppelgangerVillage.Quest
             photonView.RPC(nameof(RpcAssign), RpcTarget.AllBuffered, actorNumber, species, 1, part);
         }
 
-        [PunRPC]
-        private void RpcAssign(int actorNumber, string species, int targetCount, string partName)
+        /// <summary>마스터 전용: 새 일차 아침마다 전원에게 새 과제 배정 (기획: 일차별 과제 갱신).</summary>
+        public void ReassignAllForNewDay()
         {
+            if (!PhotonNetwork.IsMasterClient) return;
+            foreach (var p in PhotonNetwork.PlayerList)
+            {
+                string species = DaySpecies[UnityEngine.Random.Range(0, DaySpecies.Length)];
+                string part = PartNames[UnityEngine.Random.Range(0, PartNames.Length)];
+                photonView.RPC(nameof(RpcAssign), RpcTarget.AllBuffered, p.ActorNumber, species, 1, part);
+            }
+        }
+
+        [PunRPC]
+        private void RpcAssign(int actorNumber, string species, int targetCount, string partName, PhotonMessageInfo info)
+        {
+            bool hadQuest = _quests.ContainsKey(actorNumber);
             _quests[actorNumber] = new Quest { species = species, targetCount = targetCount, partName = partName };
             QuestsChanged?.Invoke();
+            // 새 일차 과제 갱신 알림 (버퍼 재생·자기 최초 배정은 조용히)
+            if (hadQuest && PhotonNetwork.InRoom && actorNumber == PhotonNetwork.LocalPlayer.ActorNumber
+                && PhotonNetwork.Time - info.SentServerTime < 8.0)
+                UI.ToastUI.Show($"오늘의 개인 과제: {species} 시민 구출 → 전담 부품 '{partName}'");
         }
 
         /// <summary>

@@ -16,6 +16,8 @@ namespace DoppelgangerVillage.UI
 
         private const int SR = 44100;
 
+        private AudioSource _ambientSource;
+
         private void Awake()
         {
             _instance = this;
@@ -24,6 +26,87 @@ namespace DoppelgangerVillage.UI
             _source.playOnAwake = false;
             _source.spatialBlend = 0f;
             _source.volume = 0.55f;
+
+            _ambientSource = gameObject.AddComponent<AudioSource>();
+            _ambientSource.playOnAwake = false;
+            _ambientSource.loop = true;
+            _ambientSource.spatialBlend = 0f;
+            _ambientSource.volume = 0.22f;
+        }
+
+        /// <summary>낮/밤 앰비언트 루프 전환 (코드 합성 — 낮: 온화한 패드+새소리, 밤: 저음 드론+바람).</summary>
+        public static void PlayAmbient(bool night)
+        {
+            if (_instance == null) return;
+            string key = night ? "amb_night" : "amb_day";
+            if (!_clips.TryGetValue(key, out var clip))
+            {
+                var data = night ? AmbientNight() : AmbientDay();
+                clip = AudioClip.Create(key, data.Length, 1, SR, false);
+                clip.SetData(data, 0);
+                _clips[key] = clip;
+            }
+            if (_instance._ambientSource.clip == clip && _instance._ambientSource.isPlaying) return;
+            _instance._ambientSource.clip = clip;
+            _instance._ambientSource.Play();
+        }
+
+        // 낮: 장조 패드 + 드문 새소리 (8초 루프)
+        private static float[] AmbientDay()
+        {
+            int n = SR * 8;
+            var d = new float[n];
+            var rng = new System.Random(11);
+            for (int i = 0; i < n; i++)
+            {
+                float t = i / (float)SR;
+                float trem = 0.75f + 0.25f * Mathf.Sin(2f * Mathf.PI * 0.25f * t);
+                d[i] = (Mathf.Sin(2f * Mathf.PI * 261.625f * t) + Mathf.Sin(2f * Mathf.PI * 329.75f * t) * 0.7f
+                        + Mathf.Sin(2f * Mathf.PI * 392f * t) * 0.5f) * 0.05f * trem;
+            }
+            for (int c = 0; c < 5; c++) // 새소리 블립
+            {
+                int start = rng.Next(0, n - SR / 2);
+                float f0 = 2100f + rng.Next(0, 900);
+                for (int i = 0; i < SR / 7; i++)
+                {
+                    float t = i / (float)SR;
+                    float env = Mathf.Sin(Mathf.PI * i / (SR / 7f));
+                    d[start + i] += Mathf.Sin(2f * Mathf.PI * (f0 + Mathf.Sin(t * 60f) * 250f) * t) * env * 0.09f;
+                }
+            }
+            FadeEdges(d);
+            return d;
+        }
+
+        // 밤: 저음 맥놀이 드론 + 바람 노이즈 (8초 루프)
+        private static float[] AmbientNight()
+        {
+            int n = SR * 8;
+            var d = new float[n];
+            var rng = new System.Random(13);
+            float noise = 0f;
+            for (int i = 0; i < n; i++)
+            {
+                float t = i / (float)SR;
+                noise = Mathf.Lerp(noise, (float)rng.NextDouble() * 2f - 1f, 0.02f); // 저역 필터 바람
+                float swell = 0.5f + 0.5f * Mathf.Sin(2f * Mathf.PI * 0.125f * t);
+                d[i] = (Mathf.Sin(2f * Mathf.PI * 55f * t) + Mathf.Sin(2f * Mathf.PI * 55.75f * t)) * 0.075f
+                       + noise * 0.05f * swell;
+            }
+            FadeEdges(d);
+            return d;
+        }
+
+        private static void FadeEdges(float[] d)
+        {
+            int fade = SR / 20;
+            for (int i = 0; i < fade; i++)
+            {
+                float k = i / (float)fade;
+                d[i] *= k;
+                d[d.Length - 1 - i] *= k;
+            }
         }
 
         public static void Play(string name, float volume = 1f)

@@ -120,6 +120,32 @@ namespace DoppelgangerVillage.Village
                     CommercialHouses.Add(h);
             }
 
+            // 추가 주민(집 없는 거리 주민, id 14~18): 종에 맞는 구역 밴드에 산개
+            foreach (int eid in new[] { 14, 15, 16, 17, 18 })
+            {
+                var extra = FindCitizen(eid);
+                if (extra == null) continue;
+                bool commercial = extra.AnimalType == "돼지" || extra.AnimalType == "곰" || extra.AnimalType == "양";
+                float rMin2 = commercial ? FogBoundary.Day1Radius + 4f : 7f;
+                float rMax2 = commercial ? FogBoundary.FullRadius - 3f : FogBoundary.Day1Radius - 3f;
+                for (int attempt = 0; attempt < 50; attempt++)
+                {
+                    float angle = (float)(rng.NextDouble() * Mathf.PI * 2.0);
+                    float radius = rMin2 + (float)rng.NextDouble() * (rMax2 - rMin2);
+                    Vector3 pos = zoneCenter + new Vector3(Mathf.Cos(angle) * radius, 0f, Mathf.Sin(angle) * radius);
+                    if (Mathf.Abs(pos.x) > 32f || Mathf.Abs(pos.z) > 32f) continue;
+                    if ((pos - trailer).magnitude < 9f || (pos - plaza).magnitude < 5f) continue;
+                    bool clear = true;
+                    foreach (var p in placed)
+                        if ((pos - p).magnitude < 6f) { clear = false; break; }
+                    if (!clear) continue;
+                    extra.transform.position = pos;
+                    extra.transform.rotation = Quaternion.Euler(0f, (float)(rng.NextDouble() * 360.0), 0f);
+                    placed.Add(pos);
+                    break;
+                }
+            }
+
             // NavMesh 런타임 재베이크 (이동한 집들이 장애물로 반영되도록)
             var ground = GameObject.Find("Ground");
             var surface = ground != null ? ground.GetComponent<NavMeshSurface>() : null;

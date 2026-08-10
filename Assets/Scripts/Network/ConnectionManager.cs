@@ -1,4 +1,6 @@
 using System;
+using System.Collections.Generic;
+using System.Linq;
 using Photon.Pun;
 using Photon.Realtime;
 using UnityEngine;
@@ -28,7 +30,11 @@ namespace DoppelgangerVillage.Network
         /// <summary>룸 입장 실패. 인자는 사유.</summary>
         public event Action<string> RoomJoinFailed;
 
+        /// <summary>열린 방 목록 갱신 (로비 UI 표시용).</summary>
+        public event Action<List<RoomInfo>> RoomListChanged;
+
         private int _createRetries;
+        private readonly Dictionary<string, RoomInfo> _roomCache = new();
 
         private void Awake()
         {
@@ -83,6 +89,17 @@ namespace DoppelgangerVillage.Network
         public override void OnConnectedToMaster()
         {
             Report("서버 접속 완료");
+            PhotonNetwork.JoinLobby(); // 열린 방 목록 수신용
+        }
+
+        public override void OnRoomListUpdate(List<RoomInfo> roomList)
+        {
+            foreach (var r in roomList)
+            {
+                if (r.RemovedFromList) _roomCache.Remove(r.Name);
+                else _roomCache[r.Name] = r;
+            }
+            RoomListChanged?.Invoke(_roomCache.Values.Where(r => r.IsOpen && r.PlayerCount > 0).ToList());
         }
 
         public override void OnJoinedRoom()

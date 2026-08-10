@@ -71,6 +71,29 @@ namespace DoppelgangerVillage.UI
             _status = UiKit.CreateText(_panelRoot.transform, "", 22, new Color(0.90f, 0.85f, 0.60f));
             UiKit.SetRect(_status.rectTransform, new Vector2(0.5f, 0.27f), new Vector2(1000, 36), Vector2.zero);
 
+            // ---- 캐릭터 색 커스터마이징 (선택은 플레이어 프로퍼티로 동기화) ----
+            var colorLabel = UiKit.CreateText(_panelRoot.transform, "캐릭터 색", 22, new Color(0.75f, 0.75f, 0.8f), TextAnchor.MiddleCenter, true);
+            UiKit.SetRect(colorLabel.rectTransform, new Vector2(0.5f, 0.20f), new Vector2(300, 32), new Vector2(-180, 0));
+            for (int i = 0; i < Player.PlayerController.ShirtPalette.Length; i++)
+            {
+                int idx = i;
+                var sw = UiKit.CreateButton(_panelRoot.transform, "", 18, Player.PlayerController.ShirtPalette[i], Color.white);
+                UiKit.SetRect((RectTransform)sw.transform, new Vector2(0.5f, 0.20f), new Vector2(44, 44), new Vector2(-60 + i * 54, 0));
+                sw.onClick.AddListener(() =>
+                {
+                    PhotonNetwork.LocalPlayer.SetCustomProperties(new ExitGames.Client.Photon.Hashtable { { "shirt", idx } });
+                    OnStatusChanged($"캐릭터 색 선택 완료 ({idx + 1}번)");
+                });
+            }
+
+            // ---- 열린 방 목록 ----
+            var listLabel = UiKit.CreateText(_panelRoot.transform, "열린 방", 22, new Color(0.75f, 0.75f, 0.8f), TextAnchor.MiddleCenter, true);
+            UiKit.SetRect(listLabel.rectTransform, new Vector2(0.5f, 0.13f), new Vector2(300, 32), new Vector2(-320, 0));
+            _roomListRoot = new GameObject("RoomList", typeof(RectTransform)).GetComponent<RectTransform>();
+            _roomListRoot.SetParent(_panelRoot.transform, false);
+            UiKit.SetRect(_roomListRoot, new Vector2(0.5f, 0.13f), new Vector2(700, 50), new Vector2(90, 0));
+            ConnectionManager.Instance.RoomListChanged += RefreshRoomList;
+
             // 입장 후 좌상단 룸 코드 배지 (동료가 코드로 합류할 수 있게 항상 표시)
             _roomBadge = UiKit.CreateText(canvas.transform, "", 24, new Color(1f, 0.95f, 0.70f), TextAnchor.MiddleLeft, true);
             UiKit.SetRect(_roomBadge.rectTransform, new Vector2(0f, 1f), new Vector2(520, 40), new Vector2(20, -24));
@@ -96,8 +119,7 @@ namespace DoppelgangerVillage.UI
             _panelRoot.SetActive(false);
             _roomBadge.gameObject.SetActive(true);
             UpdateBadge();
-            GameManager.Instance.SpawnLocalPlayer();
-            IntroNoteUI.Show(); // 튜토리얼 쪽지 (기획서 원문)
+            // 스폰·게임 시작은 대기실(WaitingRoomUI)에서 방장이 [게임 시작]을 눌렀을 때
         }
 
         public override void OnPlayerEnteredRoom(PunPlayer newPlayer) => UpdateBadge();
@@ -107,6 +129,35 @@ namespace DoppelgangerVillage.UI
         {
             if (!PhotonNetwork.InRoom || _roomBadge == null) return;
             _roomBadge.text = $"룸 코드 {PhotonNetwork.CurrentRoom.Name}  ({PhotonNetwork.CurrentRoom.PlayerCount}/{ConnectionManager.MaxPlayersPerRoom}명)";
+        }
+
+        private RectTransform _roomListRoot;
+
+        /// <summary>열린 방 목록 버튼 갱신 (최대 4개).</summary>
+        private void RefreshRoomList(System.Collections.Generic.List<Photon.Realtime.RoomInfo> rooms)
+        {
+            if (_roomListRoot == null || PhotonNetwork.InRoom) return;
+            for (int i = _roomListRoot.childCount - 1; i >= 0; i--)
+                Destroy(_roomListRoot.GetChild(i).gameObject);
+            if (rooms.Count == 0)
+            {
+                var none = UiKit.CreateText(_roomListRoot, "지금은 열린 방이 없어요 — 방을 만들어보세요", 19, new Color(0.55f, 0.55f, 0.6f));
+                UiKit.SetRect(none.rectTransform, new Vector2(0.5f, 0.5f), new Vector2(600, 30), Vector2.zero);
+                return;
+            }
+            for (int i = 0; i < rooms.Count && i < 4; i++)
+            {
+                var info = rooms[i];
+                var btn = UiKit.CreateButton(_roomListRoot, $"{info.Name}  ({info.PlayerCount}/{info.MaxPlayers})", 20, new Color(0.20f, 0.30f, 0.45f), Color.white);
+                UiKit.SetRect((RectTransform)btn.transform, new Vector2(0f, 0.5f), new Vector2(160, 44), new Vector2(10 + i * 172, 0));
+                ((RectTransform)btn.transform).pivot = new Vector2(0f, 0.5f);
+                string code = info.Name;
+                btn.onClick.AddListener(() =>
+                {
+                    SetInteractable(false);
+                    ConnectionManager.Instance.JoinRoomByCode(code);
+                });
+            }
         }
     }
 }

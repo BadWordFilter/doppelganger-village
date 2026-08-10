@@ -45,11 +45,40 @@ namespace DoppelgangerVillage.Player
                 _lantern.intensity = Village.PhaseDirector.IsNight ? 2.4f : 0f;
         }
 
+        /// <summary>커스터마이징 셔츠 팔레트 (로비 스와치와 공유).</summary>
+        public static readonly Color[] ShirtPalette =
+        {
+            new(0.90f, 0.53f, 0.24f), // 주황 (기본)
+            new(0.30f, 0.62f, 0.88f), // 하늘
+            new(0.38f, 0.72f, 0.42f), // 초록
+            new(0.90f, 0.45f, 0.60f), // 분홍
+            new(0.62f, 0.45f, 0.85f), // 보라
+            new(0.92f, 0.80f, 0.30f), // 노랑
+        };
+
         private void Start()
         {
+            ApplyCustomization(); // 모든 아바타 공통 — 소유자의 색 선택 반영
             if (!photonView.IsMine) return;
             Local = this;
             _rig = ThirdPersonCameraRig.AttachTo(transform);
+        }
+
+        /// <summary>소유자 플레이어 프로퍼티의 셔츠 색을 아바타에 적용.</summary>
+        private void ApplyCustomization()
+        {
+            int idx = 0;
+            if (photonView.Owner != null
+                && photonView.Owner.CustomProperties.TryGetValue("shirt", out object v) && v is int i)
+                idx = Mathf.Clamp(i, 0, ShirtPalette.Length - 1);
+            Color c = ShirtPalette[idx];
+            foreach (var partName in new[] { "Body", "ArmL", "ArmR" })
+            {
+                var part = Village.StageDirectionActor.FindDeep(transform, partName);
+                if (part == null) continue;
+                var r = part.GetComponent<MeshRenderer>();
+                if (r != null) r.material.SetColor("_BaseColor", c);
+            }
         }
 
         private void OnDestroy()

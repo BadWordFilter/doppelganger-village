@@ -220,6 +220,7 @@ def build_animal(species):
 
 
 def build_player():
+    # 2등신 치비 플레이어 (동물들과 같은 비율 문법 — 사용자 요청)
     clear_scene()
     pants = mat("pants", (0.30, 0.34, 0.45))
     shirt = mat("shirt", (0.90, 0.53, 0.24))
@@ -227,21 +228,20 @@ def build_player():
     hair = mat("hair", (0.28, 0.20, 0.14))
     root = empty("root")
 
-    body = sphere("Body", (0, 0, 1.02), (0.235, 0.20, 0.24), shirt, segments=10, rings=7)
+    body = sphere("Body", (0, 0, 0.38), (0.24, 0.21, 0.24), shirt, segments=10, rings=7)
     body.parent = root
-    sphere("Hips", (0, 0, 0.62), (0.20, 0.17, 0.24), pants, segments=9, rings=6, parent=body)
-    sphere("LegL", (-0.095, 0, 0.22), (0.085, 0.10, 0.24), pants, segments=8, rings=6, parent=body)
-    sphere("LegR", (0.095, 0, 0.22), (0.085, 0.10, 0.24), pants, segments=8, rings=6, parent=body)
-    sphere("ArmL", (-0.29, 0, 0.98), (0.065, 0.075, 0.20), shirt, segments=8, rings=6, parent=body)
-    sphere("ArmR", (0.29, 0, 0.98), (0.065, 0.075, 0.20), shirt, segments=8, rings=6, parent=body)
-    sphere("HandL", (-0.29, 0, 0.76), (0.055, 0.055, 0.06), skin, segments=6, rings=5, parent=body)
-    sphere("HandR", (0.29, 0, 0.76), (0.055, 0.055, 0.06), skin, segments=6, rings=5, parent=body)
+    sphere("FootL", (-0.10, -0.02, 0.06), (0.09, 0.12, 0.055), pants, segments=8, rings=5, parent=body)
+    sphere("FootR", (0.10, -0.02, 0.06), (0.09, 0.12, 0.055), pants, segments=8, rings=5, parent=body)
+    sphere("ArmL", (-0.245, 0, 0.42), (0.06, 0.07, 0.11), shirt, segments=8, rings=5, parent=body)
+    sphere("ArmR", (0.245, 0, 0.42), (0.06, 0.07, 0.11), shirt, segments=8, rings=5, parent=body)
+    sphere("HandL", (-0.245, 0, 0.30), (0.05, 0.05, 0.05), skin, segments=6, rings=5, parent=body)
+    sphere("HandR", (0.245, 0, 0.30), (0.05, 0.05, 0.05), skin, segments=6, rings=5, parent=body)
 
-    head = sphere("Head", (0, 0, 1.52), (0.20, 0.19, 0.20), skin, segments=12, rings=8)
+    head = sphere("Head", (0, -0.01, 0.88), (0.315, 0.29, 0.29), skin, segments=12, rings=8)
     head.parent = root
-    sphere("Hair", (0, 0.025, 1.60), (0.205, 0.195, 0.14), hair, segments=10, rings=6, parent=head)
-    sphere("EyeL", (-0.07, -0.165, 1.545), (0.022, 0.012, 0.03), mat("eye", EYE), segments=6, rings=4, jitter=0, parent=head)
-    sphere("EyeR", (0.07, -0.165, 1.545), (0.022, 0.012, 0.03), mat("eye", EYE), segments=6, rings=4, jitter=0, parent=head)
+    sphere("Hair", (0, 0.03, 1.02), (0.325, 0.30, 0.20), hair, segments=10, rings=6, parent=head)
+    sphere("EyeL", (-0.11, -0.25, 0.92), (0.032, 0.018, 0.045), mat("eye", EYE), segments=6, rings=4, jitter=0, parent=head)
+    sphere("EyeR", (0.11, -0.25, 0.92), (0.032, 0.018, 0.045), mat("eye", EYE), segments=6, rings=4, jitter=0, parent=head)
 
     export("player")
 

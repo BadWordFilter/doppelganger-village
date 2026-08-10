@@ -18,6 +18,7 @@ namespace DoppelgangerVillage
         /// <summary>트레일러 앞 반경 3m 랜덤 위치에 로컬 아바타 스폰 (플레이어 겹침 방지).</summary>
         public void SpawnLocalPlayer()
         {
+            if (Player.PlayerController.Local != null) return; // 중복 스폰 방지
             Vector2 r = Random.insideUnitCircle * 3f;
             Vector3 pos = new Vector3(r.x, 0.1f, r.y - 14f); // 트레일러(남쪽) 앞
             PhotonNetwork.Instantiate("PlayerAvatar", pos, Quaternion.identity);

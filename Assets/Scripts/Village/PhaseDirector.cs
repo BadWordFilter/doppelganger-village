@@ -142,7 +142,13 @@ namespace DoppelgangerVillage.Village
                 FogBoundary.SetRadius(FogBoundary.FullRadius, !stale, this);
             }
 
-            if (day > 1 && !stale) UI.ToastUI.Show($"{day}일차 아침이 밝았다. 아직 구조를 기다리는 주민들이 있다.");
+            UI.SfxDirector.PlayAmbient(false); // 낮 앰비언트
+            if (day > 1 && !stale)
+            {
+                UI.ToastUI.Show($"{day}일차 아침이 밝았다. 아직 구조를 기다리는 주민들이 있다.");
+                if (PhotonNetwork.IsMasterClient && Quest.QuestDirector.Instance != null)
+                    Quest.QuestDirector.Instance.ReassignAllForNewDay(); // 일차별 과제 갱신
+            }
         }
 
         private static bool IsCommercialSpecies(string type) => type == "돼지" || type == "곰" || type == "양";
@@ -199,6 +205,7 @@ namespace DoppelgangerVillage.Village
 
             // 밤: 경계가 열린다 — 야행성 구역까지 나갈 수 있지만, 놈들도 배회한다
             FogBoundary.SetRadius(FogBoundary.FullRadius, !stale, this);
+            UI.SfxDirector.PlayAmbient(true); // 밤 앰비언트
             if (!stale) UI.ToastUI.Show("밤이 찾아왔다... 경계가 열리고, 야행성 주민과 놈들이 깨어난다.");
 
             // 밤 배회 도플갱어 스폰 (마스터)
