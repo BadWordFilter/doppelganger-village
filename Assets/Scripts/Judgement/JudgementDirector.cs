@@ -269,16 +269,40 @@ namespace DoppelgangerVillage.Judgement
 
         private IEnumerator WalkToTrailer(AnimalCitizen citizen, float speed)
         {
+            yield return WalkPath(citizen, _trailerTarget, speed);
+        }
+
+        /// <summary>NavMesh 경로를 따라 걷는다 — 집·트레일러 등 오브젝트를 뚫지 않는다.</summary>
+        private IEnumerator WalkPath(AnimalCitizen citizen, Vector3 target, float speed)
+        {
+            var corners = ComputePathCorners(citizen.transform.position, target);
             var tr = citizen.transform;
-            Vector3 target = _trailerTarget;
-            while ((tr.position - target).sqrMagnitude > 1.2f)
+            foreach (var corner in corners)
             {
-                Vector3 dir = (target - tr.position).normalized;
-                tr.position += dir * (speed * Time.deltaTime);
-                tr.rotation = Quaternion.Slerp(tr.rotation, Quaternion.LookRotation(dir), 6f * Time.deltaTime);
-                yield return null;
+                Vector3 c = corner;
+                while (citizen != null && citizen.gameObject.activeSelf)
+                {
+                    Vector3 flat = new(c.x - tr.position.x, 0f, c.z - tr.position.z);
+                    if (flat.sqrMagnitude <= 0.25f) break;
+                    Vector3 dir = flat.normalized;
+                    tr.position += dir * (speed * Time.deltaTime);
+                    tr.rotation = Quaternion.Slerp(tr.rotation, Quaternion.LookRotation(dir), 6f * Time.deltaTime);
+                    yield return null;
+                }
+                if (citizen == null || !citizen.gameObject.activeSelf) yield break;
             }
-            citizen.gameObject.SetActive(false);
+            if (citizen != null) citizen.gameObject.SetActive(false);
+        }
+
+        private static Vector3[] ComputePathCorners(Vector3 from, Vector3 to)
+        {
+            var path = new UnityEngine.AI.NavMeshPath();
+            if (UnityEngine.AI.NavMesh.SamplePosition(from, out var h1, 3f, UnityEngine.AI.NavMesh.AllAreas)
+                && UnityEngine.AI.NavMesh.SamplePosition(to, out var h2, 3f, UnityEngine.AI.NavMesh.AllAreas)
+                && UnityEngine.AI.NavMesh.CalculatePath(h1.position, h2.position, UnityEngine.AI.NavMesh.AllAreas, path)
+                && path.corners.Length > 0)
+                return path.corners;
+            return new[] { to }; // 경로 실패 시 직선 폴백
         }
 
         private IEnumerator FlashAndVanish(AnimalCitizen citizen)
@@ -292,18 +316,10 @@ namespace DoppelgangerVillage.Judgement
 
         private IEnumerator FleeAndVanish(AnimalCitizen citizen)
         {
-            var tr = citizen.transform;
-            Vector3 dir = (tr.position - _trailerTarget).normalized;
+            Vector3 dir = (citizen.transform.position - _trailerTarget).normalized;
             dir.y = 0f;
-            float t = 0f;
-            while (t < 3.5f)
-            {
-                t += Time.deltaTime;
-                tr.position += dir * (7f * Time.deltaTime);
-                tr.rotation = Quaternion.Slerp(tr.rotation, Quaternion.LookRotation(dir), 8f * Time.deltaTime);
-                yield return null;
-            }
-            citizen.gameObject.SetActive(false);
+            Vector3 fleeTarget = citizen.transform.position + dir * 16f;
+            yield return WalkPath(citizen, fleeTarget, 7f);
         }
 
         // ---- 헬퍼 ----

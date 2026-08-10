@@ -131,7 +131,16 @@ namespace DoppelgangerVillage.Player
             if (move.sqrMagnitude > 0.01f)
                 transform.rotation = Quaternion.Slerp(transform.rotation, Quaternion.LookRotation(move), 12f * Time.deltaTime);
 
-            _verticalVel = _cc.isGrounded ? -1f : _verticalVel - 20f * Time.deltaTime;
+            if (_cc.isGrounded)
+            {
+                _verticalVel = -1f;
+                if (!uiLocked && kb.spaceKey.wasPressedThisFrame)
+                    _verticalVel = GameConfig.JumpSpeed; // 점프
+            }
+            else
+            {
+                _verticalVel -= 20f * Time.deltaTime;
+            }
             _cc.Move((move + Vector3.up * _verticalVel) * Time.deltaTime);
 
             UpdateSafeZone();
@@ -153,7 +162,7 @@ namespace DoppelgangerVillage.Player
             if (!_safeToastShownTonight)
             {
                 _safeToastShownTonight = true;
-                UI.ToastUI.Show("트레일러 곁은 안전하다... 상처가 아물고, 놈들도 다가오지 못한다.");
+                UI.ToastUI.Show("트레일러 안은 안전하다... 상처가 아물고, 놈들도 들어오지 못한다.");
             }
         }
 

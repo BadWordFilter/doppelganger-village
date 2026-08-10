@@ -11,8 +11,8 @@ namespace DoppelgangerVillage
         public const int PartsGoal = 10;  // 모아야 하는 트레일러 수리 부품 수
 
         // ---- 낮/밤 사이클 (플레이테스트: 낮 시간제한) ----
-        public static float DayDurationSeconds = 300f;   // 낮 5분 → 해질녘 정산 → 밤
-        public static float NightDurationSeconds = 150f; // 밤 2.5분 → 아침, 다음 일차
+        public static float DayDurationSeconds = 150f;  // 낮 2.5분 → 해질녘 정산 → 밤
+        public static float NightDurationSeconds = 90f; // 밤 1.5분 → 아침, 다음 일차
 
         // ---- 대화 규칙 ----
         public const int MaxQuestionsPerAnimal = 3; // 마리당 질문 제한. 4번째 시도 = 과잉 심문으로 돌변
@@ -61,6 +61,7 @@ namespace DoppelgangerVillage
         public const float StaminaRegenPerSec = 12f;   // 정지·걷기 시 회복
         public const float WalkSpeed = 4f;
         public const float RunSpeed = 7f;
+        public const float JumpSpeed = 5.5f;
         public const float ExhaustedSpeed = 2.5f;      // 스태미나 고갈 시 감속
     }
 }

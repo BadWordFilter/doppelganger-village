@@ -8,26 +8,15 @@ namespace DoppelgangerVillage.Village
     /// </summary>
     public static class SafeZone
     {
-        private static Vector3? _center;
+        // 트레일러 컨테이너 내부 (월드 고정 박스) — 안에 들어가야 안전하다
+        private static readonly Vector3 BoxMin = new(-1.05f, 0f, -25.2f);
+        private static readonly Vector3 BoxMax = new(1.05f, 2.6f, -18.8f);
 
-        public static Vector3 Center
-        {
-            get
-            {
-                if (_center == null)
-                {
-                    var marker = GameObject.Find("SafeZoneMarker");
-                    _center = marker != null ? marker.transform.position : new Vector3(0f, 0f, -18.5f);
-                }
-                return _center.Value;
-            }
-        }
+        public static Vector3 Center => new(0f, 0f, -22f);
 
-        public static bool Contains(Vector3 position)
-        {
-            Vector3 d = position - Center;
-            d.y = 0f;
-            return d.sqrMagnitude <= GameConfig.SafeZoneRadius * GameConfig.SafeZoneRadius;
-        }
+        public static bool Contains(Vector3 p) =>
+            p.x >= BoxMin.x && p.x <= BoxMax.x
+            && p.y >= BoxMin.y && p.y <= BoxMax.y
+            && p.z >= BoxMin.z && p.z <= BoxMax.z;
     }
 }

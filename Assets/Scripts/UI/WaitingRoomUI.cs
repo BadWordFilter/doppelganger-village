@@ -59,6 +59,18 @@ namespace DoppelgangerVillage.UI
             _playersText.rectTransform.pivot = new Vector2(0.5f, 1f);
             _playersText.supportRichText = true;
 
+            // 캐릭터 색 선택 (대기실에서 변경 — 전 참가자에게 실시간 반영)
+            var colorLabel = UiKit.CreateText(dim, "내 캐릭터 색", 22, new Color(0.75f, 0.75f, 0.8f), TextAnchor.MiddleCenter, true);
+            UiKit.SetRect(colorLabel.rectTransform, new Vector2(0.5f, 0.30f), new Vector2(300, 32), new Vector2(-200, 0));
+            for (int i = 0; i < Player.PlayerController.ShirtPalette.Length; i++)
+            {
+                int idx = i;
+                var sw = UiKit.CreateButton(dim, "", 18, Player.PlayerController.ShirtPalette[i], Color.white);
+                UiKit.SetRect((RectTransform)sw.transform, new Vector2(0.5f, 0.30f), new Vector2(46, 46), new Vector2(-60 + i * 56, 0));
+                sw.onClick.AddListener(() =>
+                    PhotonNetwork.LocalPlayer.SetCustomProperties(new ExitGames.Client.Photon.Hashtable { { "shirt", idx } }));
+            }
+
             _startBtn = UiKit.CreateButton(dim, "게임 시작", 28, new Color(0.80f, 0.28f, 0.24f), Color.white);
             UiKit.SetRect((RectTransform)_startBtn.transform, new Vector2(0.5f, 0.18f), new Vector2(300, 68), Vector2.zero);
             _startBtn.onClick.AddListener(() => photonView.RPC(nameof(RpcStartGame), RpcTarget.AllBuffered));
@@ -75,7 +87,13 @@ namespace DoppelgangerVillage.UI
             _codeText.text = PhotonNetwork.CurrentRoom.Name;
             string players = "";
             foreach (var p in PhotonNetwork.PlayerList)
-                players += (p.IsMasterClient ? "👑 " : "· ") + p.NickName + (p.IsLocal ? "  <color=#8fd18f>(나)</color>" : "") + "\n";
+            {
+                int shirtIdx = p.CustomProperties.TryGetValue("shirt", out object v) && v is int i
+                    ? Mathf.Clamp(i, 0, Player.PlayerController.ShirtPalette.Length - 1) : 0;
+                string hex = ColorUtility.ToHtmlStringRGB(Player.PlayerController.ShirtPalette[shirtIdx]);
+                players += $"<color=#{hex}>■</color> " + (p.IsMasterClient ? "👑 " : "") + p.NickName
+                    + (p.IsLocal ? "  <color=#8fd18f>(나)</color>" : "") + "\n";
+            }
             _playersText.text = $"참가자 {PhotonNetwork.CurrentRoom.PlayerCount}/{ConnectionManager.MaxPlayersPerRoom}\n\n{players}";
             bool isMaster = PhotonNetwork.IsMasterClient;
             _startBtn.gameObject.SetActive(isMaster);
@@ -85,6 +103,7 @@ namespace DoppelgangerVillage.UI
         public override void OnPlayerEnteredRoom(PunPlayer newPlayer) => RefreshInfo();
         public override void OnPlayerLeftRoom(PunPlayer otherPlayer) => RefreshInfo();
         public override void OnMasterClientSwitched(PunPlayer newMasterClient) => RefreshInfo();
+        public override void OnPlayerPropertiesUpdate(PunPlayer targetPlayer, ExitGames.Client.Photon.Hashtable changedProps) => RefreshInfo();
 
         [PunRPC]
         private void RpcStartGame(PhotonMessageInfo info)

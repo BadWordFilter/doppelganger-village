@@ -46,6 +46,7 @@ namespace DoppelgangerVillage.UI
                 clip.SetData(data, 0);
                 _clips[key] = clip;
             }
+            _instance.SetScares(night); // 밤에만 공포 원샷 루프
             if (_instance._ambientSource.clip == clip && _instance._ambientSource.isPlaying) return;
             _instance._ambientSource.clip = clip;
             _instance._ambientSource.Play();
@@ -79,7 +80,7 @@ namespace DoppelgangerVillage.UI
             return d;
         }
 
-        // 밤: 저음 맥놀이 드론 + 바람 노이즈 (8초 루프)
+        // 밤: 불협 저음 드론 + 심장박동 + 바람 (8초 루프) — 공포 배경음
         private static float[] AmbientNight()
         {
             int n = SR * 8;
@@ -91,10 +92,77 @@ namespace DoppelgangerVillage.UI
                 float t = i / (float)SR;
                 noise = Mathf.Lerp(noise, (float)rng.NextDouble() * 2f - 1f, 0.02f); // 저역 필터 바람
                 float swell = 0.5f + 0.5f * Mathf.Sin(2f * Mathf.PI * 0.125f * t);
-                d[i] = (Mathf.Sin(2f * Mathf.PI * 55f * t) + Mathf.Sin(2f * Mathf.PI * 55.75f * t)) * 0.075f
+                // 단2도 불협 클러스터 (50 + 52.8 + 106Hz)
+                d[i] = (Mathf.Sin(2f * Mathf.PI * 50f * t) + Mathf.Sin(2f * Mathf.PI * 52.8f * t)
+                        + Mathf.Sin(2f * Mathf.PI * 106f * t) * 0.4f) * 0.06f
                        + noise * 0.05f * swell;
             }
+            // 심장박동 (2초 주기 lub-dub × 4)
+            void Thump(float at, float amp)
+            {
+                int start = (int)(at * SR);
+                int len = (int)(SR * 0.16f);
+                for (int i = 0; i < len && start + i < n; i++)
+                {
+                    float t = i / (float)SR;
+                    d[start + i] += Mathf.Sin(2f * Mathf.PI * 48f * t) * Mathf.Exp(-t * 22f) * amp;
+                }
+            }
+            for (int b = 0; b < 4; b++)
+            {
+                Thump(b * 2f, 0.30f);
+                Thump(b * 2f + 0.34f, 0.20f);
+            }
             FadeEdges(d);
+            return d;
+        }
+
+        // ---- 밤 공포 원샷: 먼 하울링 / 삐걱임 ----
+        private Coroutine _scareLoop;
+
+        private void SetScares(bool on)
+        {
+            if (_scareLoop != null) { StopCoroutine(_scareLoop); _scareLoop = null; }
+            if (on) _scareLoop = StartCoroutine(ScareRoutine());
+        }
+
+        private System.Collections.IEnumerator ScareRoutine()
+        {
+            while (true)
+            {
+                yield return new WaitForSeconds(Random.Range(12f, 28f));
+                Play(Random.value < 0.5f ? "howl" : "creak", 0.5f);
+            }
+        }
+
+        private static float[] Howl()
+        {
+            int n = (int)(SR * 2.4f);
+            var d = new float[n];
+            for (int i = 0; i < n; i++)
+            {
+                float t = i / (float)SR;
+                float env = Mathf.Sin(Mathf.PI * Mathf.Clamp01(t / 2.4f));
+                float f = Mathf.Lerp(520f, 250f, t / 2.4f) + Mathf.Sin(t * 11f) * 14f; // 떨어지는 울음 + 비브라토
+                d[i] = (Mathf.Sin(2f * Mathf.PI * f * t) * 0.6f + Mathf.Sin(2f * Mathf.PI * f * 0.5f * t) * 0.3f) * env * 0.35f;
+            }
+            return d;
+        }
+
+        private static float[] Creak()
+        {
+            int n = (int)(SR * 1.4f);
+            var d = new float[n];
+            var rng = new System.Random(21);
+            float noise = 0f;
+            for (int i = 0; i < n; i++)
+            {
+                float t = i / (float)SR;
+                noise = Mathf.Lerp(noise, (float)rng.NextDouble() * 2f - 1f, 0.35f);
+                float ratchet = Mathf.Clamp01(Mathf.Sin(2f * Mathf.PI * (9f + t * 5f) * t)) * 0.8f + 0.2f; // 끊기는 마찰
+                float env = Mathf.Sin(Mathf.PI * Mathf.Clamp01(t / 1.4f));
+                d[i] = noise * ratchet * env * 0.4f;
+            }
             return d;
         }
 
@@ -130,6 +198,8 @@ namespace DoppelgangerVillage.UI
                 "hit" => Hit(),
                 "quest" => Quest(),
                 "sting" => Sting(),
+                "howl" => Howl(),
+                "creak" => Creak(),
                 _ => null,
             };
             if (data == null) return null;
