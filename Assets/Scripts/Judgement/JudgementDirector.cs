@@ -71,7 +71,15 @@ namespace DoppelgangerVillage.Judgement
                 if (!isDoppel)
                 {
                     _trueRescued++;
-                    if (citizen.IsNocturnal)
+                    // 개인 과제: 전담 동물 구출 = 전담 부품 확정 드랍 (기획 6절)
+                    bool dedicated = Quest.QuestDirector.Instance != null
+                        && Quest.QuestDirector.Instance.RegisterRescueAndCheckDedicatedPart(actorNumber, citizen.AnimalType);
+                    if (dedicated)
+                    {
+                        drop = "dpart";
+                        _parts++;
+                    }
+                    else if (citizen.IsNocturnal)
                     {
                         drop = "part"; // 야행성 시민 구출 성공 = 수리 부품 확정 지급 (기획 규칙)
                         _parts++;
@@ -88,7 +96,8 @@ namespace DoppelgangerVillage.Judgement
                 {
                     _infiltrators++; // 오답 — 정산 때 차감
                 }
-                photonView.RPC(nameof(RpcApplyVerdict), RpcTarget.All, citizenId, 0, drop, actorNumber, DisplayRescued, _parts);
+                // 기획: 오답(도플갱어를 보냄)이면 얼굴이 기괴하게 변하며 느릿느릿 걸어간다 — 정체가 드러나지만 막을 수 없다
+                photonView.RPC(nameof(RpcApplyVerdict), RpcTarget.All, citizenId, isDoppel ? 3 : 0, drop, actorNumber, DisplayRescued, _parts);
             }
             else
             {
@@ -158,9 +167,15 @@ namespace DoppelgangerVillage.Judgement
 
             switch (kind)
             {
-                case 0: StartCoroutine(WalkToTrailer(citizen)); break;
+                case 0: StartCoroutine(WalkToTrailer(citizen, 2.2f)); break;
                 case 1: StartCoroutine(FlashAndVanish(citizen)); break;
                 case 2: StartCoroutine(FleeAndVanish(citizen)); break;
+                case 3: // 오답 — 얼굴이 무너진 채 느릿느릿 트레일러로 (기획: 막을 수 없다)
+                    StageDirectionActor.DistortFace(citizen);
+                    foreach (var r in citizen.GetComponentsInChildren<MeshRenderer>())
+                        r.material.SetColor("_BaseColor", r.material.GetColor("_BaseColor") * 0.55f);
+                    StartCoroutine(WalkToTrailer(citizen, 1.0f));
+                    break;
             }
 
             ProgressChanged?.Invoke(displayRescued, parts);
@@ -168,8 +183,16 @@ namespace DoppelgangerVillage.Judgement
             if (actorNumber != PhotonNetwork.LocalPlayer.ActorNumber) return;
             switch (kind)
             {
+                case 3:
+                    UI.ToastUI.Show("...보낸 순간, 그것의 얼굴이 무너져 내린다. 느릿느릿 트레일러로 향하는 것을 막을 방법이 없다.");
+                    break;
                 case 0:
-                    if (drop == "part") UI.ToastUI.Show("수리 부품을 얻었다! 트레일러가 조금 더 온전해진다.");
+                    if (drop == "dpart")
+                    {
+                        var lq = Quest.QuestDirector.Instance != null ? Quest.QuestDirector.Instance.LocalQuest : null;
+                        UI.ToastUI.Show($"전담 부품 '{(lq != null ? lq.partName : "수리 부품")}'을(를) 확보했다!");
+                    }
+                    else if (drop == "part") UI.ToastUI.Show("수리 부품을 얻었다! 트레일러가 조금 더 온전해진다.");
                     else if (drop == "medkit")
                     {
                         UI.ToastUI.Show("구급상자를 얻었다! 상처를 치료했다.");
@@ -230,14 +253,14 @@ namespace DoppelgangerVillage.Judgement
 
         // ---- 연출 코루틴 (전 클라이언트 동일 수행) ----
 
-        private IEnumerator WalkToTrailer(AnimalCitizen citizen)
+        private IEnumerator WalkToTrailer(AnimalCitizen citizen, float speed)
         {
             var tr = citizen.transform;
             Vector3 target = _trailerTarget;
             while ((tr.position - target).sqrMagnitude > 1.2f)
             {
                 Vector3 dir = (target - tr.position).normalized;
-                tr.position += dir * (2.2f * Time.deltaTime);
+                tr.position += dir * (speed * Time.deltaTime);
                 tr.rotation = Quaternion.Slerp(tr.rotation, Quaternion.LookRotation(dir), 6f * Time.deltaTime);
                 yield return null;
             }

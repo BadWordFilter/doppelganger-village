@@ -52,6 +52,7 @@ namespace DoppelgangerVillage.UI
         public void Show(JudgementDirector.Settlement s)
         {
             EnsureBuilt();
+            SfxDirector.Play("dudung"); // 기획: 일일 성과 브리핑 "두둥-" 효과음
             IsShowing = true;
             _root.SetActive(true);
             Cursor.lockState = CursorLockMode.None;

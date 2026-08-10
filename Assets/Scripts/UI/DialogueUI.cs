@@ -94,12 +94,12 @@ namespace DoppelgangerVillage.UI
                 _choiceLabels.Add(label);
             }
 
-            _sendBtn = UiKit.CreateButton(panel, "트레일러로 보내기", 22, new Color(0.22f, 0.55f, 0.30f), Color.white);
+            _sendBtn = UiKit.CreateButton(panel, "트레일러로 보내기  [E]", 22, new Color(0.22f, 0.55f, 0.30f), Color.white);
             UiKit.SetRect((RectTransform)_sendBtn.transform, new Vector2(1f, 0f), new Vector2(360, 64), new Vector2(-28, 110));
             ((RectTransform)_sendBtn.transform).pivot = new Vector2(1f, 0f);
             _sendBtn.onClick.AddListener(() => Verdict(false));
 
-            _mirrorBtn = UiKit.CreateButton(panel, "눈을 감고 거울 비추기", 22, new Color(0.45f, 0.30f, 0.62f), Color.white);
+            _mirrorBtn = UiKit.CreateButton(panel, "눈을 감고 거울 비추기  [F]", 22, new Color(0.45f, 0.30f, 0.62f), Color.white);
             UiKit.SetRect((RectTransform)_mirrorBtn.transform, new Vector2(1f, 0f), new Vector2(360, 64), new Vector2(-28, 32));
             ((RectTransform)_mirrorBtn.transform).pivot = new Vector2(1f, 0f);
             _mirrorBtn.onClick.AddListener(() => Verdict(true));
@@ -112,9 +112,23 @@ namespace DoppelgangerVillage.UI
             _root.SetActive(false);
         }
 
+        private float _openedAt;
+
+        /// <summary>조작표 준수: 대화 중 E = 트레일러로 보내기, F = 거울 비추기 (열자마자 오입력 방지 딜레이).</summary>
+        private void Update()
+        {
+            if (!IsOpen || _current == null || _waiting) return;
+            if (Time.unscaledTime - _openedAt < 0.35f) return;
+            var kb = UnityEngine.InputSystem.Keyboard.current;
+            if (kb == null) return;
+            if (kb.fKey.wasPressedThisFrame) Verdict(true);
+            else if (kb.eKey.wasPressedThisFrame) Verdict(false);
+        }
+
         public void Open(AnimalCitizen citizen)
         {
             EnsureBuilt();
+            _openedAt = Time.unscaledTime;
             _current = citizen;
             IsOpen = true;
             _root.SetActive(true);
@@ -194,6 +208,7 @@ namespace DoppelgangerVillage.UI
 
             if (actorNumber != PhotonNetwork.LocalPlayer.ActorNumber) return;
             _waiting = false;
+            SfxDirector.Play("sting"); // 돌변 스팅
             if (_current != null && _current.CitizenId == citizenId)
             {
                 _answerText.text = Stylize("(온몸의 관절이 우두둑 꺾이며, 그것이 본색을 드러낸다)");

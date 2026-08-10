@@ -56,7 +56,13 @@ namespace DoppelgangerVillage.Village
                     if (_repathTimer <= 0f || (!_agent.pathPending && _agent.remainingDistance < 1f))
                     {
                         Vector2 r = Random.insideUnitCircle * 10f;
-                        _agent.SetDestination(_home + new Vector3(r.x, 0f, r.y));
+                        Vector3 dest = _home + new Vector3(r.x, 0f, r.y);
+                        if (SafeZone.Contains(dest))
+                        {
+                            _repathTimer = 0.5f; // 안전구역 안쪽은 배회 목적지에서 제외
+                            break;
+                        }
+                        _agent.SetDestination(dest);
                         _repathTimer = 4f;
                     }
                     if (target != null && dist < GameConfig.ChaserDetectRadius)
@@ -87,6 +93,7 @@ namespace DoppelgangerVillage.Village
             foreach (var p in Object.FindObjectsByType<Player.PlayerController>(FindObjectsSortMode.None))
             {
                 if (p.CurrentHp <= 0f) continue;
+                if (SafeZone.Contains(p.transform.position)) continue; // 거점 안 플레이어는 노리지 못한다
                 float d = Vector3.Distance(p.transform.position, transform.position);
                 if (d < dist)
                 {

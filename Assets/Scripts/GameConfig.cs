@@ -49,6 +49,10 @@ namespace DoppelgangerVillage
         // ---- 판정 패널티 (플레이테스트: 진짜에게 거울 = 도주 + 판정자 HP 감소) ----
         public const float MirrorRealPenaltyDamage = 20f;
 
+        // ---- 트레일러 안전구역 (기획: 밤의 거점 — 배회 도플갱어 침입 불가, 회복) ----
+        public const float SafeZoneRadius = 5.5f;
+        public const float SafeZoneHpRegenPerSec = 2.5f;
+
         // ---- 플레이어 ----
         public const float MaxHp = 100f;
         public const float OverInterrogationDamage = 34f; // 과잉 심문 공격 1회 피해

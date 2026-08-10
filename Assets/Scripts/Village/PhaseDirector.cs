@@ -126,7 +126,47 @@ namespace DoppelgangerVillage.Village
                     PhotonNetwork.Destroy(chaser.gameObject);
             }
 
+            // 일차별 구역 해금 (기획 5절): 1일차엔 상업·의료 구역이 안개에 잠겨 있다
+            if (day == 1) LockCommercialZone();
+            else UnlockCommercialZone(day == 2);
+
             if (day > 1) UI.ToastUI.Show($"{day}일차 아침이 밝았다. 아직 구조를 기다리는 주민들이 있다.");
+        }
+
+        private static bool IsCommercialSpecies(string type) => type == "돼지" || type == "곰" || type == "양";
+        private readonly System.Collections.Generic.List<GameObject> _zoneFogs = new();
+
+        /// <summary>1일차: 상업·의료 구역을 안개로 잠근다 (동물 비활성 + 안개 구체).</summary>
+        private void LockCommercialZone()
+        {
+            foreach (var c in FindObjectsByType<AnimalCitizen>(FindObjectsInactive.Include, FindObjectsSortMode.None))
+                if (!c.IsNocturnal && !c.IsResolved && IsCommercialSpecies(c.AnimalType))
+                    c.gameObject.SetActive(false);
+
+            if (_zoneFogs.Count > 0) return;
+            var fogMat = Resources.Load<Material>("ZoneFog");
+            foreach (var house in VillageLayout.CommercialHouses)
+            {
+                if (house == null) continue;
+                var fog = GameObject.CreatePrimitive(PrimitiveType.Sphere);
+                Object.Destroy(fog.GetComponent<Collider>());
+                fog.name = "ZoneFog";
+                fog.transform.position = house.position + Vector3.up * 2f;
+                fog.transform.localScale = new Vector3(14f, 9f, 14f);
+                if (fogMat != null) fog.GetComponent<MeshRenderer>().sharedMaterial = fogMat;
+                _zoneFogs.Add(fog);
+            }
+        }
+
+        /// <summary>2일차 아침: 안개가 걷히며 상업·의료 구역 해금.</summary>
+        private void UnlockCommercialZone(bool announce)
+        {
+            foreach (var fog in _zoneFogs)
+                if (fog != null) Object.Destroy(fog);
+            _zoneFogs.Clear();
+            // 시민 활성화는 RpcBeginDay의 공통 루프가 이미 처리 — 여기서는 안개 제거만
+            if (announce)
+                UI.ToastUI.Show("안개가 걷히며 상업·의료 구역이 드러났다... 낯선 주민들이 보인다.");
         }
 
         [PunRPC]
@@ -151,9 +191,9 @@ namespace DoppelgangerVillage.Village
             }
             RenderSettings.fog = true;
             RenderSettings.fogMode = FogMode.Exponential;
-            RenderSettings.fogColor = new Color(0.05f, 0.06f, 0.12f);
-            RenderSettings.fogDensity = 0.028f;
-            RenderSettings.ambientIntensity = 0.35f;
+            RenderSettings.fogColor = new Color(0.04f, 0.05f, 0.10f);
+            RenderSettings.fogDensity = 0.055f; // 기획: 밤에는 시야가 크게 좁아진다
+            RenderSettings.ambientIntensity = 0.22f;
 
             // 주간 시민은 집으로(잠들기), 야행성 기상
             foreach (var c in FindObjectsByType<AnimalCitizen>(FindObjectsInactive.Include, FindObjectsSortMode.None))

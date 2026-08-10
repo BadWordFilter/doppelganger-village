@@ -16,6 +16,9 @@ namespace DoppelgangerVillage.Village
         private const string SeedKey = "layoutSeed";
         private bool _applied;
 
+        /// <summary>상업·의료 구역 집들 (2일차 해금 — 레이아웃 적용 시 채워짐).</summary>
+        public static readonly List<Transform> CommercialHouses = new();
+
         /// <summary>마스터 전용: 시드 미배정이면 배정 (도플갱어 배정과 같은 타이밍).</summary>
         public static void EnsureSeedAssigned()
         {
@@ -74,6 +77,8 @@ namespace DoppelgangerVillage.Village
 
             // 주간 동물을 자기 집 앞으로 이동 (집 순서 ↔ 동물 id 매핑은 씬 구축 규칙과 동일)
             int[] idByHouse = { 0, 3, 5, 7, 9, 10, 1, 4, 8 };
+            string[] speciesByHouse = { "강아지", "고양이", "토끼", "돼지", "곰", "양", "강아지", "고양이", "돼지" };
+            CommercialHouses.Clear();
             for (int i = 0; i < houses.Count && i < idByHouse.Length; i++)
             {
                 var citizen = FindCitizen(idByHouse[i]);
@@ -81,6 +86,9 @@ namespace DoppelgangerVillage.Village
                 var h = houses[i];
                 citizen.transform.position = h.position + h.forward * 4.5f;
                 citizen.transform.rotation = h.rotation;
+                // 상업·의료 구역(돼지·곰·양) = 2일차 해금 대상 (기획 5절)
+                if (speciesByHouse[i] == "돼지" || speciesByHouse[i] == "곰" || speciesByHouse[i] == "양")
+                    CommercialHouses.Add(h);
             }
 
             // NavMesh 런타임 재베이크 (이동한 집들이 장애물로 반영되도록)

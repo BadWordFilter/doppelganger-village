@@ -23,9 +23,26 @@ namespace DoppelgangerVillage.Player
         private float _verticalVel;
         private float _stunTimer;
 
+        private Light _lantern;
+
         private void Awake()
         {
             _cc = GetComponent<CharacterController>();
+            // 랜턴: 밤에 좁아진 시야 속 유일한 불빛 (모든 아바타 공통, 밤에만 켜짐)
+            var lanternGo = new GameObject("Lantern");
+            lanternGo.transform.SetParent(transform, false);
+            lanternGo.transform.localPosition = new Vector3(0f, 1.7f, 0.25f);
+            _lantern = lanternGo.AddComponent<Light>();
+            _lantern.type = LightType.Point;
+            _lantern.range = 11f;
+            _lantern.color = new Color(1f, 0.85f, 0.6f);
+            _lantern.intensity = 0f;
+        }
+
+        private void LateUpdate()
+        {
+            if (_lantern != null)
+                _lantern.intensity = Village.PhaseDirector.IsNight ? 2.4f : 0f;
         }
 
         private void Start()
@@ -48,7 +65,7 @@ namespace DoppelgangerVillage.Player
 
             // 이동 입력 (대화/정산 UI·게임 종료·기절 시 입력 차단 — 스태미나 회복은 유지)
             if (_stunTimer > 0f) _stunTimer -= Time.deltaTime;
-            bool uiLocked = _stunTimer > 0f || UI.DialogueUI.IsOpen || UI.SettlementUI.IsShowing || UI.IntroNoteUI.IsShowing
+            bool uiLocked = _stunTimer > 0f || UI.DialogueUI.IsOpen || UI.SettlementUI.IsShowing || UI.IntroNoteUI.IsShowing || UI.MenuUI.IsOpen
                 || (Judgement.JudgementDirector.Instance != null && Judgement.JudgementDirector.Instance.GameEnded);
             Vector2 input = Vector2.zero;
             if (!uiLocked)
@@ -86,6 +103,28 @@ namespace DoppelgangerVillage.Player
 
             _verticalVel = _cc.isGrounded ? -1f : _verticalVel - 20f * Time.deltaTime;
             _cc.Move((move + Vector3.up * _verticalVel) * Time.deltaTime);
+
+            UpdateSafeZone();
+        }
+
+        private bool _safeToastShownTonight;
+
+        /// <summary>밤의 거점(트레일러 안전구역): 안에 있으면 서서히 회복 (기획: 해질녘 거점 복귀).</summary>
+        private void UpdateSafeZone()
+        {
+            if (!Village.PhaseDirector.IsNight)
+            {
+                _safeToastShownTonight = false;
+                return;
+            }
+            if (!Village.SafeZone.Contains(transform.position)) return;
+            if (CurrentHp > 0f && CurrentHp < GameConfig.MaxHp)
+                CurrentHp = Mathf.Min(GameConfig.MaxHp, CurrentHp + GameConfig.SafeZoneHpRegenPerSec * Time.deltaTime);
+            if (!_safeToastShownTonight)
+            {
+                _safeToastShownTonight = true;
+                UI.ToastUI.Show("트레일러 곁은 안전하다... 상처가 아물고, 놈들도 다가오지 못한다.");
+            }
         }
 
         /// <summary>과잉 심문 공격 등으로 피해를 받는다. 0이 되면 감염 판정 → 전원 감염 시 패배.</summary>
@@ -93,6 +132,7 @@ namespace DoppelgangerVillage.Player
         {
             if (!photonView.IsMine || CurrentHp <= 0f) return;
             CurrentHp = Mathf.Max(0f, CurrentHp - amount);
+            UI.SfxDirector.Play("hit");
             if (CurrentHp <= 0f)
             {
                 Debug.Log("[Player] HP 0 — 도플갱어에게 감염되었다");

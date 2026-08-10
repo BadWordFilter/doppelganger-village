@@ -37,6 +37,7 @@ namespace DoppelgangerVillage.UI
         private IEnumerator MirrorRoutine()
         {
             EnsureBuilt();
+            SfxDirector.Play("mirror");
             // 눈을 감는다 (암전)
             yield return Fade(Color.clear, Color.black, 0.35f);
             yield return new WaitForSeconds(0.25f);
