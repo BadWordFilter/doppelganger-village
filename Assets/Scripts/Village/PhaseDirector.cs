@@ -44,11 +44,29 @@ namespace DoppelgangerVillage.Village
             }
         }
 
-        /// <summary>마스터 전용: 게임 시작 시 1일차 낮 개시.</summary>
+        private bool _startPending;
+
+        /// <summary>마스터 전용: 게임 시작 시 1일차 낮 개시. PhotonNetwork.Time 서버 동기화를 기다린 뒤 시작한다.</summary>
         public void StartCycleIfMaster()
         {
-            if (!PhotonNetwork.IsMasterClient || _cycleRunning) return;
+            if (!PhotonNetwork.IsMasterClient || _cycleRunning || _startPending) return;
+            _startPending = true;
+            StartCoroutine(StartAfterTimeSync());
+        }
+
+        private System.Collections.IEnumerator StartAfterTimeSync()
+        {
+            yield return new WaitForSeconds(1.5f); // 입장 직후 서버 시계 동기화 대기 (로컬→서버 시간 점프 레이스 방지)
             photonView.RPC(nameof(RpcBeginDay), RpcTarget.All, 1, PhotonNetwork.Time + GameConfig.DayDurationSeconds);
+        }
+
+        /// <summary>수신한 종료 시각이 내 시계 기준으로 말이 안 되면(과거이거나 지나치게 미래) 로컬 재계산으로 자가 보정.</summary>
+        private double SanitizeEndTime(double endTime, float duration)
+        {
+            double now = PhotonNetwork.Time;
+            if (endTime <= now + 1.0 || endTime > now + duration + 30.0)
+                return now + duration;
+            return endTime;
         }
 
         private void Update()
@@ -79,7 +97,7 @@ namespace DoppelgangerVillage.Village
         {
             IsNight = false;
             DayNumber = day;
-            _phaseEndTime = endTime;
+            _phaseEndTime = SanitizeEndTime(endTime, GameConfig.DayDurationSeconds);
             _cycleRunning = true;
             _settling = false;
 
@@ -115,7 +133,7 @@ namespace DoppelgangerVillage.Village
         private void RpcBeginNight(double endTime)
         {
             IsNight = true;
-            _phaseEndTime = endTime;
+            _phaseEndTime = SanitizeEndTime(endTime, GameConfig.NightDurationSeconds);
             _cycleRunning = true;
             _settling = false;
 

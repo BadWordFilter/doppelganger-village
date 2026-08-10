@@ -13,12 +13,24 @@ namespace DoppelgangerVillage.Village
         /// 도플갱어 본색 노출: 점 눈이 커지고 검붉게 물들며 얼굴이 무너진다 (레퍼런스의 공포 문법).
         /// 돌변(과잉 심문)·퇴치 연출에서 호출.
         /// </summary>
+        /// <summary>이름으로 깊은 탐색 (Blender 임포트 모델은 눈이 Head 하위에 있을 수 있음).</summary>
+        public static Transform FindDeep(Transform root, string name)
+        {
+            if (root.name == name) return root;
+            for (int i = 0; i < root.childCount; i++)
+            {
+                var found = FindDeep(root.GetChild(i), name);
+                if (found != null) return found;
+            }
+            return null;
+        }
+
         public static void DistortFace(AnimalCitizen citizen)
         {
             if (citizen == null) return;
             foreach (var name in new[] { "EyeL", "EyeR", "BigEyeL", "BigEyeR" })
             {
-                var eye = citizen.transform.Find(name);
+                var eye = FindDeep(citizen.transform, name);
                 if (eye == null) continue;
                 eye.localScale = new Vector3(eye.localScale.x * 2.4f, eye.localScale.y * 2.8f, eye.localScale.z);
                 var r = eye.GetComponent<MeshRenderer>();
@@ -38,7 +50,7 @@ namespace DoppelgangerVillage.Village
         private static IEnumerator Run(AnimalCitizen citizen, string text, bool abnormal)
         {
             var root = citizen.transform;
-            var head = root.Find("Head");
+            var head = FindDeep(root, "Head");
             Vector3 rootPos = root.localPosition;
             Quaternion rootRot = root.localRotation;
             Vector3 rootScale = root.localScale;
