@@ -20,6 +20,9 @@ namespace DoppelgangerVillage.Player
         public bool IsExhausted { get; private set; }
         public bool IsRunning { get; private set; }
 
+        /// <summary>감염 상태 (기획: 감염자는 느리게 배회하며 생존자를 습격할 수 있다).</summary>
+        public bool IsInfected => CurrentHp <= 0f;
+
         private float _dangerTimer;
 
         /// <summary>추격자 근접도 → 심장박동 가속 (0.25초 주기 계산).</summary>
@@ -97,6 +100,12 @@ namespace DoppelgangerVillage.Player
         /// <summary>소유자 플레이어 프로퍼티의 색을 아바타 전신에 적용 (고양이 플레이어 — 몸 전체 색 변경).</summary>
         private void ApplyCustomization()
         {
+            // 감염된 소유자는 감염 비주얼이 우선 (늦은 합류 포함)
+            if (photonView.Owner != null && photonView.Owner.CustomProperties.ContainsKey("infected"))
+            {
+                ApplyInfectedVisual();
+                return;
+            }
             int idx = 0;
             if (photonView.Owner != null
                 && photonView.Owner.CustomProperties.TryGetValue("shirt", out object v) && v is int i)
@@ -109,11 +118,32 @@ namespace DoppelgangerVillage.Player
             }
         }
 
-        /// <summary>색 선택이 스폰보다 늦게 동기화돼도 반영 (대기실 색 변경·늦은 합류 커버).</summary>
+        /// <summary>색 선택이 스폰보다 늦게 동기화돼도 반영 (대기실 색 변경·늦은 합류 커버) + 감염 비주얼.</summary>
         public override void OnPlayerPropertiesUpdate(PunPlayer targetPlayer, ExitGames.Client.Photon.Hashtable changedProps)
         {
-            if (photonView.Owner != null && targetPlayer == photonView.Owner && changedProps.ContainsKey("shirt"))
-                ApplyCustomization();
+            if (photonView.Owner == null || targetPlayer != photonView.Owner) return;
+            if (changedProps.ContainsKey("infected")) ApplyInfectedVisual();
+            else if (changedProps.ContainsKey("shirt")) ApplyCustomization();
+        }
+
+        /// <summary>감염자 아바타는 모든 클라이언트에서 검붉게 보인다.</summary>
+        private void ApplyInfectedVisual()
+        {
+            foreach (var r in GetComponentsInChildren<MeshRenderer>(true))
+            {
+                if (r.transform.name == "Outline" || r.transform.name == "BlobShadow") continue;
+                Village.StageDirectionActor.Tint(r.material, new Color(0.42f, 0.10f, 0.10f));
+            }
+        }
+
+        /// <summary>감염자의 습격 — 피해는 대상 소유 클라이언트에서만 계산.</summary>
+        [PunRPC]
+        private void RpcAttacked(float damage)
+        {
+            if (!photonView.IsMine) return;
+            TakeDamage(damage);
+            Stun(0.5f);
+            UI.ToastUI.Show("감염자에게 습격당했다!");
         }
 
         private void OnDestroy()
@@ -129,7 +159,7 @@ namespace DoppelgangerVillage.Player
 
             // 이동 입력 (대화/정산 UI·게임 종료·기절 시 입력 차단 — 스태미나 회복은 유지)
             if (_stunTimer > 0f) _stunTimer -= Time.deltaTime;
-            bool uiLocked = _stunTimer > 0f || CurrentHp <= 0f // 감염(HP 0) = 사망 판정 — 움직일 수 없다
+            bool uiLocked = _stunTimer > 0f // 감염돼도 움직일 수 있다 — 감염자 플레이 (기획 밤 페이즈)
                 || UI.DialogueUI.IsOpen || UI.SettlementUI.IsShowing || UI.IntroNoteUI.IsShowing || UI.MenuUI.IsOpen
                 || (Judgement.JudgementDirector.Instance != null && Judgement.JudgementDirector.Instance.GameEnded);
             Vector2 input = Vector2.zero;
@@ -142,8 +172,8 @@ namespace DoppelgangerVillage.Player
                 input = Vector2.ClampMagnitude(input, 1f);
             }
 
-            // 스태미나: 달리는 동안 소모, 정지·걷기 시 회복, 고갈 시 감속 상태 진입
-            bool wantsRun = kb.leftShiftKey.isPressed && input.sqrMagnitude > 0.01f;
+            // 스태미나: 달리는 동안 소모, 정지·걷기 시 회복, 고갈 시 감속 상태 진입 (감염자는 달리기 불가)
+            bool wantsRun = !IsInfected && kb.leftShiftKey.isPressed && input.sqrMagnitude > 0.01f;
             if (wantsRun && !IsExhausted && CurrentStamina > 0f)
             {
                 CurrentStamina = Mathf.Max(0f, CurrentStamina - GameConfig.StaminaDrainPerSec * Time.deltaTime);
@@ -155,7 +185,8 @@ namespace DoppelgangerVillage.Player
                 if (IsExhausted && CurrentStamina >= GameConfig.MaxStamina * 0.3f) IsExhausted = false;
             }
             bool running = wantsRun && !IsExhausted;
-            float speed = IsExhausted ? GameConfig.ExhaustedSpeed : (running ? GameConfig.RunSpeed : GameConfig.WalkSpeed);
+            float speed = IsInfected ? GameConfig.InfectedSpeed
+                : IsExhausted ? GameConfig.ExhaustedSpeed : (running ? GameConfig.RunSpeed : GameConfig.WalkSpeed);
 
             // 카메라 기준 이동 방향
             float yaw = _rig != null ? _rig.Yaw : transform.eulerAngles.y;
@@ -169,8 +200,8 @@ namespace DoppelgangerVillage.Player
             if (_cc.isGrounded)
             {
                 _verticalVel = -1f;
-                if (!uiLocked && kb.spaceKey.wasPressedThisFrame)
-                    _verticalVel = GameConfig.JumpSpeed; // 점프
+                if (!uiLocked && !IsInfected && kb.spaceKey.wasPressedThisFrame)
+                    _verticalVel = GameConfig.JumpSpeed; // 점프 (감염자 불가)
             }
             else
             {
@@ -223,8 +254,9 @@ namespace DoppelgangerVillage.Player
             if (CurrentHp <= 0f)
             {
                 Debug.Log("[Player] HP 0 — 도플갱어에게 감염되었다");
-                UI.ToastUI.Show("의식이 흐려진다... 도플갱어에게 감염되었다.");
+                UI.ToastUI.Show("감염되었다... 이제 놈들의 편이다. 시야가 좁아지고 느려지지만, 생존자를 [E]로 습격할 수 있다.");
                 UI.ScreenFX.ShowInfected();
+                PhotonNetwork.LocalPlayer.SetCustomProperties(new ExitGames.Client.Photon.Hashtable { { "infected", true } });
                 if (Judgement.JudgementDirector.Instance != null)
                     Judgement.JudgementDirector.Instance.NotifyLocalInfected();
             }

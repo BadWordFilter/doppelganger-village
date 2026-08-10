@@ -11,6 +11,9 @@ namespace DoppelgangerVillage.Player
     {
         public float Yaw { get; private set; }
 
+        /// <summary>ESC 메뉴 설정에서 조절하는 마우스 감도 배율 (PlayerPrefs 저장).</summary>
+        public static float SensitivityScale = 1f;
+
         private const float Distance = 3.8f;
         private const float PivotHeight = 1.05f; // 2등신 치비 플레이어 기준
         private const float Sensitivity = 0.12f;
@@ -46,8 +49,9 @@ namespace DoppelgangerVillage.Player
             if (_target == null || Cursor.lockState != CursorLockMode.Locked) return;
 
             Vector2 delta = mouse.delta.ReadValue();
-            Yaw += delta.x * Sensitivity;
-            _pitch = Mathf.Clamp(_pitch - delta.y * Sensitivity, -15f, 60f);
+            float sens = Sensitivity * SensitivityScale;
+            Yaw += delta.x * sens;
+            _pitch = Mathf.Clamp(_pitch - delta.y * sens, -15f, 60f);
         }
 
         private void LateUpdate()

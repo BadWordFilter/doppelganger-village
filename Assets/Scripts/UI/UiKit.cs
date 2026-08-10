@@ -144,6 +144,48 @@ namespace DoppelgangerVillage.UI
             return input;
         }
 
+        /// <summary>설정용 슬라이더 (음량·감도 등).</summary>
+        public static Slider CreateSlider(Transform parent, float min, float max, float value)
+        {
+            var go = new GameObject("Slider", typeof(RectTransform), typeof(Slider));
+            go.transform.SetParent(parent, false);
+
+            var bg = CreatePanel(go.transform, new Color(0.22f, 0.22f, 0.28f), "BG");
+            bg.anchorMin = new Vector2(0f, 0.35f);
+            bg.anchorMax = new Vector2(1f, 0.65f);
+            bg.offsetMin = bg.offsetMax = Vector2.zero;
+
+            var fillArea = new GameObject("FillArea", typeof(RectTransform)).GetComponent<RectTransform>();
+            fillArea.SetParent(go.transform, false);
+            fillArea.anchorMin = new Vector2(0f, 0.35f);
+            fillArea.anchorMax = new Vector2(1f, 0.65f);
+            fillArea.offsetMin = fillArea.offsetMax = Vector2.zero;
+            var fill = CreatePanel(fillArea, new Color(0.55f, 0.65f, 0.90f), "Fill");
+            fill.anchorMin = Vector2.zero;
+            fill.anchorMax = Vector2.one;
+            fill.offsetMin = fill.offsetMax = Vector2.zero;
+
+            var handleArea = new GameObject("HandleArea", typeof(RectTransform)).GetComponent<RectTransform>();
+            handleArea.SetParent(go.transform, false);
+            handleArea.anchorMin = Vector2.zero;
+            handleArea.anchorMax = Vector2.one;
+            handleArea.offsetMin = new Vector2(9f, 0f);
+            handleArea.offsetMax = new Vector2(-9f, 0f);
+            var handle = CreatePanel(handleArea, new Color(0.95f, 0.95f, 0.95f), "Handle");
+            handle.anchorMin = new Vector2(0.5f, 0f);
+            handle.anchorMax = new Vector2(0.5f, 1f);
+            handle.sizeDelta = new Vector2(18f, 0f);
+
+            var s = go.GetComponent<Slider>();
+            s.fillRect = fill;
+            s.handleRect = handle;
+            s.targetGraphic = handle.GetComponent<Image>();
+            s.minValue = min;
+            s.maxValue = max;
+            s.value = value;
+            return s;
+        }
+
         /// <summary>배경+채움 형태의 게이지 바. 채움은 anchorMax.x 조절 방식.</summary>
         public static (RectTransform root, RectTransform fill) CreateBar(Transform parent, Color bg, Color fillColor)
         {

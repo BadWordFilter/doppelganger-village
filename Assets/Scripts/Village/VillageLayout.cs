@@ -31,6 +31,9 @@ namespace DoppelgangerVillage.Village
         public override void OnJoinedRoom() => TryApply();
         public override void OnRoomPropertiesUpdate(PhotonHashtable changed) => TryApply();
 
+        // 씬 리로드(리매치 등) 직후 콜백 없이도 시드가 있으면 재적용 — 레이아웃 유실 방어
+        private void Start() => TryApply();
+
         private void TryApply()
         {
             if (_applied || !PhotonNetwork.InRoom) return;
@@ -78,21 +81,23 @@ namespace DoppelgangerVillage.Village
             {
                 var h = houses[hi];
                 bool residential = hi < bandByHouse.Length && bandByHouse[hi] == "거주";
-                float rMin = residential ? 8f : FogBoundary.Day1Radius + 4f;   // 상업은 1일차 경계 밖
-                float rMax = residential ? FogBoundary.Day1Radius - 3f : FogBoundary.FullRadius - 2.5f;
+                // 집 12채 과밀로 겹치지 않게: 밴드를 넓히고 간격·시도 횟수 조정
+                float rMin = residential ? 6.5f : FogBoundary.Day1Radius + 3.5f;
+                float rMax = residential ? FogBoundary.Day1Radius - 2f : FogBoundary.FullRadius - 2.5f;
                 Vector3 pos = zoneCenter + new Vector3(0f, 0f, rMin);
                 bool ok = false;
-                for (int attempt = 0; attempt < 80 && !ok; attempt++)
+                for (int attempt = 0; attempt < 250 && !ok; attempt++)
                 {
                     float angle = (float)(rng.NextDouble() * Mathf.PI * 2.0);
                     float radius = rMin + (float)rng.NextDouble() * (rMax - rMin);
                     pos = zoneCenter + new Vector3(Mathf.Cos(angle) * radius, 0f, Mathf.Sin(angle) * radius);
                     if (Mathf.Abs(pos.x) > 32f || Mathf.Abs(pos.z) > 32f) continue;
                     if ((pos - trailer).magnitude < 10f) continue;   // 안전구역 주변 비움
-                    if ((pos - plaza).magnitude < 7f) continue;      // 광장 비움
+                    if ((pos - plaza).magnitude < 6f) continue;      // 광장 비움
                     ok = true;
+                    float minGap = attempt < 150 ? 8f : 6.5f; // 오래 실패하면 간격 완화 — 겹침만은 방지
                     foreach (var p in placed)
-                        if ((pos - p).magnitude < 9f) { ok = false; break; } // 집 간 최소 9m
+                        if ((pos - p).magnitude < minGap) { ok = false; break; }
                 }
                 placed.Add(pos);
                 h.position = pos;
@@ -142,17 +147,18 @@ namespace DoppelgangerVillage.Village
                     CommercialHouses.Add(houses[i]);
             }
 
-            // 추가 주민(id 14~18): 증축 집 3채에 단독 입주 + 2마리는 동거 (보통 1마리, 많아야 2마리)
-            int[] extraIds = { 14, 15, 16, 17, 18 };
-            for (int e = 0; e < extraIds.Length; e++)
+            // 추가 주민(id 14~18 + 미배정 거리 주민 2·6): 증축 집 단독 + 일부 동거 (보통 1마리, 많아야 2마리)
+            (int id, int room, int slot)[] extraPlan =
             {
-                var extra = FindCitizen(extraIds[e]);
-                if (extra == null) continue;
-                int ri;
-                int slot;
-                if (e < 3 && houses.Count > 9 + e) { ri = 9 + e; slot = 0; } // 증축 집 단독
-                else { ri = e == 3 ? 0 : 4; slot = 1; }                       // 동거 2마리
-                extra.transform.position = HouseInteriors.AssignResident(extraIds[e], ri, slot);
+                (14, 9, 0), (15, 10, 0), (16, 11, 0), // 증축 집 단독
+                (17, 0, 1), (18, 4, 1),               // 동거
+                (2, 1, 1), (6, 5, 1),                 // 옛 거리 주민도 입주 (전 주민 실내 원칙)
+            };
+            foreach (var (eid, ri, slot) in extraPlan)
+            {
+                var extra = FindCitizen(eid);
+                if (extra == null || ri >= houses.Count) continue;
+                extra.transform.position = HouseInteriors.AssignResident(eid, ri, slot);
                 extra.transform.rotation = Quaternion.Euler(0f, 165f, 0f);
             }
 

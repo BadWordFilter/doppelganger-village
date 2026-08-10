@@ -110,9 +110,19 @@ namespace DoppelgangerVillage.Village
             if (PhotonNetwork.LocalPlayer.ActorNumber != actorNumber) return;
             var local = Player.PlayerController.Local;
             if (local == null) return;
-            local.TakeDamage(GameConfig.ChaserHitDamage);
-            local.Stun(GameConfig.StunDuration);
-            UI.ToastUI.Show("도플갱어에게 붙잡혔다! 도망쳐!");
+            if (PhaseDirector.IsNight)
+            {
+                // 기획 밤 페이즈 규정: 밤 추격전에서 잡히면 즉시 감염
+                UI.ToastUI.Show("붙잡혔다... 차가운 손이 얼굴을 덮는다. 의식이 잠식된다!");
+                local.TakeDamage(GameConfig.MaxHp);
+            }
+            else
+            {
+                // 낮은 완화 규칙 유지 (플레이테스트 밸런스): HP 감소 + 짧은 기절
+                local.TakeDamage(GameConfig.ChaserHitDamage);
+                local.Stun(GameConfig.StunDuration);
+                UI.ToastUI.Show("도플갱어에게 붙잡혔다! 도망쳐!");
+            }
         }
     }
 }

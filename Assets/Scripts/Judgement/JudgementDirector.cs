@@ -74,23 +74,19 @@ namespace DoppelgangerVillage.Judgement
                     // 개인 과제: 전담 동물 구출 = 전담 부품 확정 드랍 (기획 6절)
                     bool dedicated = Quest.QuestDirector.Instance != null
                         && Quest.QuestDirector.Instance.RegisterRescueAndCheckDedicatedPart(actorNumber, citizen.AnimalType);
-                    if (dedicated)
-                    {
-                        drop = "dpart";
-                        _parts++;
-                    }
-                    else if (citizen.IsNocturnal)
-                    {
-                        drop = "part"; // 야행성 시민 구출 성공 = 수리 부품 확정 지급 (기획 규칙)
-                        _parts++;
-                    }
+                    if (dedicated) drop = "dpart";
+                    else if (citizen.IsNocturnal) drop = "part"; // 야행성 구출 = 부품 확정 (기획 규칙)
                     else
                     {
+                        // 기획: 아이템은 바닥에 떨어지고 직접 주워야 한다 — 획득은 습득 시점에 계산
                         float r = Random.value;
-                        if (r < GameConfig.PartDropChance) { drop = "part"; _parts++; }
-                        else if (r < GameConfig.PartDropChance + GameConfig.MedkitDropChance) drop = "medkit";
-                        else if (r < GameConfig.PartDropChance + GameConfig.MedkitDropChance + GameConfig.FoodDropChance) drop = "food";
+                        float acc = GameConfig.PartDropChance;
+                        if (r < acc) drop = "part";
+                        else if (r < (acc += GameConfig.MedkitDropChance)) drop = "medkit";
+                        else if (r < (acc += GameConfig.BandageDropChance)) drop = "bandage";
+                        else if (r < acc + GameConfig.FoodDropChance) drop = "food";
                     }
+                    if (drop != "") _pendingDrops[citizenId] = drop;
                 }
                 else
                 {
@@ -183,6 +179,12 @@ namespace DoppelgangerVillage.Judgement
             if (citizen == null) return;
             citizen.IsResolved = true;
 
+            // 드랍은 집 안이면 집 앞에 떨어진다 (전 클라이언트 동일 위치)
+            Vector3 dropPos = Village.HouseInteriors.Contains(citizen.transform.position)
+                ? Village.HouseInteriors.ResidentExteriorDoor(citizen.CitizenId, citizen.transform.position)
+                : citizen.transform.position;
+            if (kind == 0 && !string.IsNullOrEmpty(drop)) SpawnPickup(citizenId, drop, dropPos);
+
             // 버퍼 재생(늦은 합류): 상태만 복원 — 연출·토스트 생략, 보내진 시민은 내부 룸에 배치
             if (PhotonNetwork.Time - info.SentServerTime > 8.0)
             {
@@ -201,6 +203,7 @@ namespace DoppelgangerVillage.Judgement
                 case 0: StartCoroutine(WalkToTrailer(citizen, 2.2f)); break;
                 case 1: StartCoroutine(FlashAndVanish(citizen)); break;
                 case 2: StartCoroutine(FleeAndVanish(citizen)); break;
+                case 4: StartCoroutine(FleeAndVanish(citizen)); break; // 과잉 심문에 겁먹은 진짜 주민
                 case 3: // 오답 — 얼굴이 무너진 채 느릿느릿 트레일러로 (기획: 막을 수 없다)
                     StageDirectionActor.DistortFace(citizen);
                     foreach (var r in citizen.GetComponentsInChildren<MeshRenderer>())
@@ -218,19 +221,7 @@ namespace DoppelgangerVillage.Judgement
                     UI.ToastUI.Show("...보낸 순간, 그것의 얼굴이 무너져 내린다. 느릿느릿 트레일러로 향하는 것을 막을 방법이 없다.");
                     break;
                 case 0:
-                    if (drop == "dpart")
-                    {
-                        var lq = Quest.QuestDirector.Instance != null ? Quest.QuestDirector.Instance.LocalQuest : null;
-                        UI.ToastUI.Show($"전담 부품 '{(lq != null ? lq.partName : "수리 부품")}'을(를) 확보했다!");
-                    }
-                    else if (drop == "part") UI.ToastUI.Show("수리 부품을 얻었다! 트레일러가 조금 더 온전해진다.");
-                    else if (drop == "medkit")
-                    {
-                        UI.ToastUI.Show("구급상자를 얻었다! 상처를 치료했다.");
-                        var local = Player.PlayerController.Local;
-                        if (local != null) local.Heal(GameConfig.MedkitHeal);
-                    }
-                    else if (drop == "food") UI.ToastUI.Show("식량을 얻었다.");
+                    if (!string.IsNullOrEmpty(drop)) UI.ToastUI.Show("주민이 떠나며 무언가를 떨어뜨렸다! 가까이 가서 [E]로 줍자.");
                     else UI.ToastUI.Show("주민이 말없이 트레일러로 향했다...");
                     break;
                 case 1: UI.ToastUI.Show("거울에 비친 것은... 도플갱어였다! 퇴치 성공."); break;
@@ -239,7 +230,106 @@ namespace DoppelgangerVillage.Judgement
                     var judge = Player.PlayerController.Local;
                     if (judge != null) judge.TakeDamage(GameConfig.MirrorRealPenaltyDamage);
                     break;
+                case 4:
+                    UI.ToastUI.Show("과잉 심문에 겁먹은 주민이 도망쳤다... (구출 실패)");
+                    UI.DialogueUI.Instance?.Close();
+                    break;
             }
+        }
+
+        // ---- 드랍 습득 (기획: 아이템은 바닥에 떨어지고 E로 주워야 한다) ----
+
+        private readonly System.Collections.Generic.Dictionary<int, string> _pendingDrops = new(); // 마스터 전용
+        private readonly System.Collections.Generic.Dictionary<int, GameObject> _pickups = new();
+
+        private void SpawnPickup(int citizenId, string drop, Vector3 pos)
+        {
+            if (_pickups.ContainsKey(citizenId)) return;
+            var go = GameObject.CreatePrimitive(PrimitiveType.Cube);
+            go.name = $"DropPickup_{citizenId}";
+            go.transform.position = pos + Vector3.up * 0.45f;
+            go.transform.localScale = Vector3.one * 0.38f;
+            go.GetComponent<Collider>().isTrigger = true;
+            Color c = drop switch
+            {
+                "medkit" => new Color(0.92f, 0.30f, 0.28f),
+                "bandage" => new Color(0.95f, 0.94f, 0.88f),
+                "food" => new Color(0.55f, 0.82f, 0.42f),
+                _ => new Color(0.95f, 0.62f, 0.20f), // part·dpart
+            };
+            var r = go.GetComponent<MeshRenderer>();
+            r.material = new Material(Shader.Find("Universal Render Pipeline/Lit"));
+            StageDirectionActor.Tint(r.material, c);
+            go.AddComponent<Village.PickupMarker>().CitizenId = citizenId;
+            var glow = new GameObject("Glow");
+            glow.transform.SetParent(go.transform, false);
+            var l = glow.AddComponent<Light>();
+            l.type = LightType.Point;
+            l.range = 3f;
+            l.intensity = 1.1f;
+            l.color = c;
+            _pickups[citizenId] = go;
+        }
+
+        public void RequestCollect(int citizenId)
+        {
+            photonView.RPC(nameof(RpcRequestCollect), RpcTarget.MasterClient, citizenId, PhotonNetwork.LocalPlayer.ActorNumber);
+        }
+
+        [PunRPC]
+        private void RpcRequestCollect(int citizenId, int actorNumber)
+        {
+            if (!PhotonNetwork.IsMasterClient || GameEnded) return;
+            if (!_pendingDrops.TryGetValue(citizenId, out string drop)) return; // 이미 주워감
+            _pendingDrops.Remove(citizenId);
+            if (drop == "part" || drop == "dpart") _parts++;
+            photonView.RPC(nameof(RpcDropCollected), RpcTarget.AllBuffered, citizenId, drop, actorNumber, DisplayRescued, _parts);
+            CheckPhase();
+        }
+
+        [PunRPC]
+        private void RpcDropCollected(int citizenId, string drop, int actorNumber, int displayRescued, int parts, PhotonMessageInfo info)
+        {
+            if (_pickups.TryGetValue(citizenId, out var go) && go != null) Destroy(go);
+            _pickups.Remove(citizenId);
+            ProgressChanged?.Invoke(displayRescued, parts);
+            if (PhotonNetwork.Time - info.SentServerTime > 8.0) return;
+            if (actorNumber != PhotonNetwork.LocalPlayer.ActorNumber) return;
+            var collector = Player.PlayerController.Local;
+            switch (drop)
+            {
+                case "dpart":
+                    var lq = Quest.QuestDirector.Instance != null ? Quest.QuestDirector.Instance.LocalQuest : null;
+                    UI.SfxDirector.Play("quest");
+                    UI.ToastUI.Show($"전담 부품 '{(lq != null ? lq.partName : "수리 부품")}'을(를) 주웠다!");
+                    break;
+                case "part":
+                    UI.SfxDirector.Play("quest");
+                    UI.ToastUI.Show("수리 부품을 주웠다! 트레일러가 조금 더 온전해진다.");
+                    break;
+                case "medkit":
+                    UI.ToastUI.Show("구급상자를 주웠다! 상처를 치료했다.");
+                    if (collector != null) collector.Heal(GameConfig.MedkitHeal);
+                    break;
+                case "bandage":
+                    UI.ToastUI.Show("붕대를 주웠다. 상처를 감쌌다.");
+                    if (collector != null) collector.Heal(GameConfig.BandageHeal);
+                    break;
+                case "food":
+                    UI.ToastUI.Show("식량을 주웠다.");
+                    break;
+            }
+        }
+
+        /// <summary>과잉 심문 대상이 진짜 주민 — 겁먹고 도주, 구출 실패 (기획: 돌변은 도플갱어만).</summary>
+        public void InterrogationFlee(int citizenId, int actorNumber)
+        {
+            if (!PhotonNetwork.IsMasterClient || GameEnded) return;
+            var citizen = FindCitizen(citizenId);
+            if (citizen == null || citizen.IsResolved) return;
+            _fled++;
+            photonView.RPC(nameof(RpcApplyVerdict), RpcTarget.AllBuffered, citizenId, 4, "", actorNumber, DisplayRescued, _parts);
+            CheckPhase();
         }
 
         [PunRPC]

@@ -256,6 +256,7 @@ namespace DoppelgangerVillage.UI
                 "scream" => Scream(),
                 "crack" => Crack(),
                 "laugh" => Laugh(),
+                "knock" => Knock(),
                 _ => null,
             };
             if (data == null) return null;
@@ -513,6 +514,30 @@ namespace DoppelgangerVillage.UI
             Tick(0.07f, 1f);
             Tick(0.18f, 0.7f);
             Tick(0.27f, 0.95f);
+            return d;
+        }
+
+        // 문 두드리기 — 나무 둔탁음 2회
+        private static float[] Knock()
+        {
+            int n = (int)(SR * 0.5f);
+            var d = new float[n];
+            var rng = new System.Random(47);
+            void Thud(float at)
+            {
+                int start = (int)(at * SR);
+                int len = (int)(SR * 0.09f);
+                for (int i = 0; i < len && start + i < n; i++)
+                {
+                    float t = i / (float)SR;
+                    float env = Mathf.Exp(-t * 55f);
+                    d[start + i] += (Mathf.Sin(2f * Mathf.PI * 160f * t) * 0.6f
+                                     + Mathf.Sin(2f * Mathf.PI * 95f * t) * 0.4f
+                                     + ((float)rng.NextDouble() * 2f - 1f) * 0.25f) * env;
+                }
+            }
+            Thud(0f);
+            Thud(0.2f);
             return d;
         }
 

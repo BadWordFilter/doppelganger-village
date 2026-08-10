@@ -29,11 +29,19 @@ namespace DoppelgangerVillage
         /// </summary>
         public static readonly float[] DoppelRevealChanceByQuestion = { 0.10f, 0.30f, 0.60f };
 
-        // ---- 판정 드랍 (진짜 주민 구출 시 — 드랍 없음도 있어 도플갱어가 통계로 안 들키게) ----
-        public const float PartDropChance = 0.30f;   // 수리 부품 (플레이테스트: 너무 잘 나와서 대폭 하향)
-        public const float MedkitDropChance = 0.15f; // 구급상자 (HP 회복)
-        public const float FoodDropChance = 0.15f;   // 식량 (연출용) — 나머지 40%는 드랍 없음
+        // ---- 판정 드랍 (진짜 주민 구출 시 바닥에 떨어짐 — E로 주워야 획득. 드랍 없음도 있음) ----
+        public const float PartDropChance = 0.30f;    // 수리 부품 (플레이테스트: 너무 잘 나와서 대폭 하향)
+        public const float MedkitDropChance = 0.10f;  // 구급상자 (HP 대회복)
+        public const float BandageDropChance = 0.15f; // 붕대 (HP 소회복 — 기획서 회복 아이템)
+        public const float FoodDropChance = 0.10f;    // 식량 (연출용) — 나머지 35%는 드랍 없음
         public const float MedkitHeal = 30f;
+        public const float BandageHeal = 15f;
+
+        // ---- 감염자 플레이 (기획 밤 페이즈: 감염되면 느리게 배회하며 생존자를 공격) ----
+        public const float InfectedSpeed = 2.2f;        // 감염자 이동 속도 (달리기·점프 불가)
+        public const float InfectedAttackDamage = 15f;  // 생존자 습격 피해
+        public const float InfectedAttackRange = 2.2f;
+        public const float InfectedAttackCooldown = 3f;
 
         // ---- 배정 ----
         public const int MinDoppelgangers = 4;  // 게임 시작 시 마스터가 랜덤 배정
@@ -48,7 +56,7 @@ namespace DoppelgangerVillage
         public const float ChaserLoseRadius = 13f;   // 시야에서 벗어나면 금방 포기
         public const float ChaserAttackRange = 1.7f;
         public const float ChaserHitDamage = 25f;
-        public const float ChaserLifetimeSeconds = 45f; // 돌변 개체는 45초 후 소멸 (누적 지옥 방지)
+        public const float ChaserLifetimeSeconds = 75f; // 돌변 개체 소멸 시간 (집 앞에서 기다리는 시간 보장)
         public const float StunDuration = 0.8f;      // 잡혔을 때 짧은 기절
 
         // ---- 판정 패널티 (플레이테스트: 진짜에게 거울 = 도주 + 판정자 HP 감소) ----

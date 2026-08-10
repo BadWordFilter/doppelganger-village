@@ -38,10 +38,14 @@ namespace DoppelgangerVillage.Dialogue
 
         private AnimalCitizen Citizen(int id)
         {
-            if (_citizens == null)
-                _citizens = FindObjectsByType<AnimalCitizen>(FindObjectsInactive.Include, FindObjectsSortMode.None)
-                    .ToDictionary(c => c.CitizenId);
-            return _citizens.TryGetValue(id, out var c) ? c : null;
+            // 캐시에 없으면 재구축 — 게임 도중 생성되는 확장 구역 시민(외곽 링)도 찾도록 (대화 무반응 버그 수정)
+            if (_citizens == null || !_citizens.ContainsKey(id))
+            {
+                _citizens = new Dictionary<int, AnimalCitizen>();
+                foreach (var c in FindObjectsByType<AnimalCitizen>(FindObjectsInactive.Include, FindObjectsSortMode.None))
+                    _citizens[c.CitizenId] = c; // 중복 id가 있어도 예외 없이 마지막 것 사용
+            }
+            return _citizens.TryGetValue(id, out var found) ? found : null;
         }
 
         /// <summary>해당 동물에게 낼 질문 선택지 3개 (일상/핵심 혼합 — 핵심 최소 1개 보장).</summary>
@@ -77,10 +81,14 @@ namespace DoppelgangerVillage.Dialogue
             var entry = Database.ById(entryId);
             if (citizen == null || entry == null || citizen.IsResolved) return;
 
-            // 4번째 질문 시도 = 과잉 심문: 도플갱어가 눈치채고 돌변
+            // 4번째 질문 시도 = 과잉 심문 (기획: 돌변은 도플갱어만)
+            // 진짜 주민은 겁먹고 도주 — 구출 실패 코스트가 있어 '4번째 질문 간 보기'가 공짜 정보가 되지 않는다
             if (citizen.QuestionsAsked >= GameConfig.MaxQuestionsPerAnimal)
             {
-                photonView.RPC(nameof(RpcOverInterrogation), RpcTarget.AllBuffered, citizenId, actorNumber);
+                if (citizen.IsDoppelganger)
+                    photonView.RPC(nameof(RpcOverInterrogation), RpcTarget.AllBuffered, citizenId, actorNumber);
+                else
+                    Judgement.JudgementDirector.Instance.InterrogationFlee(citizenId, actorNumber);
                 return;
             }
 
@@ -125,7 +133,8 @@ namespace DoppelgangerVillage.Dialogue
 
             Debug.Log($"[Dialogue] 과잉 심문! 시민 {citizenId} 이(가) 돌변하여 액터 {actorNumber} 을(를) 공격");
             OverInterrogated?.Invoke(citizenId, actorNumber);
-            StartCoroutine(HideAfter(citizen, 1.3f));
+            // 돌변한 모습을 충분히 보여준 뒤 사라진다 (집 안 돌변도 눈에 보이게)
+            StartCoroutine(HideAfter(citizen, 2.8f));
             // 돌변 → 추격자 스폰 (마스터 소유 룸 오브젝트, 전 클라이언트 위치 동기화)
             // 집 안에서 돌변하면 놈은 집 앞 마을 쪽에 나타난다 (내부 룸은 NavMesh 밖)
             if (PhotonNetwork.IsMasterClient)

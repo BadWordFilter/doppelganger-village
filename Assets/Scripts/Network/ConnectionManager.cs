@@ -43,6 +43,9 @@ namespace DoppelgangerVillage.Network
         {
             // 씬 리로드(리매치) 때 새 인스턴스가 이어받는다 — 게임 상태 전체 리셋을 위해 씬과 수명을 같이한다
             Instance = this;
+            // 저장된 설정 적용 (ESC 메뉴에서 변경)
+            AudioListener.volume = PlayerPrefs.GetFloat("vol", 1f);
+            Player.ThirdPersonCameraRig.SensitivityScale = PlayerPrefs.GetFloat("sens", 1f);
         }
 
         /// <summary>마스터 서버 접속. 이미 연결돼 있으면 무시.</summary>

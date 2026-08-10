@@ -21,6 +21,9 @@ namespace DoppelgangerVillage.UI
         public static DialogueUI Instance { get; private set; }
         public static bool IsOpen { get; private set; }
 
+        /// <summary>마지막으로 닫힌 시각 — 판정 키가 같은 프레임에 월드 상호작용으로 새는 것을 막는다.</summary>
+        public static float LastClosedAt { get; private set; }
+
         /// <summary>판정 선택: (대상, 거울인가) — 4단계 판정 시스템이 구독한다.</summary>
         public event Action<AnimalCitizen, bool> VerdictChosen;
 
@@ -31,7 +34,7 @@ namespace DoppelgangerVillage.UI
         private Text _warnText;
         private readonly List<Button> _choiceButtons = new();
         private readonly List<Text> _choiceLabels = new();
-        private Button _sendBtn, _mirrorBtn;
+        private Button _sendBtn, _mirrorBtn, _closeBtn;
 
         private AnimalCitizen _current;
         private List<DialogueEntry> _choices;
@@ -112,10 +115,10 @@ namespace DoppelgangerVillage.UI
             ((RectTransform)_mirrorBtn.transform).pivot = new Vector2(1f, 0f);
             _mirrorBtn.onClick.AddListener(() => Verdict(true));
 
-            var closeBtn = UiKit.CreateButton(panel, "떠나기", 20, new Color(0.3f, 0.3f, 0.35f), Color.white);
-            UiKit.SetRect((RectTransform)closeBtn.transform, new Vector2(1f, 0f), new Vector2(360, 44), new Vector2(-28, 190));
-            ((RectTransform)closeBtn.transform).pivot = new Vector2(1f, 0f);
-            closeBtn.onClick.AddListener(Close);
+            _closeBtn = UiKit.CreateButton(panel, "떠나기", 20, new Color(0.3f, 0.3f, 0.35f), Color.white);
+            UiKit.SetRect((RectTransform)_closeBtn.transform, new Vector2(1f, 0f), new Vector2(360, 44), new Vector2(-28, 190));
+            ((RectTransform)_closeBtn.transform).pivot = new Vector2(1f, 0f);
+            _closeBtn.onClick.AddListener(Close);
 
             _root.SetActive(false);
         }
@@ -125,11 +128,19 @@ namespace DoppelgangerVillage.UI
         /// <summary>조작표 준수: 대화 중 E = 트레일러로 보내기, F = 거울 비추기 (열자마자 오입력 방지 딜레이).</summary>
         private void Update()
         {
+            // 응답 유실 실패 안전장치: 5초 넘게 답이 없으면 선택지를 다시 연다 (클릭 먹통 방지)
+            if (IsOpen && _waiting && Time.unscaledTime - _waitingSince > 5f)
+            {
+                _waiting = false;
+                RefreshChoices();
+            }
             if (!IsOpen || _current == null || _waiting) return;
             if (Time.unscaledTime - _openedAt < 0.35f) return;
             var kb = UnityEngine.InputSystem.Keyboard.current;
+            var mouse = UnityEngine.InputSystem.Mouse.current;
             if (kb == null) return;
-            if (kb.fKey.wasPressedThisFrame) Verdict(true);
+            // 조작표: F 또는 우클릭 = 거울, E = 트레일러로 보내기
+            if (kb.fKey.wasPressedThisFrame || (mouse != null && mouse.rightButton.wasPressedThisFrame)) Verdict(true);
             else if (kb.eKey.wasPressedThisFrame) Verdict(false);
         }
 
@@ -151,6 +162,7 @@ namespace DoppelgangerVillage.UI
         public void Close()
         {
             IsOpen = false;
+            LastClosedAt = Time.unscaledTime;
             _current = null;
             if (_root != null) _root.SetActive(false);
         }
@@ -158,8 +170,10 @@ namespace DoppelgangerVillage.UI
         private void RefreshChoices()
         {
             UpdateCount();
+            // 질문 소진 = 반드시 판정해야 한다 (기획: 대화 후 2택 강제) — 떠나기 봉쇄
             bool danger = _current.QuestionsAsked >= GameConfig.MaxQuestionsPerAnimal;
-            _warnText.text = danger ? "더 캐물었다간... 눈치챌 것 같다." : "";
+            _closeBtn.gameObject.SetActive(!danger);
+            _warnText.text = danger ? "질문이 끝났다. 이제 결정을 내려야 한다 — 더 물으면 눈치챌 것이다." : "";
             _choices = DialogueDirector.Instance.PickChoices(_current);
             for (int i = 0; i < _choiceButtons.Count; i++)
             {
@@ -173,10 +187,13 @@ namespace DoppelgangerVillage.UI
             }
         }
 
+        private float _waitingSince;
+
         private void OnChoiceClicked(int idx)
         {
             if (_waiting || _current == null || idx >= _choices.Count) return;
             _waiting = true;
+            _waitingSince = Time.unscaledTime;
             foreach (var b in _choiceButtons) b.interactable = false;
             DialogueDirector.Instance.Ask(_current, _choices[idx]);
         }
@@ -247,8 +264,11 @@ namespace DoppelgangerVillage.UI
 
         private void UpdateCount()
         {
-            if (_current != null)
-                _countLabel.text = $"질문 {_current.QuestionsAsked}/{GameConfig.MaxQuestionsPerAnimal}";
+            if (_current == null) return;
+            _countLabel.text = $"질문 {_current.QuestionsAsked}/{GameConfig.MaxQuestionsPerAnimal}";
+            // 다른 플레이어가 질문을 소진해도 즉시 판정 강제 상태로 전환
+            if (_closeBtn != null && _current.QuestionsAsked >= GameConfig.MaxQuestionsPerAnimal)
+                _closeBtn.gameObject.SetActive(false);
         }
 
         private static AnimalCitizen FindCitizen(int id)
