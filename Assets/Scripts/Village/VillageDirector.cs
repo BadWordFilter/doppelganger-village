@@ -20,8 +20,10 @@ namespace DoppelgangerVillage.Village
             if (PhotonNetwork.CurrentRoom.CustomProperties.ContainsKey(DoppelKey)) return;
 
             // 야행성(시작 시 비활성) 시민도 배정 대상에 포함 — 밤에도 추리가 성립해야 한다
+            // 확장 구역(외곽 링) 시민은 id 대역에서 별도 배정 — 내부 도플갱어 밀도를 희석하지 않게
             var ids = Object.FindObjectsByType<AnimalCitizen>(FindObjectsInactive.Include, FindObjectsSortMode.None)
                 .Select(a => a.CitizenId)
+                .Where(id => id < GameConfig.OuterIdStart)
                 .ToList();
             if (ids.Count == 0)
             {
@@ -35,7 +37,13 @@ namespace DoppelgangerVillage.Village
                 int j = Random.Range(i, ids.Count);
                 (ids[i], ids[j]) = (ids[j], ids[i]);
             }
-            int[] chosen = ids.Take(count).ToArray();
+            var outerIds = Enumerable.Range(GameConfig.OuterIdStart, GameConfig.OuterCitizenCount).ToList();
+            for (int i = 0; i < outerIds.Count; i++)
+            {
+                int j = Random.Range(i, outerIds.Count);
+                (outerIds[i], outerIds[j]) = (outerIds[j], outerIds[i]);
+            }
+            int[] chosen = ids.Take(count).Concat(outerIds.Take(GameConfig.OuterDoppelgangers)).ToArray();
             PhotonNetwork.CurrentRoom.SetCustomProperties(new PhotonHashtable { { DoppelKey, chosen } });
             Debug.Log($"[Village] 도플갱어 {count}마리 배정 완료 (id: {string.Join(",", chosen)})");
         }

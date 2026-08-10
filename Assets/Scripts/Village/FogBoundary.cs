@@ -13,7 +13,13 @@ namespace DoppelgangerVillage.Village
     {
         public static readonly Vector3 Center = new(0f, 0f, -6f);
         public const float Day1Radius = 17f;   // 1일차: 거주 구역 + 트레일러
-        public const float FullRadius = 28f;   // 밤부터: 전체 맵 (영구 외곽 경계)
+        public const float FullRadius = 28f;   // 밤부터: 전체 맵
+
+        /// <summary>주민 10마리 구출 시 개방되는 확장 상태 (JudgementDirector가 설정).</summary>
+        public static bool Expanded;
+
+        /// <summary>현재 단계의 최대 경계 — 밤·2일차 이후 페이즈 전환이 이 값을 쓴다.</summary>
+        public static float CurrentMaxRadius => Expanded ? GameConfig.ExpandedRadius : FullRadius;
 
         private const int SegmentCount = 28;
         private const float WallHeight = 9f;

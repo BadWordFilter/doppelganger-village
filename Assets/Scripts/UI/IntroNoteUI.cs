@@ -17,9 +17,7 @@ namespace DoppelgangerVillage.UI
             "이 쪽지를 줍게 될 분이 제발 살아있기를 바랍니다.\n\n" +
             "우리 마을은 주민인지, 도플갱어인지 구별할 수 없는\n괴물들에게 완전히 점령당했습니다.\n\n" +
             "부디 도플갱어에게 먹히지 말고\n진짜 주민들을 찾아 이곳을 탈출하세요.\n\n" +
-            "놈들은 우리와 똑같이 생겼지만,\n대화를 해보면 아주 조금씩 틈이 보입니다.\n\n" +
-            "만약 눈앞의 대상이 도플갱어라는 확신이 들었다면,\n절대 뒤돌아 뛰지 마십시오.\n\n" +
-            "조용히 눈을 감고, 주머니에서 거울을 꺼내\n놈의 얼굴을 비추십시오.";
+            "만약 도플갱어라는 확신이 들었다면,\n눈을 감고 거울을 비추십시오.";
 
         private void Awake()
         {
@@ -49,7 +47,7 @@ namespace DoppelgangerVillage.UI
 
             // 낡은 종이 느낌의 쪽지
             var paper = UiKit.CreatePanel(dim, new Color(0.91f, 0.86f, 0.72f, 0.98f), "Paper");
-            UiKit.SetRect(paper, new Vector2(0.5f, 0.5f), new Vector2(680, 640), Vector2.zero);
+            UiKit.SetRect(paper, new Vector2(0.5f, 0.5f), new Vector2(680, 470), Vector2.zero);
             paper.localEulerAngles = new Vector3(0, 0, 1.5f);
 
             var header = UiKit.CreateText(paper, "< 떨어진 메모장 >", 26, new Color(0.35f, 0.28f, 0.2f), TextAnchor.MiddleCenter, true);
@@ -57,7 +55,7 @@ namespace DoppelgangerVillage.UI
             header.rectTransform.pivot = new Vector2(0.5f, 1f);
 
             var body = UiKit.CreateText(paper, $"<i>{NoteText}</i>", 22, new Color(0.25f, 0.2f, 0.16f), TextAnchor.UpperCenter);
-            UiKit.SetRect(body.rectTransform, new Vector2(0.5f, 1f), new Vector2(600, 480), new Vector2(0, -84));
+            UiKit.SetRect(body.rectTransform, new Vector2(0.5f, 1f), new Vector2(600, 310), new Vector2(0, -84));
             body.rectTransform.pivot = new Vector2(0.5f, 1f);
             body.supportRichText = true;
 

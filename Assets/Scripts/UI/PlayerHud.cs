@@ -46,7 +46,7 @@ namespace DoppelgangerVillage.UI
         {
             var p = PlayerController.Local;
             if (_root == null) return;
-            if (p == null)
+            if (p == null || DialogueUI.IsOpen) // 대화 패널이 게이지를 덮으므로 대화 중엔 숨김
             {
                 if (_root.activeSelf) _root.SetActive(false);
                 return;

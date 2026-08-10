@@ -127,8 +127,14 @@ namespace DoppelgangerVillage.Dialogue
             OverInterrogated?.Invoke(citizenId, actorNumber);
             StartCoroutine(HideAfter(citizen, 1.3f));
             // 돌변 → 추격자 스폰 (마스터 소유 룸 오브젝트, 전 클라이언트 위치 동기화)
+            // 집 안에서 돌변하면 놈은 집 앞 마을 쪽에 나타난다 (내부 룸은 NavMesh 밖)
             if (PhotonNetwork.IsMasterClient)
-                PhotonNetwork.InstantiateRoomObject("DoppelChaser", citizen.transform.position, citizen.transform.rotation);
+            {
+                Vector3 spawnPos = citizen.transform.position;
+                if (Village.HouseInteriors.Contains(spawnPos))
+                    spawnPos = Village.HouseInteriors.ResidentExteriorDoor(citizen.CitizenId, spawnPos);
+                PhotonNetwork.InstantiateRoomObject("DoppelChaser", spawnPos, citizen.transform.rotation);
+            }
         }
 
         private System.Collections.IEnumerator HideAfter(AnimalCitizen citizen, float delay)

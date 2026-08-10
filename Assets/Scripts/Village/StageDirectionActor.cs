@@ -25,6 +25,21 @@ namespace DoppelgangerVillage.Village
             return null;
         }
 
+        /// <summary>머티리얼 색 설정 — URP(_BaseColor)와 glTFast(baseColorFactor) 셰이더 모두 지원.</summary>
+        public static void Tint(Material m, Color c)
+        {
+            if (m.HasProperty("_BaseColor")) m.SetColor("_BaseColor", c);
+            else if (m.HasProperty("baseColorFactor")) m.SetColor("baseColorFactor", c);
+            else m.color = c;
+        }
+
+        public static Color GetTint(Material m)
+        {
+            if (m.HasProperty("_BaseColor")) return m.GetColor("_BaseColor");
+            if (m.HasProperty("baseColorFactor")) return m.GetColor("baseColorFactor");
+            return m.color;
+        }
+
         public static void DistortFace(AnimalCitizen citizen)
         {
             if (citizen == null) return;
@@ -34,7 +49,7 @@ namespace DoppelgangerVillage.Village
                 if (eye == null) continue;
                 eye.localScale = new Vector3(eye.localScale.x * 2.4f, eye.localScale.y * 2.8f, eye.localScale.z);
                 var r = eye.GetComponent<MeshRenderer>();
-                if (r != null) r.material.SetColor("_BaseColor", new Color(0.35f, 0.02f, 0.02f));
+                if (r != null) Tint(r.material, new Color(0.35f, 0.02f, 0.02f));
             }
         }
 

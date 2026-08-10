@@ -55,7 +55,17 @@ namespace DoppelgangerVillage.Player
             if (_target == null) return;
             var rot = Quaternion.Euler(_pitch, Yaw, 0f);
             Vector3 pivot = _target.position + Vector3.up * PivotHeight;
-            transform.position = pivot - rot * Vector3.forward * Distance;
+
+            // 카메라 충돌: 벽·집 뒤로 넘어가지 않고 막힌 지점까지 당겨온다
+            Vector3 back = -(rot * Vector3.forward);
+            float dist = Distance;
+            if (Physics.SphereCast(pivot, 0.25f, back, out RaycastHit hit, Distance, ~0, QueryTriggerInteraction.Ignore))
+            {
+                // 자기 자신(플레이어 캡슐)은 시작 지점과 겹쳐 있어 SphereCast가 무시한다
+                if (hit.transform != _target && !hit.transform.IsChildOf(_target))
+                    dist = Mathf.Max(0.45f, hit.distance - 0.12f);
+            }
+            transform.position = pivot + back * dist;
             transform.rotation = rot;
 
             // 달리기 속도감: FOV 확장

@@ -214,7 +214,7 @@ namespace DoppelgangerVillage.UI
             if (target != null)
             {
                 foreach (var r in target.GetComponentsInChildren<MeshRenderer>())
-                    r.material.SetColor("_BaseColor", new Color(0.45f, 0.08f, 0.08f));
+                    StageDirectionActor.Tint(r.material, new Color(0.45f, 0.08f, 0.08f));
                 StageDirectionActor.DistortFace(target); // 눈이 커지고 검붉게 — 얼굴 붕괴
                 Village.AnimalPerformance.Horror(target, "crack", 0.85f); // 관절 꺾이는 소리
                 target.IsResolved = true; // 돌변한 개체는 더 이상 대화 불가

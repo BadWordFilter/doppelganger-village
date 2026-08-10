@@ -36,7 +36,18 @@ namespace DoppelgangerVillage.Village
             if (_applied || !PhotonNetwork.InRoom) return;
             if (!PhotonNetwork.CurrentRoom.CustomProperties.TryGetValue(SeedKey, out object v) || v is not int seed) return;
             _applied = true;
+            FogBoundary.Expanded = false; // 새 게임 — 확장 상태 초기화 (버퍼 RPC가 있으면 재적용됨)
             Apply(seed);
+        }
+
+        /// <summary>확장 구역 개방: 잠들어 있던 외곽 링 시민 활성화 (10마리 구출 보상).
+        /// 밤이면 활성화를 미룬다 — 아침 기상 루프가 FogBoundary.Expanded를 보고 깨운다.</summary>
+        public static void ActivateOuterRing()
+        {
+            if (PhaseDirector.IsNight) return;
+            foreach (var c in FindObjectsByType<AnimalCitizen>(FindObjectsInactive.Include, FindObjectsSortMode.None))
+                if (c.CitizenId >= GameConfig.OuterIdStart && !c.IsNocturnal && !c.IsResolved)
+                    c.gameObject.SetActive(true);
         }
 
         private void Apply(int seed)
@@ -50,10 +61,19 @@ namespace DoppelgangerVillage.Village
             Vector3 zoneCenter = FogBoundary.Center;
             var placed = new List<Vector3> { trailer };
 
-            // 집 9채: 구역별 밴드 배치 — 거주(1일차 경계 안) / 상업·의료(경계 밖, 2일차 해금)
-            string[] bandByHouse = { "거주", "거주", "거주", "상업", "상업", "상업", "거주", "거주", "상업" }; // speciesByHouse 순서와 동일
+            // 집 12채: 구역별 밴드 배치 — 거주(1일차 경계 안) / 상업·의료(경계 밖, 2일차 해금)
+            // (플레이테스트: 집마다 보통 1마리 — 기존 9채 + 거주 3채 증축)
+            string[] bandByHouse = { "거주", "거주", "거주", "상업", "상업", "상업", "거주", "거주", "상업", "거주", "거주", "상업" };
             var houses = new List<Transform>();
             foreach (Transform h in housesRoot.transform) houses.Add(h);
+            int baseCount = houses.Count;
+            while (houses.Count < 12 && baseCount > 0)
+            {
+                var template = houses[houses.Count % 3]; // 거주 스타일 순환 복제
+                var extension = Instantiate(template.gameObject, housesRoot.transform).transform;
+                extension.name = template.name + "_증축" + houses.Count;
+                houses.Add(extension);
+            }
             for (int hi = 0; hi < houses.Count; hi++)
             {
                 var h = houses[hi];
@@ -104,7 +124,10 @@ namespace DoppelgangerVillage.Village
                 }
             }
 
-            // 주간 동물을 자기 집 앞으로 이동 (집 순서 ↔ 동물 id 매핑은 씬 구축 규칙과 동일)
+            // 집 내부 룸 생성 (어몽어스식 출입) — 주민은 집 안에 산다
+            HouseInteriors.BuildAll(houses);
+
+            // 주간 동물을 자기 집 '안'에 입주 (집 순서 ↔ 동물 id 매핑은 씬 구축 규칙과 동일)
             int[] idByHouse = { 0, 3, 5, 7, 9, 10, 1, 4, 8 };
             string[] speciesByHouse = { "강아지", "고양이", "토끼", "돼지", "곰", "양", "강아지", "고양이", "돼지" };
             CommercialHouses.Clear();
@@ -112,38 +135,56 @@ namespace DoppelgangerVillage.Village
             {
                 var citizen = FindCitizen(idByHouse[i]);
                 if (citizen == null) continue;
-                var h = houses[i];
-                citizen.transform.position = h.position + h.forward * 4.5f;
-                citizen.transform.rotation = h.rotation;
+                citizen.transform.position = HouseInteriors.AssignResident(idByHouse[i], i, 0);
+                citizen.transform.rotation = Quaternion.Euler(0f, 180f, 0f); // 문 쪽을 본다
                 // 상업·의료 구역(돼지·곰·양) = 2일차 해금 대상 (기획 5절)
                 if (speciesByHouse[i] == "돼지" || speciesByHouse[i] == "곰" || speciesByHouse[i] == "양")
-                    CommercialHouses.Add(h);
+                    CommercialHouses.Add(houses[i]);
             }
 
-            // 추가 주민(집 없는 거리 주민, id 14~18): 종에 맞는 구역 밴드에 산개
-            foreach (int eid in new[] { 14, 15, 16, 17, 18 })
+            // 추가 주민(id 14~18): 증축 집 3채에 단독 입주 + 2마리는 동거 (보통 1마리, 많아야 2마리)
+            int[] extraIds = { 14, 15, 16, 17, 18 };
+            for (int e = 0; e < extraIds.Length; e++)
             {
-                var extra = FindCitizen(eid);
+                var extra = FindCitizen(extraIds[e]);
                 if (extra == null) continue;
-                bool commercial = extra.AnimalType == "돼지" || extra.AnimalType == "곰" || extra.AnimalType == "양";
-                float rMin2 = commercial ? FogBoundary.Day1Radius + 4f : 7f;
-                float rMax2 = commercial ? FogBoundary.FullRadius - 3f : FogBoundary.Day1Radius - 3f;
-                for (int attempt = 0; attempt < 50; attempt++)
+                int ri;
+                int slot;
+                if (e < 3 && houses.Count > 9 + e) { ri = 9 + e; slot = 0; } // 증축 집 단독
+                else { ri = e == 3 ? 0 : 4; slot = 1; }                       // 동거 2마리
+                extra.transform.position = HouseInteriors.AssignResident(extraIds[e], ri, slot);
+                extra.transform.rotation = Quaternion.Euler(0f, 165f, 0f);
+            }
+
+            // 확장 구역(외곽 링) 시민: 10마리 구출 시 열리는 바깥 밴드 — 생성만 하고 잠재운다
+            string[] outerSpecies = { "강아지", "고양이", "토끼", "돼지", "곰", "양" };
+            for (int oi = 0; oi < GameConfig.OuterCitizenCount; oi++)
+            {
+                int oid = GameConfig.OuterIdStart + oi;
+                if (FindCitizen(oid) != null) continue; // 이미 생성됨
+                string species = outerSpecies[rng.Next(outerSpecies.Length)];
+                var template = FindTemplate(species);
+                if (template == null) continue;
+                var clone = Instantiate(template.gameObject);
+                clone.name = $"OuterCitizen_{oid}_{species}";
+                clone.GetComponent<AnimalCitizen>().Configure(oid, species);
+                for (int attempt = 0; attempt < 60; attempt++)
                 {
                     float angle = (float)(rng.NextDouble() * Mathf.PI * 2.0);
-                    float radius = rMin2 + (float)rng.NextDouble() * (rMax2 - rMin2);
+                    float radius = FogBoundary.FullRadius + 4f
+                        + (float)rng.NextDouble() * (GameConfig.ExpandedRadius - FogBoundary.FullRadius - 7f);
                     Vector3 pos = zoneCenter + new Vector3(Mathf.Cos(angle) * radius, 0f, Mathf.Sin(angle) * radius);
-                    if (Mathf.Abs(pos.x) > 32f || Mathf.Abs(pos.z) > 32f) continue;
-                    if ((pos - trailer).magnitude < 9f || (pos - plaza).magnitude < 5f) continue;
+                    if (Mathf.Abs(pos.x) > 44f || Mathf.Abs(pos.z) > 44f) continue;
                     bool clear = true;
                     foreach (var p in placed)
-                        if ((pos - p).magnitude < 6f) { clear = false; break; }
+                        if ((pos - p).magnitude < 5f) { clear = false; break; }
                     if (!clear) continue;
-                    extra.transform.position = pos;
-                    extra.transform.rotation = Quaternion.Euler(0f, (float)(rng.NextDouble() * 360.0), 0f);
+                    clone.transform.position = pos;
+                    clone.transform.rotation = Quaternion.Euler(0f, (float)(rng.NextDouble() * 360.0), 0f);
                     placed.Add(pos);
                     break;
                 }
+                clone.SetActive(false);
             }
 
             // NavMesh 런타임 재베이크 (이동한 집들이 장애물로 반영되도록)
@@ -158,6 +199,15 @@ namespace DoppelgangerVillage.Village
         {
             foreach (var c in FindObjectsByType<AnimalCitizen>(FindObjectsInactive.Include, FindObjectsSortMode.None))
                 if (c.CitizenId == id) return c;
+            return null;
+        }
+
+        /// <summary>외곽 링 복제 원본: 같은 종의 기존 주간 시민.</summary>
+        private static AnimalCitizen FindTemplate(string species)
+        {
+            foreach (var c in FindObjectsByType<AnimalCitizen>(FindObjectsInactive.Include, FindObjectsSortMode.None))
+                if (c.AnimalType == species && !c.IsNocturnal && c.CitizenId < GameConfig.OuterIdStart)
+                    return c;
             return null;
         }
     }

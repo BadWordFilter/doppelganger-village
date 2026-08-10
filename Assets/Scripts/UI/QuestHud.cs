@@ -35,7 +35,7 @@ namespace DoppelgangerVillage.UI
             _questText.supportRichText = true;
 
             var detail = UiKit.CreatePanel(canvas.transform, new Color(0.04f, 0.05f, 0.08f, 0.92f), "DetailPanel");
-            UiKit.SetRect(detail, new Vector2(0f, 1f), new Vector2(420, 190), new Vector2(20, -140));
+            UiKit.SetRect(detail, new Vector2(0f, 1f), new Vector2(420, 176), new Vector2(20, -140));
             detail.pivot = new Vector2(0f, 1f);
             _detailPanel = detail.gameObject;
             _detailText = UiKit.CreateText(detail, "", 19, new Color(0.9f, 0.9f, 0.88f), TextAnchor.UpperLeft);
@@ -88,13 +88,14 @@ namespace DoppelgangerVillage.UI
         private void RefreshDetail()
         {
             if (_detailText == null) return;
+            // 조작키만 표시 (수집 현황은 우상단 목표 HUD가 담당)
             _detailText.text =
-                $"<b>수집 현황</b>\n" +
-                $"구출 주민  {_rescued} / {GameConfig.RescueGoal}\n" +
-                $"수리 부품  {_parts} / {GameConfig.PartsGoal}\n\n" +
-                $"<b>조작</b>\n" +
-                $"WASD 이동 · Shift 달리기 · E 대화/구출\n" +
-                $"F 거울 비추기 · Tab 정보 · ESC 커서 해제";
+                "<b>조작</b>\n" +
+                "WASD 이동 · Space 점프\n" +
+                "Shift 달리기 · 좌클릭 시점 잠금\n" +
+                "E 대화 / 집·트레일러 출입 / 보내기\n" +
+                "F 눈을 감고 거울 비추기\n" +
+                "ESC 메뉴 · 커서 해제";
         }
     }
 }

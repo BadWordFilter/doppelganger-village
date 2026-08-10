@@ -6,9 +6,14 @@ namespace DoppelgangerVillage
     /// </summary>
     public static class GameConfig
     {
-        // ---- 승리 조건 (기획: 11일차+ 스케일 — 다일차 생존 분량) ----
-        public const int RescueGoal = 10; // 구출해야 하는 진짜 주민 수
-        public const int PartsGoal = 10;  // 모아야 하는 트레일러 수리 부품 수
+        // ---- 승리 조건·진행 (플레이테스트: 10명은 너무 빨리 끝남 → 단계식 확장) ----
+        public const int RescueGoal = 10;      // 1단계: 이만큼 구출하면 안개 경계가 물러나며 구역 확장
+        public const int FinalRescueGoal = 20; // 최종: 확장 구역 포함 이만큼 구출해야 탈출
+        public const int PartsGoal = 10;       // 모아야 하는 트레일러 수리 부품 수
+        public const float ExpandedRadius = 40f; // 확장 후 안개 경계 반경
+        public const int OuterIdStart = 40;      // 확장 구역 시민 id 시작값
+        public const int OuterCitizenCount = 12; // 확장 구역 추가 시민 수
+        public const int OuterDoppelgangers = 3; // 그중 도플갱어 수
 
         // ---- 낮/밤 사이클 (플레이테스트: 낮 시간제한) ----
         public static float DayDurationSeconds = 150f;  // 낮 2.5분 → 해질녘 정산 → 밤
@@ -25,9 +30,9 @@ namespace DoppelgangerVillage
         public static readonly float[] DoppelRevealChanceByQuestion = { 0.10f, 0.30f, 0.60f };
 
         // ---- 판정 드랍 (진짜 주민 구출 시 — 드랍 없음도 있어 도플갱어가 통계로 안 들키게) ----
-        public const float PartDropChance = 0.70f;   // 수리 부품
-        public const float MedkitDropChance = 0.10f; // 구급상자 (HP 회복)
-        public const float FoodDropChance = 0.10f;   // 식량 (연출용) — 나머지 15%는 드랍 없음
+        public const float PartDropChance = 0.30f;   // 수리 부품 (플레이테스트: 너무 잘 나와서 대폭 하향)
+        public const float MedkitDropChance = 0.15f; // 구급상자 (HP 회복)
+        public const float FoodDropChance = 0.15f;   // 식량 (연출용) — 나머지 40%는 드랍 없음
         public const float MedkitHeal = 30f;
 
         // ---- 배정 ----

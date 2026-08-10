@@ -1,6 +1,7 @@
 using Photon.Pun;
 using UnityEngine;
 using UnityEngine.InputSystem;
+using PunPlayer = Photon.Realtime.Player;
 
 namespace DoppelgangerVillage.Player
 {
@@ -9,7 +10,7 @@ namespace DoppelgangerVillage.Player
     /// 원격 아바타는 PhotonTransformView가 위치를 동기화한다.
     /// </summary>
     [RequireComponent(typeof(CharacterController))]
-    public class PlayerController : MonoBehaviourPun
+    public class PlayerController : MonoBehaviourPunCallbacks
     {
         /// <summary>이 클라이언트가 조종하는 로컬 플레이어 (HUD 등에서 참조)</summary>
         public static PlayerController Local { get; private set; }
@@ -88,7 +89,12 @@ namespace DoppelgangerVillage.Player
             _rig = ThirdPersonCameraRig.AttachTo(transform);
         }
 
-        /// <summary>소유자 플레이어 프로퍼티의 셔츠 색을 아바타에 적용.</summary>
+        /// <summary>틴트 제외 부위 — 눈·코·그림자·아웃라인은 색이 변하지 않는다.</summary>
+        private static readonly System.Collections.Generic.HashSet<string> NoTint =
+            new() { "EyeL", "EyeR", "EyeShineL", "EyeShineR", "MouthL", "MouthR",
+                    "Muzzle", "Nose", "InnerEarL", "InnerEarR", "BlobShadow", "Outline" };
+
+        /// <summary>소유자 플레이어 프로퍼티의 색을 아바타 전신에 적용 (고양이 플레이어 — 몸 전체 색 변경).</summary>
         private void ApplyCustomization()
         {
             int idx = 0;
@@ -96,13 +102,18 @@ namespace DoppelgangerVillage.Player
                 && photonView.Owner.CustomProperties.TryGetValue("shirt", out object v) && v is int i)
                 idx = Mathf.Clamp(i, 0, ShirtPalette.Length - 1);
             Color c = ShirtPalette[idx];
-            foreach (var partName in new[] { "Body", "ArmL", "ArmR" })
+            foreach (var r in GetComponentsInChildren<MeshRenderer>(true))
             {
-                var part = Village.StageDirectionActor.FindDeep(transform, partName);
-                if (part == null) continue;
-                var r = part.GetComponent<MeshRenderer>();
-                if (r != null) r.material.SetColor("_BaseColor", c);
+                if (NoTint.Contains(r.transform.name)) continue;
+                Village.StageDirectionActor.Tint(r.material, c);
             }
+        }
+
+        /// <summary>색 선택이 스폰보다 늦게 동기화돼도 반영 (대기실 색 변경·늦은 합류 커버).</summary>
+        public override void OnPlayerPropertiesUpdate(PunPlayer targetPlayer, ExitGames.Client.Photon.Hashtable changedProps)
+        {
+            if (photonView.Owner != null && targetPlayer == photonView.Owner && changedProps.ContainsKey("shirt"))
+                ApplyCustomization();
         }
 
         private void OnDestroy()

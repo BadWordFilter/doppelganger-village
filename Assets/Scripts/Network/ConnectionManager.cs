@@ -36,16 +36,13 @@ namespace DoppelgangerVillage.Network
         private int _createRetries;
         private readonly Dictionary<string, RoomInfo> _roomCache = new();
 
+        /// <summary>리매치 예약 코드 — 씬 리로드 후 재접속 시 이 코드로 자동 입장.</summary>
+        public static string RematchCode;
+
         private void Awake()
         {
-            if (Instance != null && Instance != this)
-            {
-                Destroy(gameObject);
-                return;
-            }
+            // 씬 리로드(리매치) 때 새 인스턴스가 이어받는다 — 게임 상태 전체 리셋을 위해 씬과 수명을 같이한다
             Instance = this;
-            DontDestroyOnLoad(gameObject);
-            PhotonNetwork.AutomaticallySyncScene = true; // 마스터가 씬 전환을 주도
         }
 
         /// <summary>마스터 서버 접속. 이미 연결돼 있으면 무시.</summary>
@@ -89,7 +86,26 @@ namespace DoppelgangerVillage.Network
         public override void OnConnectedToMaster()
         {
             Report("서버 접속 완료");
+            if (!string.IsNullOrEmpty(RematchCode))
+            {
+                // 리매치: 같은 팀 전원이 같은 새 코드로 모인다 (첫 도착자가 방을 만든다)
+                string code = RematchCode;
+                RematchCode = null;
+                Report($"같은 팀과 새 게임 준비 중... (코드 {code})");
+                PhotonNetwork.JoinOrCreateRoom(code, new RoomOptions { MaxPlayers = MaxPlayersPerRoom }, TypedLobby.Default);
+                return;
+            }
             PhotonNetwork.JoinLobby(); // 열린 방 목록 수신용
+        }
+
+        /// <summary>룸을 떠나 로비로 (씬 리로드로 게임 상태 전체 리셋 — 새로고침 불필요).</summary>
+        public static void LeaveToLobby()
+        {
+            RematchCode = null;
+            if (PhotonNetwork.InRoom) PhotonNetwork.LeaveRoom();
+            PhotonNetwork.SendAllOutgoingCommands();
+            UnityEngine.SceneManagement.SceneManager.LoadScene(
+                UnityEngine.SceneManagement.SceneManager.GetActiveScene().name);
         }
 
         public override void OnRoomListUpdate(List<RoomInfo> roomList)

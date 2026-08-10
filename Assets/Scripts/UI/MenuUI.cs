@@ -34,7 +34,7 @@ namespace DoppelgangerVillage.UI
             _root = dim.gameObject;
 
             var panel = UiKit.CreatePanel(dim, new Color(0.08f, 0.09f, 0.13f, 0.98f), "Panel");
-            UiKit.SetRect(panel, new Vector2(0.5f, 0.5f), new Vector2(520, 460), Vector2.zero);
+            UiKit.SetRect(panel, new Vector2(0.5f, 0.5f), new Vector2(520, 500), Vector2.zero);
 
             var title = UiKit.CreateText(panel, "메뉴", 34, new Color(0.95f, 0.9f, 0.75f), TextAnchor.MiddleCenter, true);
             UiKit.SetRect(title.rectTransform, new Vector2(0.5f, 1f), new Vector2(480, 56), new Vector2(0, -22));
@@ -42,17 +42,18 @@ namespace DoppelgangerVillage.UI
 
             var body = UiKit.CreateText(panel,
                 "<b>조작</b>\n" +
-                "WASD  이동\n" +
+                "WASD  이동 · Space  점프\n" +
                 "마우스  시야 (좌클릭 잠금 · ESC 해제)\n" +
                 "Shift  달리기 (스태미나 소모)\n" +
-                "E  대화 / 트레일러로 보내기\n" +
+                "E  대화 / 집·트레일러 출입 / 보내기\n" +
                 "F  눈을 감고 거울 비추기\n" +
-                "Tab  개인 과제·수집 현황\n\n" +
+                "Tab  조작키 확인\n\n" +
                 "<b>목표</b>\n" +
-                $"진짜 주민 {GameConfig.RescueGoal} + 수리 부품 {GameConfig.PartsGoal} → 탈출\n\n" +
+                $"주민 {GameConfig.RescueGoal} 구출 → 안개 구역 확장\n" +
+                $"최종: 주민 {GameConfig.FinalRescueGoal} + 부품 {GameConfig.PartsGoal} → 탈출\n\n" +
                 "다시 시작: 브라우저 새로고침",
                 21, new Color(0.9f, 0.9f, 0.88f), TextAnchor.UpperLeft);
-            UiKit.SetRect(body.rectTransform, new Vector2(0.5f, 1f), new Vector2(440, 320), new Vector2(0, -86));
+            UiKit.SetRect(body.rectTransform, new Vector2(0.5f, 1f), new Vector2(440, 350), new Vector2(0, -86));
             body.rectTransform.pivot = new Vector2(0.5f, 1f);
             body.supportRichText = true;
 

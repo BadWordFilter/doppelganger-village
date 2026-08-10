@@ -117,10 +117,28 @@ namespace DoppelgangerVillage.Judgement
         /// <summary>마스터: 판정 후 — 목표 달성(표시 기준) 또는 깨어 있는 동물 소진 시 정산.</summary>
         private void CheckPhase()
         {
+            // 1단계 목표(10마리) 달성 → 안개 경계 확장 + 외곽 시민 개방 (1회)
+            if (!Village.FogBoundary.Expanded && DisplayRescued >= GameConfig.RescueGoal)
+                photonView.RPC(nameof(RpcExpandZone), RpcTarget.AllBuffered);
+
             int awake = RemainingCitizens();
-            bool goalMet = DisplayRescued >= GameConfig.RescueGoal && _parts >= GameConfig.PartsGoal;
+            bool goalMet = DisplayRescued >= GameConfig.FinalRescueGoal && _parts >= GameConfig.PartsGoal;
             if (!goalMet && awake > 0) return;
             DoSettlement();
+        }
+
+        /// <summary>구역 확장: 안개가 물러나고 외곽 링 시민이 깨어난다 (버퍼 — 늦은 합류도 재현).</summary>
+        [PunRPC]
+        private void RpcExpandZone(PhotonMessageInfo info)
+        {
+            if (Village.FogBoundary.Expanded) return;
+            Village.FogBoundary.Expanded = true;
+            bool stale = PhotonNetwork.Time - info.SentServerTime > 8.0;
+            Village.FogBoundary.SetRadius(GameConfig.ExpandedRadius, !stale, this);
+            Village.VillageLayout.ActivateOuterRing();
+            if (stale) return;
+            UI.SfxDirector.Play("quest");
+            UI.ToastUI.Show($"주민 {GameConfig.RescueGoal}마리 구출! 안개가 물러나고 바깥 구역이 열렸다... 최종 목표: 주민 {GameConfig.FinalRescueGoal}마리.");
         }
 
         /// <summary>마스터: 페이즈 타이머 만료 시 정산 후 낮↔밤 전환 (PhaseDirector가 호출).</summary>
@@ -135,7 +153,7 @@ namespace DoppelgangerVillage.Judgement
             if (SettlementInProgress) return;
             int all = RemainingCitizensIncludingSleeping();
             int final = Mathf.Max(0, _trueRescued - _infiltrators);
-            bool realGoal = final >= GameConfig.RescueGoal && _parts >= GameConfig.PartsGoal;
+            bool realGoal = final >= GameConfig.FinalRescueGoal && _parts >= GameConfig.PartsGoal;
             int outcome = realGoal ? 1 : (all == 0 ? 2 : 0);
 
             photonView.RPC(nameof(RpcSettlement), RpcTarget.AllBuffered,
@@ -174,6 +192,10 @@ namespace DoppelgangerVillage.Judgement
                 return;
             }
 
+            // 집 안에서 판정된 시민은 집 앞으로 나와서 걷기 시작한다 (내부 룸은 NavMesh 밖)
+            if (kind != 1 && Village.HouseInteriors.Contains(citizen.transform.position))
+                citizen.transform.position = Village.HouseInteriors.ResidentExteriorDoor(citizen.CitizenId, citizen.transform.position);
+
             switch (kind)
             {
                 case 0: StartCoroutine(WalkToTrailer(citizen, 2.2f)); break;
@@ -182,7 +204,7 @@ namespace DoppelgangerVillage.Judgement
                 case 3: // 오답 — 얼굴이 무너진 채 느릿느릿 트레일러로 (기획: 막을 수 없다)
                     StageDirectionActor.DistortFace(citizen);
                     foreach (var r in citizen.GetComponentsInChildren<MeshRenderer>())
-                        r.material.SetColor("_BaseColor", r.material.GetColor("_BaseColor") * 0.55f);
+                        StageDirectionActor.Tint(r.material, StageDirectionActor.GetTint(r.material) * 0.55f);
                     StartCoroutine(WalkToTrailer(citizen, 1.0f));
                     break;
             }
@@ -244,6 +266,28 @@ namespace DoppelgangerVillage.Judgement
             };
             ProgressChanged?.Invoke(finalRescued, parts);
             SettlementShown?.Invoke(s);
+        }
+
+        // ---- 리매치: 같은 팀 전원이 새 룸으로 옮겨 처음부터 (새로고침 불필요) ----
+
+        /// <summary>방장 전용: 새 4자리 코드를 전원에게 전파하고 각자 씬 리로드 후 그 방에 모인다.</summary>
+        public void RequestRematch()
+        {
+            if (!PhotonNetwork.IsMasterClient) return;
+            string code = Random.Range(1000, 10000).ToString();
+            photonView.RPC(nameof(RpcRematch), RpcTarget.Others, code);
+            PhotonNetwork.SendAllOutgoingCommands(); // 떠나기 전에 반드시 전송
+            RpcRematch(code);
+        }
+
+        [PunRPC]
+        private void RpcRematch(string code)
+        {
+            Network.ConnectionManager.RematchCode = code;
+            if (PhotonNetwork.InRoom) PhotonNetwork.LeaveRoom();
+            PhotonNetwork.SendAllOutgoingCommands();
+            UnityEngine.SceneManagement.SceneManager.LoadScene(
+                UnityEngine.SceneManagement.SceneManager.GetActiveScene().name);
         }
 
         // ---- 감염(HP 0) → 전원 감염 시 패배 ----
@@ -319,7 +363,7 @@ namespace DoppelgangerVillage.Judgement
         private IEnumerator FlashAndVanish(AnimalCitizen citizen)
         {
             foreach (var r in citizen.GetComponentsInChildren<MeshRenderer>())
-                r.material.SetColor("_BaseColor", new Color(0.9f, 0.15f, 0.1f));
+                StageDirectionActor.Tint(r.material, new Color(0.9f, 0.15f, 0.1f));
             StageDirectionActor.DistortFace(citizen); // 거울에 비친 본색 — 얼굴 붕괴
             yield return new WaitForSeconds(0.7f);
             citizen.gameObject.SetActive(false);

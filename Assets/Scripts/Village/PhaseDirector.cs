@@ -116,11 +116,12 @@ namespace DoppelgangerVillage.Village
             RenderSettings.fog = false;
             RenderSettings.ambientIntensity = 1f;
 
-            // 주간 시민 기상, 야행성은 잠들기
+            // 주간 시민 기상, 야행성은 잠들기 (외곽 링 시민은 구역 확장 전까지 잠재운다)
             foreach (var c in FindObjectsByType<AnimalCitizen>(FindObjectsInactive.Include, FindObjectsSortMode.None))
             {
                 if (c.IsResolved) continue;
-                c.gameObject.SetActive(!c.IsNocturnal);
+                bool outerLocked = c.CitizenId >= GameConfig.OuterIdStart && !FogBoundary.Expanded;
+                c.gameObject.SetActive(!c.IsNocturnal && !outerLocked);
             }
 
             // 밤 배회 도플갱어 소멸 (마스터)
@@ -139,7 +140,7 @@ namespace DoppelgangerVillage.Village
             else
             {
                 UnlockCommercialZone(day == 2 && !stale);
-                FogBoundary.SetRadius(FogBoundary.FullRadius, !stale, this);
+                FogBoundary.SetRadius(FogBoundary.CurrentMaxRadius, !stale, this);
             }
 
             UI.SfxDirector.PlayAmbient(false); // 낮 앰비언트
@@ -204,7 +205,7 @@ namespace DoppelgangerVillage.Village
             }
 
             // 밤: 경계가 열린다 — 야행성 구역까지 나갈 수 있지만, 놈들도 배회한다
-            FogBoundary.SetRadius(FogBoundary.FullRadius, !stale, this);
+            FogBoundary.SetRadius(FogBoundary.CurrentMaxRadius, !stale, this);
             UI.SfxDirector.PlayAmbient(true); // 밤 앰비언트
             if (!stale) UI.ToastUI.Show("밤이 찾아왔다... 경계가 열리고, 야행성 주민과 놈들이 깨어난다.");
 
