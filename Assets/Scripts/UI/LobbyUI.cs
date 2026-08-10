@@ -28,6 +28,12 @@ namespace DoppelgangerVillage.UI
             cm.RoomJoinFailed += _ => SetInteractable(true);
             SetInteractable(false);
             cm.Connect();
+            // 씬 리로드 후 이미 접속돼 있으면 콜백이 다시 오지 않는다 — 버튼이 영영 잠기는 것 방지
+            if (PhotonNetwork.IsConnectedAndReady && !PhotonNetwork.InRoom)
+            {
+                OnStatusChanged("서버 접속 완료");
+                SetInteractable(true);
+            }
         }
 
         private void Build()

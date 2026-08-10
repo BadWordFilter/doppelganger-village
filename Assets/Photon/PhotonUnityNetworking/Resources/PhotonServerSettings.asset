@@ -19,7 +19,7 @@ MonoBehaviour:
     AppIdVoice: 4ae031bb-170e-4a00-b8f6-8333795f25c4
     AppVersion: 
     UseNameServer: 1
-    FixedRegion: 
+    FixedRegion: hk
     Server: 
     Port: 0
     ProxyServer: 
@@ -55,6 +55,9 @@ MonoBehaviour:
   - RpcStartGame
   - RpcExpandZone
   - RpcRematch
+  - RpcAttacked
+  - RpcDropCollected
+  - RpcRequestCollect
   DisableAutoOpenWizard: 1
   ShowSettings: 0
   DevRegionSetOnce: 1
