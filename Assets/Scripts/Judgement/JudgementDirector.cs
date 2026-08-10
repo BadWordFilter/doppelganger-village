@@ -165,10 +165,11 @@ namespace DoppelgangerVillage.Judgement
             if (citizen == null) return;
             citizen.IsResolved = true;
 
-            // 버퍼 재생(늦은 합류): 상태만 복원 — 연출·토스트 생략
+            // 버퍼 재생(늦은 합류): 상태만 복원 — 연출·토스트 생략, 보내진 시민은 내부 룸에 배치
             if (PhotonNetwork.Time - info.SentServerTime > 8.0)
             {
-                citizen.gameObject.SetActive(false);
+                if (kind == 0 || kind == 3) MoveToInterior(citizen);
+                else citizen.gameObject.SetActive(false);
                 ProgressChanged?.Invoke(displayRescued, parts);
                 return;
             }
@@ -269,11 +270,21 @@ namespace DoppelgangerVillage.Judgement
 
         private IEnumerator WalkToTrailer(AnimalCitizen citizen, float speed)
         {
-            yield return WalkPath(citizen, _trailerTarget, speed);
+            yield return WalkPath(citizen, _trailerTarget, speed, deactivateAtEnd: false);
+            MoveToInterior(citizen);
+        }
+
+        /// <summary>트레일러로 보내진 시민을 내부 룸의 결정적 슬롯에 배치 — 잠입 도플갱어도 태연히 섞인다.</summary>
+        private static void MoveToInterior(AnimalCitizen citizen)
+        {
+            if (citizen == null) return;
+            citizen.transform.position = Village.TrailerInterior.CitizenSlot(citizen.CitizenId);
+            citizen.transform.rotation = Quaternion.Euler(0f, 160f + (citizen.CitizenId * 37) % 40, 0f); // 입구 쪽을 향해 서 있음
+            citizen.gameObject.SetActive(true);
         }
 
         /// <summary>NavMesh 경로를 따라 걷는다 — 집·트레일러 등 오브젝트를 뚫지 않는다.</summary>
-        private IEnumerator WalkPath(AnimalCitizen citizen, Vector3 target, float speed)
+        private IEnumerator WalkPath(AnimalCitizen citizen, Vector3 target, float speed, bool deactivateAtEnd = true)
         {
             var corners = ComputePathCorners(citizen.transform.position, target);
             var tr = citizen.transform;
@@ -291,7 +302,7 @@ namespace DoppelgangerVillage.Judgement
                 }
                 if (citizen == null || !citizen.gameObject.activeSelf) yield break;
             }
-            if (citizen != null) citizen.gameObject.SetActive(false);
+            if (citizen != null && deactivateAtEnd) citizen.gameObject.SetActive(false);
         }
 
         private static Vector3[] ComputePathCorners(Vector3 from, Vector3 to)

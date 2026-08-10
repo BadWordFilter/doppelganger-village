@@ -21,12 +21,36 @@ namespace DoppelgangerVillage.Player
             if (!photonView.IsMine) return;
 
             var target = FindNearestCitizen();
-            InteractionHint.Show(target != null && !DialogueUI.IsOpen ? "E — 대화하기" : null);
+            bool nearDoor = !Village.TrailerInterior.Contains(transform.position)
+                && Vector3.Distance(transform.position, Village.TrailerInterior.VillageDoor) < 3.0f;
+            bool nearExit = Village.TrailerInterior.Contains(transform.position)
+                && Vector3.Distance(transform.position, Village.TrailerInterior.InteriorExit) < 3.0f;
+
+            string hint = null;
+            if (!DialogueUI.IsOpen)
+            {
+                if (target != null) hint = "E — 대화하기";
+                else if (nearDoor) hint = "E — 트레일러 안으로";
+                else if (nearExit) hint = "E — 밖으로 나가기";
+            }
+            InteractionHint.Show(hint);
 
             if (DialogueUI.IsOpen) return;
             var kb = Keyboard.current;
-            if (kb == null || !kb.eKey.wasPressedThisFrame || target == null) return;
-            DialogueUI.Instance.Open(target);
+            if (kb == null || !kb.eKey.wasPressedThisFrame) return;
+
+            if (target != null) { DialogueUI.Instance.Open(target); return; }
+            if (nearDoor) { Teleport(Village.TrailerInterior.EntrySpawn); return; }
+            if (nearExit) Teleport(Village.TrailerInterior.ExitToVillage);
+        }
+
+        /// <summary>트레일러 내부 룸 출입 (CC 껐다 켜며 순간이동 — 위치는 PhotonTransformView가 동기화).</summary>
+        private void Teleport(Vector3 to)
+        {
+            var cc = GetComponent<CharacterController>();
+            if (cc != null) cc.enabled = false;
+            transform.position = to;
+            if (cc != null) cc.enabled = true;
         }
 
         private AnimalCitizen FindNearestCitizen()

@@ -8,15 +8,9 @@ namespace DoppelgangerVillage.Village
     /// </summary>
     public static class SafeZone
     {
-        // 트레일러 컨테이너 내부 (월드 고정 박스) — 안에 들어가야 안전하다
-        private static readonly Vector3 BoxMin = new(-1.05f, 0f, -25.2f);
-        private static readonly Vector3 BoxMax = new(1.05f, 2.6f, -18.8f);
+        public static Vector3 Center => new(0f, 0f, -22f); // 마을 쪽 트레일러 (추격자 회피 기준점)
 
-        public static Vector3 Center => new(0f, 0f, -22f);
-
-        public static bool Contains(Vector3 p) =>
-            p.x >= BoxMin.x && p.x <= BoxMax.x
-            && p.y >= BoxMin.y && p.y <= BoxMax.y
-            && p.z >= BoxMin.z && p.z <= BoxMax.z;
+        /// <summary>안전 = 트레일러 내부 룸 안 (어몽어스식 별도 공간).</summary>
+        public static bool Contains(Vector3 p) => TrailerInterior.Contains(p);
     }
 }
