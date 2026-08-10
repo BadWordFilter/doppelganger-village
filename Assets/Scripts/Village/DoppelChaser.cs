@@ -19,6 +19,7 @@ namespace DoppelgangerVillage.Village
         private Vector3 _home;
         private float _repathTimer;
         private float _attackCooldown;
+        private float _lifetime;
 
         private void Awake()
         {
@@ -35,6 +36,15 @@ namespace DoppelgangerVillage.Village
         private void Update()
         {
             if (!PhotonNetwork.IsMasterClient || !_agent.enabled || !_agent.isOnNavMesh) return;
+
+            // 수명 소진 → 소멸 (돌변 개체가 무한히 쌓이지 않도록)
+            _lifetime += Time.deltaTime;
+            if (_lifetime > GameConfig.ChaserLifetimeSeconds)
+            {
+                PhotonNetwork.Destroy(gameObject);
+                return;
+            }
+
             _attackCooldown -= Time.deltaTime;
 
             var target = NearestAlivePlayer(out float dist);

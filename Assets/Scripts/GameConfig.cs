@@ -7,8 +7,12 @@ namespace DoppelgangerVillage
     public static class GameConfig
     {
         // ---- 승리 조건 ----
-        public const int RescueGoal = 4; // 구출해야 하는 진짜 주민 수
-        public const int PartsGoal = 4;  // 모아야 하는 트레일러 수리 부품 수
+        public const int RescueGoal = 5; // 구출해야 하는 진짜 주민 수 (플레이테스트: 상향)
+        public const int PartsGoal = 5;  // 모아야 하는 트레일러 수리 부품 수
+
+        // ---- 낮/밤 사이클 (플레이테스트: 낮 시간제한) ----
+        public static float DayDurationSeconds = 300f;   // 낮 5분 → 해질녘 정산 → 밤
+        public static float NightDurationSeconds = 150f; // 밤 2.5분 → 아침, 다음 일차
 
         // ---- 대화 규칙 ----
         public const int MaxQuestionsPerAnimal = 3; // 마리당 질문 제한. 4번째 시도 = 과잉 심문으로 돌변
@@ -32,14 +36,18 @@ namespace DoppelgangerVillage
         public const int MinAnimals = 10;       // 맵에 등장하는 주간 동물 개체 수 범위
         public const int MaxAnimals = 11;
 
-        // ---- 추격자 (돌변한 도플갱어 — 배회→감지→추격 FSM) ----
+        // ---- 추격자 (돌변한 도플갱어 — 배회→감지→추격 FSM, 플레이테스트로 완화) ----
         public const float ChaserRoamSpeed = 2.0f;
-        public const float ChaserChaseSpeed = 5.5f;  // 걷기(4)보다 빠르고 달리기(7)보다 느리게 — 스태미나 관리 유도
-        public const float ChaserDetectRadius = 11f;
-        public const float ChaserLoseRadius = 18f;
+        public const float ChaserChaseSpeed = 4.8f;  // 걷기(4)보다 빠르고 달리기(7)로는 확실히 도망 가능
+        public const float ChaserDetectRadius = 9f;
+        public const float ChaserLoseRadius = 13f;   // 시야에서 벗어나면 금방 포기
         public const float ChaserAttackRange = 1.7f;
         public const float ChaserHitDamage = 25f;
-        public const float StunDuration = 1.2f;      // 잡혔을 때 짧은 기절
+        public const float ChaserLifetimeSeconds = 45f; // 돌변 개체는 45초 후 소멸 (누적 지옥 방지)
+        public const float StunDuration = 0.8f;      // 잡혔을 때 짧은 기절
+
+        // ---- 판정 패널티 (플레이테스트: 진짜에게 거울 = 도주 + 판정자 HP 감소) ----
+        public const float MirrorRealPenaltyDamage = 20f;
 
         // ---- 플레이어 ----
         public const float MaxHp = 100f;

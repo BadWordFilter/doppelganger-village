@@ -102,17 +102,29 @@ namespace DoppelgangerVillage.Judgement
             CheckPhase();
         }
 
-        /// <summary>
-        /// 마스터: 목표 달성(표시 기준) 또는 깨어 있는 동물 소진 시 정산 발동.
-        /// 잠들어 있는 야행성이 남아 있으면 패배 대신 밤 페이즈로 이어진다.
-        /// </summary>
+        /// <summary>정산 진행 중 여부 (타이머·판정 동시 발동으로 인한 이중 정산 방지).</summary>
+        public bool SettlementInProgress { get; private set; }
+
+        /// <summary>마스터: 판정 후 — 목표 달성(표시 기준) 또는 깨어 있는 동물 소진 시 정산.</summary>
         private void CheckPhase()
         {
-            int awake = RemainingCitizens();          // 활성(깨어 있는) 미판정
-            int all = RemainingCitizensIncludingSleeping();
+            int awake = RemainingCitizens();
             bool goalMet = DisplayRescued >= GameConfig.RescueGoal && _parts >= GameConfig.PartsGoal;
             if (!goalMet && awake > 0) return;
+            DoSettlement();
+        }
 
+        /// <summary>마스터: 페이즈 타이머 만료 시 정산 후 낮↔밤 전환 (PhaseDirector가 호출).</summary>
+        public void SettleAndSwitchPhase()
+        {
+            if (!PhotonNetwork.IsMasterClient || GameEnded) return;
+            DoSettlement();
+        }
+
+        private void DoSettlement()
+        {
+            if (SettlementInProgress) return;
+            int all = RemainingCitizensIncludingSleeping();
             int final = Mathf.Max(0, _trueRescued - _infiltrators);
             bool realGoal = final >= GameConfig.RescueGoal && _parts >= GameConfig.PartsGoal;
             int outcome = realGoal ? 1 : (all == 0 ? 2 : 0);
@@ -120,21 +132,21 @@ namespace DoppelgangerVillage.Judgement
             photonView.RPC(nameof(RpcSettlement), RpcTarget.All,
                 _trueRescued, _infiltrators, final, _parts, _banished, _fled, all, outcome);
 
-            // 정산 차감 반영 후 계속 (기획: 잠입 도플 1마리당 구출 주민 -1)
+            // 정산 차감 반영 후 계속 (기획: 잠입 도플 1마리당 구출 주민 -1) → 페이즈 전환
             if (outcome == 0)
             {
+                SettlementInProgress = true;
                 _trueRescued = final;
                 _infiltrators = 0;
-                // 깨어 있는 대상이 없고 야행성이 잠들어 있다면 → 밤 페이즈 개시
-                if (awake == 0 && all > 0)
-                    StartCoroutine(NightAfterSettlement());
+                StartCoroutine(SwitchPhaseAfterSettlement());
             }
         }
 
-        private IEnumerator NightAfterSettlement()
+        private IEnumerator SwitchPhaseAfterSettlement()
         {
             yield return new WaitForSeconds(4f); // 정산 화면 읽을 시간
-            Village.PhaseDirector.Instance.BeginNight();
+            SettlementInProgress = false;
+            Village.PhaseDirector.Instance.SwitchPhase();
         }
 
         [PunRPC]
@@ -168,7 +180,11 @@ namespace DoppelgangerVillage.Judgement
                     else UI.ToastUI.Show("주민이 말없이 트레일러로 향했다...");
                     break;
                 case 1: UI.ToastUI.Show("거울에 비친 것은... 도플갱어였다! 퇴치 성공."); break;
-                case 2: UI.ToastUI.Show("진짜 주민이었다... 겁에 질려 도망쳐 버렸다."); break;
+                case 2:
+                    UI.ToastUI.Show("진짜 주민이었다... 도망치는 비명이 영혼을 할퀸다. (HP 감소)");
+                    var judge = Player.PlayerController.Local;
+                    if (judge != null) judge.TakeDamage(GameConfig.MirrorRealPenaltyDamage);
+                    break;
             }
         }
 
