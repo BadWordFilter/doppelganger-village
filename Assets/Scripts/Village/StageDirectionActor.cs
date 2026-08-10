@@ -49,6 +49,7 @@ namespace DoppelgangerVillage.Village
 
         private static IEnumerator Run(AnimalCitizen citizen, string text, bool abnormal)
         {
+            citizen.IsActing = true;
             var root = citizen.transform;
             var head = FindDeep(root, "Head");
             Vector3 rootPos = root.localPosition;
@@ -95,6 +96,7 @@ namespace DoppelgangerVillage.Village
                 root.localScale = rootScale;
             }
             if (head != null) head.localRotation = headRot;
+            if (citizen != null) citizen.IsActing = false;
         }
 
         private static bool Contains(string text, params string[] keys)

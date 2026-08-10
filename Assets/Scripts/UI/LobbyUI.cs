@@ -43,10 +43,17 @@ namespace DoppelgangerVillage.UI
             var subtitle = UiKit.CreateText(_panelRoot.transform, "대화로 도플갱어를 가려내고, 진짜 주민을 구출해 마을에서 탈출하세요", 24, new Color(0.68f, 0.68f, 0.75f));
             UiKit.SetRect(subtitle.rectTransform, new Vector2(0.5f, 0.68f), new Vector2(1100, 40), Vector2.zero);
 
+            // 닉네임 입력 (선택)
+            _nickInput = UiKit.CreateInput(_panelRoot.transform, "닉네임 (선택)", 24);
+            _nickInput.characterLimit = 10;
+            _nickInput.contentType = UnityEngine.UI.InputField.ContentType.Standard;
+            UiKit.SetRect((RectTransform)_nickInput.transform, new Vector2(0.5f, 0.58f), new Vector2(280, 52), Vector2.zero);
+
             _createBtn = UiKit.CreateButton(_panelRoot.transform, "방 만들기", 30, new Color(0.80f, 0.28f, 0.24f), Color.white);
-            UiKit.SetRect((RectTransform)_createBtn.transform, new Vector2(0.5f, 0.50f), new Vector2(320, 70), Vector2.zero);
+            UiKit.SetRect((RectTransform)_createBtn.transform, new Vector2(0.5f, 0.48f), new Vector2(320, 70), Vector2.zero);
             _createBtn.onClick.AddListener(() =>
             {
+                ApplyNickname();
                 SetInteractable(false);
                 ConnectionManager.Instance.CreateRoom();
             });
@@ -64,6 +71,7 @@ namespace DoppelgangerVillage.UI
                     OnStatusChanged("4자리 룸 코드를 입력하세요");
                     return;
                 }
+                ApplyNickname();
                 SetInteractable(false);
                 ConnectionManager.Instance.JoinRoomByCode(code);
             });
@@ -132,6 +140,13 @@ namespace DoppelgangerVillage.UI
         }
 
         private RectTransform _roomListRoot;
+        private InputField _nickInput;
+
+        private void ApplyNickname()
+        {
+            string nick = _nickInput != null ? _nickInput.text?.Trim() : null;
+            if (!string.IsNullOrEmpty(nick)) PhotonNetwork.NickName = nick;
+        }
 
         /// <summary>열린 방 목록 버튼 갱신 (최대 4개).</summary>
         private void RefreshRoomList(System.Collections.Generic.List<Photon.Realtime.RoomInfo> rooms)

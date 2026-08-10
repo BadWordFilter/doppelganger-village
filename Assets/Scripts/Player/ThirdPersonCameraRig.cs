@@ -57,6 +57,14 @@ namespace DoppelgangerVillage.Player
             Vector3 pivot = _target.position + Vector3.up * PivotHeight;
             transform.position = pivot - rot * Vector3.forward * Distance;
             transform.rotation = rot;
+
+            // 달리기 속도감: FOV 확장
+            var cam = GetComponent<Camera>();
+            if (cam != null)
+            {
+                bool running = PlayerController.Local != null && PlayerController.Local.IsRunning;
+                cam.fieldOfView = Mathf.Lerp(cam.fieldOfView, running ? 66f : 60f, 6f * Time.deltaTime);
+            }
         }
     }
 }

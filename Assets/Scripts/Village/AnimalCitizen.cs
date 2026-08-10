@@ -22,6 +22,9 @@ namespace DoppelgangerVillage.Village
         /// <summary>판정 완료 여부 (구출/퇴치/도주 후 재상호작용 방지).</summary>
         public bool IsResolved { get; set; }
 
+        /// <summary>연출 지문 애니메이션 재생 중 (유휴 모션·시선 추적과의 충돌 방지).</summary>
+        public bool IsActing { get; set; }
+
         /// <summary>남은 질문 횟수 관리는 대화 시스템(3단계)에서 처리한다.</summary>
         public int QuestionsAsked { get; set; }
 

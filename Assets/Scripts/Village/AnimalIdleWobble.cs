@@ -20,7 +20,11 @@ namespace DoppelgangerVillage.Village
             if (_body != null) _baseScale = _body.localScale;
             _phase = Random.value * 10f;
             _hopTimer = Random.Range(3f, 9f);
+            _baseRotation = transform.rotation;
         }
+
+        private AnimalCitizen _citizen;
+        private Quaternion _baseRotation;
 
         private void Update()
         {
@@ -29,6 +33,22 @@ namespace DoppelgangerVillage.Village
             // 숨쉬기 스쿼시
             float breathe = 1f + Mathf.Sin(Time.time * 2.2f + _phase) * 0.03f;
             _body.localScale = new Vector3(_baseScale.x, _baseScale.y * breathe, _baseScale.z);
+
+            // 가까운 플레이어를 천천히 바라봄 (판정 전 개체만, 연출 중엔 정지)
+            if (_citizen == null) _citizen = GetComponent<AnimalCitizen>();
+            if (_citizen != null && !_citizen.IsResolved && !_citizen.IsActing)
+            {
+                var local = Player.PlayerController.Local;
+                if (local != null)
+                {
+                    Vector3 to = local.transform.position - transform.position;
+                    to.y = 0f;
+                    if (to.sqrMagnitude < 4.5f * 4.5f && to.sqrMagnitude > 0.01f)
+                        transform.rotation = Quaternion.Slerp(transform.rotation, Quaternion.LookRotation(to), 2.2f * Time.deltaTime);
+                    else
+                        transform.rotation = Quaternion.Slerp(transform.rotation, _baseRotation, 1.2f * Time.deltaTime);
+                }
+            }
 
             // 이따금 통통
             _hopTimer -= Time.deltaTime;

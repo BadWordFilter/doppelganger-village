@@ -32,6 +32,8 @@ namespace DoppelgangerVillage.UI
             _ambientSource.loop = true;
             _ambientSource.spatialBlend = 0f;
             _ambientSource.volume = 0.22f;
+
+            StartCoroutine(HeartRoutine());
         }
 
         /// <summary>낮/밤 앰비언트 루프 전환 (코드 합성 — 낮: 온화한 패드+새소리, 밤: 저음 드론+바람).</summary>
@@ -114,6 +116,47 @@ namespace DoppelgangerVillage.UI
                 Thump(b * 2f + 0.34f, 0.20f);
             }
             FadeEdges(d);
+            return d;
+        }
+
+        // ---- 추격자 근접 심장박동 (거리 비례 가속) ----
+        private float _danger;
+
+        public static void SetDanger(float d01)
+        {
+            if (_instance != null) _instance._danger = Mathf.Clamp01(d01);
+        }
+
+        private System.Collections.IEnumerator HeartRoutine()
+        {
+            while (true)
+            {
+                if (_danger <= 0.01f)
+                {
+                    yield return new WaitForSeconds(0.3f);
+                    continue;
+                }
+                Play("heart", 0.35f + 0.5f * _danger);
+                yield return new WaitForSeconds(Mathf.Lerp(1.3f, 0.42f, _danger));
+            }
+        }
+
+        private static float[] Heart()
+        {
+            int n = (int)(SR * 0.5f);
+            var d = new float[n];
+            void Thump(float at, float amp)
+            {
+                int start = (int)(at * SR);
+                int len = (int)(SR * 0.15f);
+                for (int i = 0; i < len && start + i < n; i++)
+                {
+                    float t = i / (float)SR;
+                    d[start + i] += Mathf.Sin(2f * Mathf.PI * 52f * t) * Mathf.Exp(-t * 24f) * amp;
+                }
+            }
+            Thump(0f, 0.9f);
+            Thump(0.18f, 0.6f);
             return d;
         }
 
@@ -200,6 +243,7 @@ namespace DoppelgangerVillage.UI
                 "sting" => Sting(),
                 "howl" => Howl(),
                 "creak" => Creak(),
+                "heart" => Heart(),
                 _ => null,
             };
             if (data == null) return null;

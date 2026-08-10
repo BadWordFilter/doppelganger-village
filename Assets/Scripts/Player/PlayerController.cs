@@ -17,6 +17,29 @@ namespace DoppelgangerVillage.Player
         public float CurrentHp { get; private set; } = GameConfig.MaxHp;
         public float CurrentStamina { get; private set; } = GameConfig.MaxStamina;
         public bool IsExhausted { get; private set; }
+        public bool IsRunning { get; private set; }
+
+        private float _dangerTimer;
+
+        /// <summary>추격자 근접도 → 심장박동 가속 (0.25초 주기 계산).</summary>
+        private void UpdateDanger()
+        {
+            _dangerTimer -= Time.deltaTime;
+            if (_dangerTimer > 0f) return;
+            _dangerTimer = 0.25f;
+            float danger = 0f;
+            if (CurrentHp > 0f && !Village.SafeZone.Contains(transform.position))
+            {
+                float nearest = float.MaxValue;
+                foreach (var ch in FindObjectsByType<Village.DoppelChaser>(FindObjectsSortMode.None))
+                {
+                    float d = Vector3.Distance(ch.transform.position, transform.position);
+                    if (d < nearest) nearest = d;
+                }
+                if (nearest < 14f) danger = Mathf.Clamp01(1f - (nearest - 2f) / 12f);
+            }
+            UI.SfxDirector.SetDanger(danger);
+        }
 
         private CharacterController _cc;
         private ThirdPersonCameraRig _rig;
@@ -143,6 +166,19 @@ namespace DoppelgangerVillage.Player
             }
             _cc.Move((move + Vector3.up * _verticalVel) * Time.deltaTime);
 
+            IsRunning = running && move.sqrMagnitude > 0.01f;
+
+            // 낙사 방지: 허공으로 떨어지면 트레일러 앞으로 복귀
+            if (transform.position.y < -10f)
+            {
+                _cc.enabled = false;
+                transform.position = Village.TrailerInterior.ExitToVillage;
+                _cc.enabled = true;
+                _verticalVel = 0f;
+                UI.ToastUI.Show("아찔했다... 정신을 차리니 트레일러 앞이다.");
+            }
+
+            UpdateDanger();
             UpdateSafeZone();
         }
 
